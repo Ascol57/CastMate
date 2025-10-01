@@ -1,16 +1,16 @@
 <template>
 	<div v-if="updateData" class="flex flex-column">
 		<div>
-			<h4 class="my-2 text-center">New Update</h4>
+			<h4 class="my-2 text-center">{{ $tSync('update.title') }}</h4>
 			<h2 class="my-2 text-center">{{ updateData.version }} - {{ updateData.name }}</h2>
 		</div>
 		<flex-scroller class="flex-grow-1 update-notes mb-3" inner-class="px-4" style="height: 50vh">
 			<div ref="notes" v-html="updateData.notes"></div>
 		</flex-scroller>
 		<div class="flex flex-row">
-			<p-button @click="doUpdate" :loading="updating">Update!</p-button>
+			<p-button @click="doUpdate" :loading="updating">{{ $tSync('update.button') }}!</p-button>
 			<div class="flex-grow-1" />
-			<p-button outlined @click="cancel">Skip</p-button>
+			<p-button outlined @click="cancel">{{ $tSync('system.skip') }}</p-button>
 		</div>
 	</div>
 </template>

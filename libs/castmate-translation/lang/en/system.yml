@@ -1,0 +1,38 @@
+minimize: Minimize
+maximize: Maximize
+close: Close
+new_profile: New Profile
+new_automation: New Automation
+file: File
+save_all: Save All
+settings: Settings
+exit: Exit
+help: Help
+about: About
+discord: Discord
+open_log_folder: Open Log Folder
+skip: Skip
+twitch: Twitch
+obs: OBS
+save: Save
+description: Description
+next: Next
+automations: Automations
+add: Add
+sign_in: Sign In
+sign_in_again: Sign In Again
+test: Test
+username: Username
+password: Password
+login: Login
+create: Create
+unsaved_changes: has unsaved changes.
+cancel: Cancel
+save_and_close: Save & Close
+search: Search
+name: Name
+streamplan: Stream Plan
+pending: Pending
+delete: Delete
+delete_confirmation: Are you sure you want to delete
+edit: Edit

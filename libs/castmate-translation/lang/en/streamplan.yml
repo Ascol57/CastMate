@@ -1,0 +1,6 @@
+activation: Activation
+deactivation: Deactivation
+on_activation: On Activation
+on_deactivation: On Deactivation
+add_segments: Add Segments
+segments: Segments

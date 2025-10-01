@@ -11,12 +11,12 @@
 			<p-input-group class="mt-5" v-else>
 				<p-float-label variant="on">
 					<p-input-text id="l" v-model="config" ref="nameInput" autofocus />
-					<label for="l"> Name </label>
+					<label for="l"> {{ $tSync("system.name") }} </label>
 				</p-float-label>
 			</p-input-group>
 		</template>
 		<div class="flex justify-content-end mt-1">
-			<p-button :label="isCreate ? 'Create' : 'Save'" @click="submit"></p-button>
+			<p-button :label="isCreate ? $tSync('system.create') : $tSync('system.save')" @click="submit"></p-button>
 		</div>
 	</div>
 </template>

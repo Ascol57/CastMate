@@ -9,5 +9,6 @@
         "overlay",
         "renderer",
         "shared"
-    ]
+    ],
+    "translation": true
 }

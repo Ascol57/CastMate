@@ -1,5 +1,5 @@
 <template>
-	<label-floater label="Trigger" input-id="trigger" v-slot="labelProps">
+	<label-floater :label="$tSync('common.trigger')" input-id="trigger" v-slot="labelProps">
 		<c-autocomplete
 			v-model="idModel"
 			:items="triggers"

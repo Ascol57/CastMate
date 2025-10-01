@@ -11,6 +11,7 @@ import {
 	useResourceStore,
 } from "../main"
 import NameDialogVue from "../components/dialogs/NameDialog.vue"
+import { tSync } from "../util/translation"
 
 export interface AutomationResourceView {
 	automationView: AutomationView
@@ -83,7 +84,7 @@ function createAutomationGroup(app: App<Element>) {
 
 		return {
 			id: "automation",
-			title: "Automations",
+			title: tSync("system.automations"),
 			icon: "mdi mdi-cogs",
 			items,
 			create() {
@@ -91,13 +92,13 @@ function createAutomationGroup(app: App<Element>) {
 				if (!resources.value) return
 				dialog.open(NameDialogVue, {
 					props: {
-						header: `New Automation`,
+						header: tSync("system.new_automation"),
 						style: {
 							width: "25vw",
 						},
 						modal: true,
 					},
-					onClose(options) {
+					onClose(options: { data?: { name: string } } | undefined): void {
 						if (!options?.data) {
 							return
 						}

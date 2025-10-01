@@ -1,4 +1,5 @@
 import { MediaManager, ReactiveRef, WebService, defineAction, ensureDirectory } from "castmate-core"
+import { t } from "castmate-translation"
 import { OBSConnection } from "./connection"
 import { Directory, MediaFile, Toggle } from "castmate-schema"
 import path from "path"
@@ -6,21 +7,22 @@ import path from "path"
 export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 	defineAction({
 		id: "source",
-		name: "Source Visibility",
+		name: t("plugins.obs.actions.source_visibility.name"),
+		description: t("plugins.obs.actions.source_visibility.description"),
 		icon: "mdi mdi-eye",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: "OBS Connection",
+					name: t("plugins.obs.settings.obs_connections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				scene: {
 					type: String,
 					required: true,
-					name: "Scene",
+					name: t("plugins.obs.actions.source_visibility.config.scene"),
 					template: true,
 					async enum(context: { obs: OBSConnection }) {
 						return (await context?.obs?.getSceneAndGroupNames()) ?? []
@@ -28,7 +30,7 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				source: {
 					type: Number,
-					name: "Source",
+					name: t("plugins.obs.actions.source_visibility.config.source"),
 					required: true,
 					template: true,
 					async enum(context: { obs: OBSConnection; scene: string }) {
@@ -39,7 +41,7 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				enabled: {
 					type: Toggle,
-					name: "Source Visibility",
+					name: t("plugins.obs.actions.source_visibility.config.enabled"),
 					required: true,
 					default: true,
 					template: true,
@@ -51,7 +53,7 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 		result: {
 			type: Object,
 			properties: {
-				sourceEnabled: { type: Boolean, name: "Source Enabled", required: true },
+				sourceEnabled: { type: Boolean, name: t("plugins.obs.results.source_enabled"), required: true },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {
@@ -81,22 +83,22 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 
 	defineAction({
 		id: "filter",
-		name: "Filter Visibility",
-		description: "Enable/Disable an OBS filter",
+		name: t("plugins.obs.actions.filter_visibility.name"),
+		description: t("plugins.obs.actions.filter_visibility.description"),
 		icon: "mdi mdi-eye",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: "OBS Connection",
+					name: t("plugins.obs.settings.obs_connections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				sourceName: {
 					type: String,
 					//template: true,
-					name: "Source Name",
+					name: t("plugins.obs.actions.filter_visibility.config.source"),
 					required: true,
 					template: true,
 					async enum(context: { obs: OBSConnection }) {
@@ -113,7 +115,7 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				filterName: {
 					type: String,
-					name: "Filter Name",
+					name: t("plugins.obs.actions.filter_visibility.config.filter"),
 					//template: true,
 					required: true,
 					template: true,
@@ -174,20 +176,20 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 
 	defineAction({
 		id: "screenshot",
-		name: "Screenshot Source",
+		name: t("plugins.obs.actions.screenshot.name"),
 		icon: "mdi mdi-camera",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: "OBS Connection",
+					name: t("plugins.obs.settings.obs_connections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				sourceName: {
 					type: String,
-					name: "Source Name",
+					name: t("plugins.obs.actions.screenshot.config.source_name"),
 					template: true,
 					async enum(context: { obs: OBSConnection }) {
 						const obs = context?.obs?.connection
@@ -203,22 +205,22 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				width: {
 					type: Number,
-					name: "Width",
+					name: t("plugins.obs.actions.screenshot.config.width"),
 					template: true,
 				},
 				height: {
 					type: Number,
-					name: "Height",
+					name: t("plugins.obs.actions.screenshot.config.height"),
 					template: true,
 				},
 				directory: {
 					type: Directory,
-					name: "Directory",
+					name: t("plugins.obs.actions.screenshot.config.directory"),
 					required: true,
 				},
 				filename: {
 					type: String,
-					name: "Filename",
+					name: t("plugins.obs.actions.screenshot.config.filename"),
 					default: "screenshot-{{ Date.now() }}.png",
 					template: true,
 					required: true,
@@ -228,7 +230,7 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 		result: {
 			type: Object,
 			properties: {
-				screenshot: { type: String, required: true, name: "Screenshot File" },
+				screenshot: { type: String, required: true, name: t("plugins.obs.actions.screenshot.result.screenshot") },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {
@@ -267,20 +269,20 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 
 	defineAction({
 		id: "text",
-		name: "Set Source Text",
+		name: t("plugins.obs.actions.text.name"),
 		icon: "mdi mdi-form-textbox",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: "OBS Connection",
+					name: t("plugins.obs.settings.obs_connections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				sourceName: {
 					type: String,
-					name: "Source Name",
+					name: t("plugins.obs.actions.text.config.source_name"),
 					required: true,
 					async enum(context: { obs: OBSConnection }) {
 						const obs = context?.obs?.connection
@@ -292,7 +294,7 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				text: {
 					type: String,
-					name: "Text",
+					name: t("plugins.obs.actions.text.config.text"),
 					template: true,
 					required: true,
 					multiLine: true,
@@ -312,20 +314,20 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 
 	defineAction({
 		id: "refreshBrowser",
-		name: "Refresh Browser",
+		name: t("plugins.obs.actions.refresh_browser.name"),
 		icon: "mdi mdi-refresh",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: "OBS Connection",
+					name: t("plugins.obs.settings.obs_connections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				sourceName: {
 					type: String,
-					name: "Source Name",
+					name: t("plugins.obs.actions.refresh_browser.config.source_name"),
 					required: true,
 					async enum(context: { obs: OBSConnection }) {
 						const obs = context?.obs?.connection
@@ -349,20 +351,20 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 
 	defineAction({
 		id: "setBrowserURL",
-		name: "Set Browser URL",
+		name: t("plugins.obs.actions.set_browser_url.name"),
 		icon: "mdi mdi-refresh",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: "OBS Connection",
+					name: t("plugins.obs.settings.obs_connections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				sourceName: {
 					type: String,
-					name: "Source Name",
+					name: t("plugins.obs.actions.set_browser_url.config.source_name"),
 					required: true,
 					async enum(context: { obs: OBSConnection }) {
 						const obs = context?.obs?.connection
@@ -374,7 +376,7 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				url: {
 					type: String,
-					name: "URL",
+					name: t("plugins.obs.actions.set_browser_url.config.url"),
 					required: true,
 					template: true,
 				},
@@ -394,20 +396,20 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 
 	defineAction({
 		id: "setImage",
-		name: "Set Image Source",
+		name: t("plugins.obs.actions.set_image.name"),
 		icon: "mdi mdi-refresh",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: "OBS Connection",
+					name: t("plugins.obs.settings.obs_connections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				sourceName: {
 					type: String,
-					name: "Source Name",
+					name: t("plugins.obs.actions.set_image.config.source_name"),
 					required: true,
 					async enum(context: { obs: OBSConnection }) {
 						const obs = context?.obs?.connection
@@ -420,7 +422,7 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				image: {
 					type: MediaFile,
-					name: "Image",
+					name: t("plugins.obs.actions.set_image.config.image"),
 					image: true,
 					required: true,
 					template: true,

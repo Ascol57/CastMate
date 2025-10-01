@@ -12,7 +12,7 @@
 				text
 				:icon="queue?.config.paused ? 'mdi mdi-play' : 'mdi mdi-pause'"
 				@click="togglePause"
-				v-tooltip="queue?.config.paused ? `Unpause Queue` : `Pause Queue`"
+				v-tooltip="queue?.config.paused ? $tSync('queue.unpause') : $tSync('queue.pause')"
 			>
 			</p-button>
 		</template>

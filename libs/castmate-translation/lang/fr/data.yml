@@ -1,0 +1,20 @@
+value: Valeur
+group: Groupe
+no_conditions: Aucune condition (toujours actif)
+state: État
+no_media: CastMate n'a aucun média dans son dossier multimédia.
+no_media_filtered: Aucun média avec ce nom.
+RGB: RGB
+HSV: HSV
+focus: focus
+scroll: défilement
+command: Commande
+string: N'importe où
+regex: RegEx
+command_variables: Variables de commande
+add_parameter: Ajouter un paramètre
+command_message: Message de commande
+remove_message: Supprimer le message
+add_message: Ajouter un message
+left_boundary: Coupure gauche
+right_boundary: Coupure droite

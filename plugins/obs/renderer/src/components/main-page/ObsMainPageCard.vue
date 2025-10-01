@@ -4,9 +4,9 @@
 		<p-message icon="pi pi-exclamation-triangle" severity="warn" :pt="{ text: 'flex-grow-1' }">
 			<div class="flex flex-row w-full gap-1">
 				<div class="flex-grow-1 flex flex-column justify-content-center text-center">
-					CastMate can control OBS, but you haven't set up the connection yet.
+					{{ tSync('plugins.obs.renderer.main_page.no_connections') }}
 				</div>
-				<p-button severity="warn" @click="createFirstConnection">Setup OBS</p-button>
+				<p-button severity="warn" @click="createFirstConnection">{{ tSync('plugins.obs.renderer.main_page.setup_obs') }}</p-button>
 			</div>
 		</p-message>
 	</main-page-card>
@@ -27,6 +27,7 @@ import {
 	useResourceArray,
 	useResourceCreateDialog,
 	useSettingValue,
+	tSync,
 } from "castmate-ui-core"
 import { computed } from "vue"
 

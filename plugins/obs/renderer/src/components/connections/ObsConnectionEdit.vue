@@ -1,47 +1,41 @@
 <template>
 	<div class="pb-2">
 		<div style="width: 800px">
-			CastMate can control OBS over OBS's WebSocket Server. You must first enable the websocket server in OBS so
-			CastMate can connect to it.
+			{{ tSync('plugins.obs.renderer.connection_edit.setup_description') }}
 			<ol>
 				<li class="text-center">
-					Open the <span class="code-like">WebSocket Server Settings</span> in OBS.<br />
+					{{ tSync('plugins.obs.renderer.connection_edit.step_1') }}<br />
 					<img src="../../img/WebsocketServerSettings.png" class="mt-1" />
 				</li>
 				<li class="text-center">
-					Make sure the
-					<span class="code-like"><i class="mdi mdi-checkbox-outline" /> Enable WebSocket server</span>
-					checkbox is checked AND you've
-					<b>clicked apply.</b>
+					{{ tSync('plugins.obs.renderer.connection_edit.step_2') }}
 					<img src="../../img/EnableWebsocketServer.png" class="mt-1" />
 				</li>
 
 				<li class="text-center">
-					Click <span class="code-like">Show Connect Info</span> button to open QR code.
+					{{ tSync('plugins.obs.renderer.connection_edit.step_3') }}
 					<img src="../../img/ShowConnectInfo.png" class="mt-1" />
 				</li>
 
 				<li class="text-center">
-					With the QR Code window still open, click the
-					<span class="code-like"> <i class="mdi mdi-qrcode-scan" /> </span> button below. (It doesn't matter
-					if it's hidden behind other windows).
+					{{ tSync('plugins.obs.renderer.connection_edit.step_4') }}
 				</li>
 			</ol>
 		</div>
 		<div class="flex flex-column gap-5">
 			<p-float-label variant="on" style="flex: 1">
 				<p-input-text v-model="model.name" fluid />
-				<label>CastMate Connection Name</label>
+				<label>{{ tSync('plugins.obs.renderer.connection_edit.connection_name') }}</label>
 			</p-float-label>
 			<div class="flex flex-row gap-1">
-				<p-button @click="readQR" v-tooltip="'Scan Connect Info QR Code'">
+				<p-button @click="readQR" :v-tooltip="tSync('plugins.obs.renderer.connection_edit.scan_qr_tooltip')">
 					<i class="mdi mdi-qrcode-scan" style="font-size: x-large" />
 				</p-button>
 				<div class="flex flex-column gap-3 flex-grow-1">
 					<div class="flex flex-row gap-1">
 						<p-float-label variant="on" style="flex: 1">
 							<p-input-text v-model="model.host" fluid />
-							<label>OBS Ip Address</label>
+							<label>{{ tSync('plugins.obs.renderer.connection_edit.ip_address') }}</label>
 						</p-float-label>
 						<p-float-label variant="on">
 							<p-input-number
@@ -51,16 +45,16 @@
 								:max="65535"
 								:pt="{ pcInputText: { root: 'port-input' } }"
 							/>
-							<label>Port</label>
+							<label>{{ tSync('plugins.obs.renderer.connection_edit.port') }}</label>
 						</p-float-label>
 					</div>
 					<p-float-label variant="on">
 						<p-password v-model="model.password" toggle-mask fluid :feedback="false" />
-						<label>WebSocket Password</label>
+						<label>{{ tSync('plugins.obs.renderer.connection_edit.websocket_password') }}</label>
 					</p-float-label>
 				</div>
 				<p-button :severity="testSeverity" :loading="testing" @click="testDetails">
-					<template v-if="testSuccess == null"> Test </template>
+					<template v-if="testSuccess == null"> {{ tSync('plugins.obs.renderer.connection_edit.test') }} </template>
 					<template v-else-if="testSuccess"> <i class="mdi mdi-check-bold" /> </template>
 					<template v-else> <i class="mdi mdi-close-thick" /> </template>
 				</p-button>
@@ -78,7 +72,7 @@ import PInputText from "primevue/inputtext"
 import PInputNumber from "primevue/inputnumber"
 import PPassword from "primevue/password"
 import PButton from "primevue/button"
-import { useIpcCaller } from "castmate-ui-core"
+import { useIpcCaller, tSync } from "castmate-ui-core"
 
 const props = defineProps<{
 	modelValue: OBSConnectionConfig

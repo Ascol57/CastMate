@@ -2,6 +2,7 @@ import { ReactiveRef, abortableSleep, defineAction, sleep, usePluginLogger } fro
 import { OBSConnection } from "./connection"
 import { Toggle } from "castmate-schema"
 import { OBSFFmpegSourceSettings } from "./input-settings"
+import { t } from "castmate-translation"
 
 export async function getMediaDuration(obs: OBSConnection, sourceName: string): Promise<number | undefined> {
 	const resp = await obs.connection.call("GetMediaInputStatus", { inputName: sourceName })
@@ -41,28 +42,28 @@ export function setupMedia(obsDefault: ReactiveRef<OBSConnection>) {
 
 	defineAction({
 		id: "mediaAction",
-		name: "Media Controls",
-		description: "Play, Pause, and Stop media sources.",
+		name: t("plugins.obs.actions.media_action.name"),
+		description: t("plugins.obs.actions.media_action.description"),
 		icon: "mdi mdi-play-pause",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: "OBS Connection",
+					name: t("plugins.obs.settings.obs_connections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				source: {
 					type: String,
-					name: "Source",
+					name: t("plugins.obs.actions.media_action.config.source"),
 					required: true,
 					async enum(context: { obs: OBSConnection }) {
 						return await context.obs.getInputs(["ffmpeg_source", "vlc_source"])
 					},
 				},
 				action: {
-					name: "Media Action",
+					name: t("plugins.obs.actions.media_action.config.action"),
 					type: String,
 					enum: ["Play", "Pause", "Restart", "Stop", "Next", "Previous"],
 					required: true,
@@ -95,9 +96,9 @@ export function setupMedia(obsDefault: ReactiveRef<OBSConnection>) {
 
 	defineAction({
 		id: "playMedia",
-		name: "Play Media",
+		name: t("plugins.obs.actions.play_media.name"),
 		icon: "mdi mdi-play",
-		description: "Plays a media source from the beginning. Make sure close file when inactive is off.",
+		description: t("plugins.obs.actions.play_media.description"),
 		duration: {
 			propDependencies: ["obs", "scene", "source"],
 			async callback(config) {
@@ -130,12 +131,12 @@ export function setupMedia(obsDefault: ReactiveRef<OBSConnection>) {
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: "OBS Connection",
+					name: t("plugins.obs.settings.obs_connections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				scene: {
-					name: "Scene",
+					name: t("plugins.obs.actions.play_media.config.scene"),
 					type: String,
 					required: true,
 					async enum(context: { obs: OBSConnection }) {
@@ -144,7 +145,7 @@ export function setupMedia(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				source: {
 					type: Number,
-					name: "Source",
+					name: t("plugins.obs.actions.play_media.config.source"),
 					required: true,
 					async enum(context: { scene: string; obs: OBSConnection }) {
 						return await context.obs.getSceneSources(context.scene, "ffmpeg_source")
@@ -203,21 +204,21 @@ export function setupMedia(obsDefault: ReactiveRef<OBSConnection>) {
 
 	defineAction({
 		id: "chapterMarker",
-		name: "Chapter Marker",
-		description: "Creates a Chapter Marker in the OBS recording",
+		name: t("plugins.obs.actions.chapter_marker.name"),
+		description: t("plugins.obs.actions.chapter_marker.description"),
 		icon: "mdi mdi-map-marker",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: "OBS Connection",
+					name: t("plugins.obs.settings.obs_connections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				chapterName: {
 					type: String,
-					name: "Chapter Name",
+					name: t("plugins.obs.actions.chapter_marker.config.chapter_name"),
 					template: true,
 				},
 			},

@@ -12,10 +12,10 @@
 		<p-divider />
 		<div class="p-inputgroup" v-tooltip="'Prevent more triggers in this profile from running after this one.'">
 			<p-check-box binary input-id="check" v-model="model.stop" />
-			<label for="check" class="ml-2"> Trigger Stop </label>
+			<label for="check" class="ml-2"> {{ $tSync("automation.trigger_stop") }} </label>
 		</div>
 		<p-divider />
-		<label class="text-color-secondary text-sm">Test Data</label>
+		<label class="text-color-secondary text-sm">{{ $tSync("automation.test_data") }}</label>
 		<data-input v-model="model.testContext" :schema="contextSchema" local-path="testConfig" />
 	</div>
 	<div v-else></div>

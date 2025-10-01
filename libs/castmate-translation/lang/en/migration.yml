@@ -1,0 +1,9 @@
+title: CastMate 0.5 is <i>Finally</i> Here!
+description: We need to update your existing CastMate data.
+backup_and_begin: Back Up and Begin Updating
+creating_backup: Creating Backup
+migrating_settings: Migrating Settings
+obs_connection_description: CastMate needs OBS <b>open</b> and <b>connected</b> to properly update data.
+migrate: Migrate!
+migrating_profiles: Migrating Automations and Profiles
+migrated_profiles: Your data has been updated to work with version 0.5!

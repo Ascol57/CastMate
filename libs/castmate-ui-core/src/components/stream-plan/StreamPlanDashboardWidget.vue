@@ -1,6 +1,6 @@
 <template>
 	<main-page-card class="flex-1" style="min-width: 380px">
-		<template #header> <i class="mdi mdi-view-agenda" /> Stream Plan </template>
+		<template #header> <i class="mdi mdi-view-agenda" /> {{ $tSync("system.streamplan") }} </template>
 
 		<div class="flex-1 flex flex-column gap-2">
 			<div class="flex flex-row">

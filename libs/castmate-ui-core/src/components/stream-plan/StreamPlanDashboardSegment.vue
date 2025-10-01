@@ -7,7 +7,7 @@
 			<div class="flex flex-row">
 				<div class="flex-grow-1">
 					<div class="text-center">
-						<label class="text-color-secondary text-xs">Activation</label>
+						<label class="text-color-secondary text-xs">{{ $tSync("streamplan.activation") }}</label>
 					</div>
 					<sequence-mini-preview
 						class="justify-content-center"
@@ -17,7 +17,7 @@
 				</div>
 				<div class="flex-grow-1">
 					<div class="text-center">
-						<label class="text-color-secondary text-xs">Deactivation</label>
+						<label class="text-color-secondary text-xs">{{ $tSync("streamplan.deactivation") }}</label>
 					</div>
 					<sequence-mini-preview
 						class="justify-content-center"

@@ -1,4 +1,5 @@
 import { ReactiveRef, defineAction } from "castmate-core"
+import { t } from "castmate-translation"
 import { OBSConnection } from "./connection"
 import { Toggle } from "castmate-schema"
 
@@ -21,21 +22,22 @@ function sliderToDB(sliderPos: number) {
 export function setupAudio(obsDefault: ReactiveRef<OBSConnection>) {
 	defineAction({
 		id: "mute",
-		name: "Mute Source",
+		name: t("plugins.obs.actions.mute.name"),
+		description: t("plugins.obs.actions.mute.description"),
 		icon: "mdi mdi-volume-mute",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: "OBS Connection",
+					name: t("plugins.obs.actions.mute.config.obs_connection"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				source: {
 					type: String,
 					template: true,
-					name: "Source",
+					name: t("plugins.obs.actions.mute.config.source"),
 					required: true,
 					async enum(context: { obs: OBSConnection }) {
 						return await context.obs.getInputs()
@@ -43,7 +45,7 @@ export function setupAudio(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				muted: {
 					type: Toggle,
-					name: "Muted",
+					name: t("plugins.obs.actions.mute.config.muted"),
 					required: true,
 					default: true,
 					template: true,
@@ -55,7 +57,7 @@ export function setupAudio(obsDefault: ReactiveRef<OBSConnection>) {
 		result: {
 			type: Object,
 			properties: {
-				audioMuted: { type: Boolean, name: "Audio Muted", required: true },
+				audioMuted: { type: Boolean, name: t("plugins.obs.results.audio_muted"), required: true },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {
@@ -73,21 +75,22 @@ export function setupAudio(obsDefault: ReactiveRef<OBSConnection>) {
 
 	defineAction({
 		id: "changeVolume",
-		name: "Change Volume",
+		name: t("plugins.obs.actions.volume.name"),
+		description: t("plugins.obs.actions.volume.description"),
 		icon: "mdi mdi-volume-high",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: "OBS Connection",
+					name: t("plugins.obs.actions.volume.config.obs_connection"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				source: {
 					type: String,
 					template: true,
-					name: "Source",
+					name: t("plugins.obs.actions.volume.config.source"),
 					required: true,
 					async enum(context: { obs: OBSConnection }) {
 						return await context.obs.getInputs()
@@ -95,7 +98,7 @@ export function setupAudio(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				volume: {
 					type: Number,
-					name: "Volume",
+					name: t("plugins.obs.actions.volume.config.volume"),
 					required: true,
 					default: 100,
 					min: 0,

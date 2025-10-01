@@ -1,44 +1,44 @@
 <template>
 	<div class="migration-dialog">
 		<div class="text-center">
-			<h1 class="mb-0">CastMate 0.5 is <i>Finally</i> Here!</h1>
+			<h1 class="mb-0">{{ $tSync('migration.title') }}</h1>
 			<h3 class="p-text-secondary mt-0" v-if="!migratedProfiles">
-				We need to update your existing CastMate data.
+				{{ $tSync('migration.description') }}
 			</h3>
 		</div>
 		<div v-if="!creatingBackup" class="flex flex-row justify-content-center align-items-center py-5">
-			<p-button :loading="migratingSettings" size="large" @click="doBackup">Back Up and Begin Updating</p-button>
+			<p-button :loading="migratingSettings" size="large" @click="doBackup">{{ $tSync('migration.backup_button') }}</p-button>
 		</div>
 		<div v-else-if="!backupCreated" class="flex flex-column align-items-center">
-			<h1>Creating Backup</h1>
+			<h1>{{ $tSync('migration.creating_backup') }}</h1>
 			<p-progress-spinner />
 		</div>
 		<div v-else-if="!migratedSettings" class="flex flex-column align-items-center">
-			<h1>Migrating Settings</h1>
+			<h1>{{ $tSync('migration.migrating_settings') }}</h1>
 			<p-progress-spinner />
 		</div>
 		<div v-else-if="!migratingProfiles">
 			<div class="flex flex-row gap-4">
 				<div class="flex-grow-1 flex flex-column">
 					<h1 class="text-center">
-						<i class="mdi mdi-twitch twitch-purple"></i>Twitch
+						<i class="mdi mdi-twitch twitch-purple"></i>{{ $tSync('system.twitch') }}
 						<migration-check-box :checked="areAccountsConnected" />
 					</h1>
 					<p class="m-0 text-center">
-						Sign into <i><b>BOTH</b></i> the channel account and the bot account.<br />
+						{{ $tSync('setup.twitch_text_line_1') }}
 						<span class="p-text-secondary text-sm">
-							If you don't have a bot account. Just sign in with your channel account twice.
+							{{ $tSync('setup.twitch_text_line_2') }}
 						</span>
 					</p>
 					<div class="flex-grow-1 flex flex-row justify-content-center align-items-center gap-4 account-box">
 						<div class="flex flex-column align-items-center gap-1">
-							<h3 class="my-0">Channel Account</h3>
-							<span class="my-0 text-300">Sign into your main channel account here.</span>
+							<h3 class="my-0">{{ $tSync('setup.channel_account') }}</h3>
+							<span class="my-0 text-300">{{ $tSync('setup.channel_account_description') }}</span>
 							<account-widget account-type="TwitchAccount" account-id="channel" />
 						</div>
 						<div class="flex flex-column align-items-center gap-1">
-							<h3 class="my-0">Bot Account</h3>
-							<span class="my-0 text-300">This account is used to send chat messages.</span>
+							<h3 class="my-0">{{ $tSync('setup.bot_account') }}</h3>
+							<span class="my-0 text-300">{{ $tSync('setup.bot_account_description') }}</span>
 							<account-widget account-type="TwitchAccount" account-id="bot" />
 						</div>
 					</div>
@@ -46,35 +46,35 @@
 				</div>
 				<div class="flex-grow-1 flex flex-column">
 					<h1 class="text-center">
-						<i class="obsi obsi-obs obs-blue"></i>OBS <migration-check-box :checked="isObsConnected" />
+						<i class="obsi obsi-obs obs-blue"></i>{{ $tSync('system.obs') }} <migration-check-box :checked="isObsConnected" />
 					</h1>
 					<p class="m-0 text-center">
-						Connect to OBS<br />
+						{{ $tSync('setup.obs_connection_description') }}<br />
 						<span class="p-text-secondary text-sm">
-							CastMate needs OBS <b>open</b> and <b>connected</b> to properly update data.
+							{{ $tSync('migration.obs_connection_description') }}
 						</span>
 					</p>
 					<data-input v-model="obsConfig" :schema="obsConfigSchema"></data-input>
 					<div class="flex flex-row justify-content-center px-2">
-						<p-button @click="updateObsSettings"> Save </p-button>
+						<p-button @click="updateObsSettings"> {{ $tSync('system.save') }} </p-button>
 					</div>
 				</div>
 			</div>
 			<div class="flex flex-row justify-content-center">
 				<p-button :loading="migratingProfiles" :disabled="!canMigrateProfiles" @click="doMigrate" size="large">
-					Migrate!
+					{{ $tSync('migration.migrate') }}
 				</p-button>
 			</div>
 		</div>
 		<div v-else-if="!migratedProfiles" class="flex flex-column align-items-center">
-			<h1>Migrating Automations and Profiles</h1>
+			<h1>{{ $tSync('migration.migrating_profiles') }}</h1>
 			<p-progress-spinner />
 		</div>
 		<div v-else-if="migratedProfiles">
-			<h2 class="text-center">Your data has been updated to work with version 0.5!</h2>
+			<h2 class="text-center">{{ $tSync('migration.migration_complete') }}</h2>
 			<!--todo: Migration Video Here!-->
 			<div class="flex flex-row justify-content-center">
-				<p-button size="large" @click="doDone">Let's Go!</p-button>
+				<p-button size="large" @click="doDone">{{ $tSync('system.lets_go') }}</p-button>
 			</div>
 		</div>
 	</div>

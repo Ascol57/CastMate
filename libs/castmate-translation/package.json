@@ -1,0 +1,19 @@
+{
+    "name": "castmate-translation",
+    "version": "0.0.1",
+    "description": "",
+    "main": "src/index.ts",
+    "devMain": "src/index.ts",
+    "exports": {
+        ".": "./src/index.ts",
+        "./renderer": "./src/renderer.ts"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Ascol57",
+    "license": "ISC",
+    "dependencies": {
+        "yaml": "^2.8.1"
+    }
+}

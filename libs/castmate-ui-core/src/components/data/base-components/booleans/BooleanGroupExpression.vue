@@ -8,10 +8,10 @@
 			<boolean-group-operator-selector v-model="operator" local-path="operator" />
 			<div style="flex: 1"></div>
 			<p-button @click="addValue" size="small" text class="extra-small-button">
-				<i class="mdi mdi-plus" /> Value
+				<i class="mdi mdi-plus" /> {{ $tSync("data.value") }}
 			</p-button>
 			<p-button @click="addGroup" size="small" text class="extra-small-button">
-				<i class="mdi mdi-plus" /> Group
+				<i class="mdi mdi-plus" /> {{ $tSync("data.group") }}
 			</p-button>
 			<p-button v-if="showDrag" text icon="mdi mdi-delete" @click="emit('delete', $event)"></p-button>
 		</div>
@@ -26,7 +26,7 @@
 				local-path="operands"
 			>
 				<template #no-items>
-					<div class="flex flex-column align-items-center p-3">No Conditions (Always On)</div>
+					<div class="flex flex-column align-items-center p-3">{{ $tSync("data.no_conditions") }}</div>
 				</template>
 				<template #item="{ item, index }">
 					<boolean-sub-expression

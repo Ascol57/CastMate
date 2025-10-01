@@ -1,0 +1,252 @@
+# OBS Plugin Translations - English
+plugin:
+  name: "OBS"
+  description: "Provides OBS Control over OBS Websocket 5"
+
+settings:
+  default_connection:
+    name: "Default OBS Connection"
+  obs_connections: "OBS Connections"
+
+states:
+  scene:
+    name: "Scene"
+  streaming:
+    name: "Streaming"
+  recording:
+    name: "Recording"
+  replay_buffer:
+    name: "Replay Buffering"
+  virtual_cam:
+    name: "Virtual Cam Active"
+  connected:
+    name: "Connected"
+
+actions:
+  scene:
+    name: "Change Scene"
+    description: "Changes the current scene in OBS"
+    config:
+      scene: "Scene"
+  set_browser_url:
+    name: "Set Browser Source URL"
+    description: "Set the URL of a browser source"
+    config:
+      source_name: "Source"
+      url: "URL"
+  set_image:
+    name: "Set Image Source"
+    description: "Set the file path of an image source"
+    config:
+      source_name: "Source"
+      image: "Image Path"
+  play_media:
+    name: "Play Media Source"
+    description: "Play a media source"
+    config:
+      scene: "Scene"
+      source: "Source"
+  save_replay:
+    name: "Save Replay"
+    description: "Save the current replay buffer"
+  toggle_studio_mode:
+    name: "Toggle Studio Mode"
+    description: "Toggle studio mode on or off"
+    config:
+      studio_mode: "Studio Mode"
+  trigger_studio_mode_transition:
+    name: "Trigger Studio Mode Transition"
+    description: "Trigger a transition in studio mode"
+  
+  prev_scene:
+    name: "Previous Scene"
+    description: "Go back to the previous scene"
+  
+  hotkey:
+    name: "Hotkey"
+    description: "Trigger an OBS hotkey"
+    config:
+      hotkey: "Hotkey"
+
+  source_visibility:
+    name: "Source Visibility"
+    description: "Show or hide a source"
+    config:
+      scene: "Scene"
+      source: "Source"
+      enabled: "Source Visibility"
+
+  mute:
+    name: "Mute Source"
+    description: "Mute or unmute an audio source"
+    config:
+      source: "Source"
+      muted: "Muted"
+
+  volume:
+    name: "Change Volume"
+    description: "Change the volume of an audio source"
+    config:
+      source: "Source"
+      volume: "Volume"
+
+  filter_visibility:
+    name: "Filter Visibility"
+    description: "Show or hide a source filter"
+    config:
+      source: "Source"
+      filter: "Filter"
+      enabled: "Filter Visibility"
+
+  screenshot:
+    name: "Screenshot"
+    description: "Take a screenshot"
+    config:
+      scene: "Scene"
+      source: "Source"
+      format: "Format"
+      path: "Path"
+
+  text:
+    name: "Source Text"
+    description: "Change text source content"
+    config:
+      source: "Source"
+      text: "Text"
+
+  refresh_browser:
+    name: "Refresh Browser Source"
+    description: "Refresh a browser source"
+    config:
+      source: "Source"
+
+  transform:
+    name: "Transform Source"
+    description: "Apply transformations to a source"
+    config:
+      scene: "Scene"
+      source: "Source"
+      transform: "Transform"
+
+  media_action:
+    name: "Media Action"
+    description: "Control media playback"
+    config:
+      source: "Source"
+      action: "Action"
+
+  chapter_marker:
+    name: "Chapter Marker"
+    description: "Add a chapter marker during recording"
+
+  toggle_streaming:
+    name: "Toggle Streaming"
+    description: "Start or stop streaming"
+    config:
+      streaming: "Streaming"
+
+  toggle_recording:
+    name: "Toggle Recording"
+    description: "Start or stop recording"
+    config:
+      recording: "Recording"
+
+  toggle_replay_buffer:
+    name: "Toggle Replay Buffer"
+    description: "Start or stop replay buffer"
+    config:
+      replay_buffer: "Replay Buffer"
+
+  toggle_virtual_cam:
+    name: "Toggle Virtual Camera"
+    description: "Start or stop virtual camera"
+    config:
+      virtual_cam: "Virtual Camera"
+
+connection:
+  name: "Connection Name"
+  host: "Hostname"
+  port: "Port"
+  password: "Password"
+  setup_title: "CastMate can control OBS over OBS's WebSocket Server. You must first enable the websocket server in OBS so CastMate can connect to it."
+  setup_step_1: "Open the WebSocket Server Settings in OBS."
+  setup_step_2: "Make sure the Enable WebSocket server checkbox is checked AND you've clicked apply."
+  setup_step_3: "Click Show Connect Info button to open QR code."
+  setup_step_4: "With the QR Code window still open, click the button below. (It doesn't matter if it's hidden behind other windows)."
+  scan_qr_tooltip: "Scan Connect Info QR Code"
+
+results:
+  audio_muted: "Audio Muted"
+  source_enabled: "Source Enabled"
+
+renderer:
+  dashboard_card:
+    refresh_all_browsers: "Refresh All Browsers"
+    disconnected: "Disconnected"
+    open: "Open"
+    remote_obs_tooltip: "This is a remote OBS connection"
+    remote_obs: "Remote OBS"
+    streaming: "Streaming"
+    recording: "Recording"
+  
+  main_page:
+    no_connections: "CastMate can control OBS, but you haven't set up the connection yet."
+    setup_obs: "Setup OBS"
+    not_connected: "(Not Connected)"
+    open_obs: "Open OBS"
+    cant_open_remote: "Can't Open Remote OBS"
+    edit: "Edit"
+    obs_running_not_connected: "OBS is running, but CastMate isn't connected."
+    edit_connection: "Edit Connection"
+    connection: "OBS Connection"
+  
+  connection_edit:
+    setup_description: "CastMate can control OBS over OBS's WebSocket Server. You must first enable the websocket server in OBS so CastMate can connect to it."
+    step_1: "Open the WebSocket Server Settings in OBS."
+    step_2: "Make sure the Enable WebSocket server checkbox is checked AND you've clicked apply."
+    step_3: "Click Show Connect Info button to open QR code."
+    step_4: "With the QR Code window still open, click the button below. (It doesn't matter if it's hidden behind other windows)."
+    connection_name: "CastMate Connection Name"
+    ip_address: "OBS Ip Address"
+    port: "Port"
+    websocket_password: "WebSocket Password"
+    test: "Test"
+    scan_qr_tooltip: "Scan Connect Info QR Code"
+  
+  transform:
+    position: "Position"
+    rotation: "Rotation"
+    alignment: "Alignment"
+    size: "Size"
+    size_note: "This is not in pixels. It is a multiplier for the default size. (1.0 will be default size)"
+    crop: "Crop"
+    top: "Top"
+    left: "Left"
+    right: "Right"
+    bottom: "Bottom"
+    bounds: "Bounds"
+    bounds_type: "Bounds Type"
+    width: "Width"
+    height: "Height"
+    x: "X"
+    y: "Y"
+    
+    alignment_values:
+      center: "Center"
+      left: "Left"
+      right: "Right"
+      top: "Top"
+      bottom: "Bottom"
+      top_left: "Top Left"
+      top_right: "Top Right"
+      bottom_left: "Bottom Left"
+      bottom_right: "Bottom Right"
+    
+    bounds_type_values:
+      none: "None"
+      stretch: "Stretch"
+      scale_inner: "Scale Inner"
+      scale_outer: "Scale Outer"
+      scale_to_width: "Scale to Width"
+      scale_to_height: "Scale to Height"
+      max_only: "Max Only"

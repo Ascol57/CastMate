@@ -25,6 +25,7 @@ import { SatelliteService } from "./satellite/satellite-service"
 import { SatelliteResources } from "./satellite/satellite-resource"
 import { SatelliteMedia } from "./satellite/satellite-media"
 import { setAppMode } from "./util/init-mode"
+import { initializeTranslationService } from "castmate-translation"
 
 /*
 //This shit is dynamic and vite hates it.
@@ -87,6 +88,10 @@ export async function initializeCastMate() {
 	await ensureDirectory(resolveProjectPath("secrets"))
 	await ensureDirectory(resolveProjectPath("state"))
 	await initializeFileSystem()
+	
+	// Initialize translation service with plugin support
+	await initializeTranslationService()
+	
 	InfoService.initialize()
 	await InfoService.getInstance().checkInfo()
 	GenericLoginService.initialize()

@@ -21,10 +21,10 @@
 			:video="video"
 		>
 			<template #noItems>
-				<div class="empty-div">CastMate doesn't have any media in it's media folder.</div>
+				<div class="empty-div">{{ $tSync("data.no_media") }}</div>
 			</template>
 
-			<template #noFiltered> <div class="empty-div">No Media by that name.</div> </template>
+			<template #noFiltered> <div class="empty-div">{{ $tSync("data.no_media_filtered") }}</div> </template>
 		</media-tree-root>
 	</drop-down-panel>
 </template>

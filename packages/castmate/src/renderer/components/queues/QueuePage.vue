@@ -11,7 +11,7 @@
 			>
 				<template #header>
 					<div class="flex flex-row">
-						<p-button @click="createDialog()">Create Queue</p-button>
+						<p-button @click="createDialog()">{{ $tSync('queue.create') }}</p-button>
 					</div>
 				</template>
 
@@ -21,9 +21,9 @@
 					</template>
 				</p-column>
 
-				<p-column header="Name" field="config.name"> </p-column>
+				<p-column :header="$tSync('system.name')" field="config.name"> </p-column>
 
-				<p-column header="Pending" class="column-fit-width">
+				<p-column :header="$tSync('system.pending')" class="column-fit-width">
 					<template #body="{ data }: { data: ActionQueueResource }">
 						{{ data.state.queue.length }}
 					</template>

@@ -2,8 +2,8 @@
 	<div class="path-view py-1">
 		<div class="flex flex-row gap-1 align-items-center">
 			<pre>{{ path }}</pre>
-			<p-button class="extra-small-button" size="small" @click="focus"> focus</p-button>
-			<p-button class="extra-small-button" size="small" @click="scrollIntoView"> scroll</p-button>
+			<p-button class="extra-small-button" size="small" @click="focus"> {{ $tSync("data.focus") }}</p-button>
+			<p-button class="extra-small-button" size="small" @click="scrollIntoView"> {{ $tSync("data.scroll") }}</p-button>
 		</div>
 		<div class="flex flex-row gap-1 align-items-center">
 			<div v-for="binding in pathView.uiBindings" class="">

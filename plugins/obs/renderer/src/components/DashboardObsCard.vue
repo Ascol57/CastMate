@@ -9,30 +9,30 @@
 					icon="mdi mdi-refresh"
 					size="small"
 					class="extra-small-button"
-					v-tooltip="'Refresh All Browsers'"
+					v-tooltip="tSync('plugins.obs.renderer.dashboard_card.refresh_all_browsers')"
 					@click="refreshAllBrowsers"
 				/>
 			</div>
 		</template>
-		<main-page-card-item v-if="!obs.state.connected" label="Disconnected">
-			<p-button v-if="isLocal" text @click="openObs">Open</p-button>
+		<main-page-card-item v-if="!obs.state.connected" :label="tSync('plugins.obs.renderer.dashboard_card.disconnected')">
+			<p-button v-if="isLocal" text @click="openObs">{{ tSync('plugins.obs.renderer.dashboard_card.open') }}</p-button>
 			<div
 				class="p-text-secondary"
 				style="font-size: 0.875rem"
 				v-else
-				v-tooltip="`CastMate can't start OBS on remote machines`"
+				:v-tooltip="tSync('plugins.obs.renderer.dashboard_card.remote_obs_tooltip')"
 			>
-				Remote OBS
+				{{ tSync('plugins.obs.renderer.dashboard_card.remote_obs') }}
 			</div>
 		</main-page-card-item>
 		<template v-else-if="obs.state.connected">
-			<main-page-card-item label="Streaming">
+			<main-page-card-item :label="tSync('plugins.obs.renderer.dashboard_card.streaming')">
 				<i
 					:style="{ color: obs.state.streaming ? 'blue' : 'var(--surface-300)' }"
 					:class="obs.state.streaming ? 'mdi mdi-broadcast' : 'mdi mdi-broadcast-off'"
 				/>
 			</main-page-card-item>
-			<main-page-card-item label="Recording">
+			<main-page-card-item :label="tSync('plugins.obs.renderer.dashboard_card.recording')">
 				<i
 					:style="{ color: obs.state.recording ? 'red' : 'var(--surface-300)' }"
 					:class="obs.state.recording ? 'mdi mdi-record' : 'mdi mdi-record'"
@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { useResource, MainPageCard, MainPageCardItem, useResourceIPCCaller } from "castmate-ui-core"
+import { useResource, MainPageCard, MainPageCardItem, useResourceIPCCaller, tSync } from "castmate-ui-core"
 import { OBSConnectionConfig, OBSConnectionState } from "castmate-plugin-obs-shared"
 import { ResourceData } from "castmate-schema"
 import { computed } from "vue"

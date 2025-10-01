@@ -10,13 +10,13 @@
 			</div>
 		</div>
 		<div class="flex justify-content-end mt-1">
-			<p-button @click="createResourceDlg()" text> Add {{ resourceType }}</p-button>
+			<p-button @click="createResourceDlg()" text> {{ $tSync("system.add") }} {{ resourceType }}</p-button>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { useResourceArray, useResourceCreateDialog } from "../../main"
+import { useResourceArray, useResourceCreateDialog, tSync } from "../../main"
 import AccountWidget from "./AccountWidget.vue"
 import { useResourceDeleteDialog } from "../../main"
 import PButton from "primevue/button"

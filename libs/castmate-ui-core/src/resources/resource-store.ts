@@ -9,6 +9,7 @@ import { useConfirm } from "primevue/useconfirm"
 import ResourceEditDialogVue from "../components/resources/ResourceEditDialog.vue"
 import { DialogServiceMethods } from "primevue/dialogservice"
 import ResourceCreateDialog from "../components/resources/ResourceCreateDialog.vue"
+import { tSync } from "../util/translation"
 
 interface ResourceStorage<TResourceData extends ResourceData = ResourceData> {
 	resources: Map<string, TResourceData>
@@ -240,7 +241,7 @@ export function useResourceCreateDialog(
 
 			dialog.open(ResourceCreateDialog, {
 				props: {
-					header: `Create ${resourceName}`,
+					header: `${tSync("system.create")} ${resourceName}`,
 					modal: true,
 				},
 				data: {
@@ -278,7 +279,7 @@ export function useResourceEditDialog(resourceType: MaybeRefOrGetter<string | un
 
 		dialog.open(ResourceEditDialogVue, {
 			props: {
-				header: `Edit ${resource.config?.name ?? resourceName}`,
+				header: `${tSync("system.edit")} ${resource.config?.name ?? resourceName}`,
 				modal: true,
 			},
 			data: {
@@ -311,8 +312,8 @@ export function useResourceDeleteDialog(resourceType: MaybeRefOrGetter<string | 
 		const resource = resourceStore.resourceMap.get(resourceTypeName)?.resources?.get(id)
 		if (!resource) return
 		confirm.require({
-			header: `Delete ${resource.config.name}`,
-			message: `Are you sure you want to delete ${resource.config.name}`,
+			header: `${tSync("system.delete")} ${resource.config.name}`,
+			message: `${tSync("system.delete_confirmation")} ${resource.config.name}`,
 			icon: "mdi mdi-delete",
 			accept() {
 				resourceStore.deleteResource(resourceTypeName, id)

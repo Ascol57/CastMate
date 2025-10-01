@@ -1,7 +1,7 @@
 <template>
 	<flex-scroller ref="scroller" v-model:scroll-y="view.scrollY" v-model:scroll-x="view.scrollX">
 		<div class="profile-edit flex-grow-1">
-			<h1>Triggers</h1>
+			<h1>{{ $tSync('common.triggers') }}</h1>
 
 			<document-data-collection
 				class="trigger-area"
@@ -13,38 +13,38 @@
 				<template #header>
 					<div v-if="hasTriggers" class="flex flex-column p-1">
 						<div>
-							<p-button @click="createTriggerBeginning">Add Trigger</p-button>
+							<p-button @click="createTriggerBeginning">{{ $tSync('profile.add_trigger') }}</p-button>
 						</div>
 					</div>
 				</template>
 				<template #no-items>
 					<div class="flex flex-column align-items-center p-3">
-						<h3>Triggers are how CastMate responds to events.</h3>
-						<p-button @click="createTriggerEnd">Add Trigger</p-button>
+						<h3>{{ $tSync('profile.no_triggers') }}</h3>
+						<p-button @click="createTriggerEnd">{{ $tSync('profile.add_trigger') }}</p-button>
 					</div>
 				</template>
 				<template #footer>
 					<div v-if="hasTriggers" class="flex flex-column p-1">
 						<div>
-							<p-button @click="createTriggerEnd">Add Trigger</p-button>
+							<p-button @click="createTriggerEnd">{{ $tSync('profile.add_trigger') }}</p-button>
 						</div>
 					</div>
 				</template>
 			</document-data-collection>
 
-			<h1>Activation</h1>
+			<h1>{{ $tSync('profile.activation') }}</h1>
 			<c-boolean-expression v-model="model.activationCondition" local-path="activationCondition" />
 			<inline-automation-edit
 				v-model="model.activationAutomation"
 				v-model:view="view.activationAutomation"
 				local-path="activationAutomation"
-				label="On Activate"
+				:label="$tSync('profile.on_activate')"
 			/>
 			<inline-automation-edit
 				v-model="model.deactivationAutomation"
 				v-model:view="view.deactivationAutomation"
 				local-path="deactivationAutomation"
-				label="On Deactivate"
+				:label="$tSync('profile.on_deactivate')"
 			/>
 		</div>
 	</flex-scroller>

@@ -6,11 +6,11 @@
 			<color-hex-edit v-model="model" />
 		</div>
 		<div class="sliders gap-1">
-			<p class="text-xs m-0">RGB</p>
+			<p class="text-xs m-0">{{ $tSync("data.RGB") }}</p>
 			<linear-gradient-picker label="R" :gradient="redGradient" v-model="red" :min="0" :max="255" />
 			<linear-gradient-picker label="G" :gradient="greenGradient" v-model="green" :min="0" :max="255" />
 			<linear-gradient-picker label="B" :gradient="blueGradient" v-model="blue" :min="0" :max="255" />
-			<p class="text-xs m-0">HSV</p>
+			<p class="text-xs m-0">{{ $tSync("data.HSV") }}</p>
 			<linear-gradient-picker label="H" :gradient="hueGradient" v-model="hue" :min="0" :max="360" />
 			<linear-gradient-picker label="S" :gradient="satGradient" v-model="sat" :min="0" :max="100" />
 			<linear-gradient-picker label="V" :gradient="valueGradient" v-model="val" :min="0" :max="100" />

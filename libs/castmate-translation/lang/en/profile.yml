@@ -1,0 +1,5 @@
+add_trigger: Add Trigger
+no_triggers: Triggers are how CastMate responds to events.
+activation: Activation
+on_activation: On Activate
+on_deactivation: On Deactivate

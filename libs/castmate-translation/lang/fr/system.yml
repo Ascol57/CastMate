@@ -1,0 +1,37 @@
+minimize: Minimiser
+maximize: Agrandir
+close: Fermer
+new_profile: Nouveau Profil
+new_automation: Nouvelle Automatisation
+file: Fichier
+save_all: Tout Enregistrer
+settings: Paramètres
+exit: Quitter
+help: Aide
+about: À Propos
+discord: Discord
+open_log_folder: Ouvrir le Dossier des Logs
+skip: Passer
+twitch: Twitch
+obs: OBS
+save: Enregistrer
+description: Description
+next: Suivant
+automations: Automatisations
+add: Ajouter
+sign_in: Se connecter
+sign_in_again: Se connecter à nouveau
+test: Test
+username: Nom d'utilisateur
+password: Mot de passe
+login: Connexion
+create: Créer
+unsaved_changes: a des modifications non sauvegardées.
+cancel: Annuler
+save_and_close: Enregistrer et fermer
+search: Rechercher
+name: Nom
+streamplan: Plan de stream
+delete: Supprimer
+delete_confirmation: Êtes-vous sûr de vouloir supprimer
+edit: Éditer

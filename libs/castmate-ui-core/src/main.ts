@@ -129,3 +129,4 @@ export * from "./util/electron"
 
 export * from "./util/dialog-helper"
 export * from "./util/vue-util"
+export * from "./util/translation"

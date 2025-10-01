@@ -14,6 +14,7 @@ import {
 	defineReactiveState,
 	usePluginLogger,
 } from "castmate-core"
+import { t, registerPluginTranslations, generatedTranslationsFromDirectory } from "castmate-translation"
 import { Color, Toggle } from "castmate-schema"
 import { OBSConnection, setupConnections, onOBSWebsocketEvent } from "./connection"
 import { setupSources } from "./sources"
@@ -24,6 +25,10 @@ import { setupTransforms } from "./transform"
 
 import { attemptQRReading, setupAutoConnect } from "./auto-connect"
 import { setupAudio } from "./audio"
+import { fileURLToPath } from "url"
+import path from "path"
+
+registerPluginTranslations("obs", generatedTranslationsFromDirectory(path.resolve("../../plugins/obs/lang")))
 
 export default definePlugin(
 	{
@@ -42,17 +47,17 @@ export default definePlugin(
 
 		const obsDefault = defineSetting("obsDefault", {
 			type: OBSConnection,
-			name: "Default OBS Connection",
+			name: t("plugins.obs.settings.default_connection.name"),
 			required: true,
 		})
 
-		defineResourceSetting(OBSConnection, "OBS Connections")
+		defineResourceSetting(OBSConnection, t("plugins.obs.settings.obs_connections"))
 
 		defineReactiveState(
 			"scene",
 			{
 				type: String,
-				name: "Scene",
+				name: t("plugins.obs.states.scene.name"),
 				required: true,
 				async enum() {
 					return await obsDefault.value.getSceneNames()
@@ -67,7 +72,7 @@ export default definePlugin(
 			"streaming",
 			{
 				type: Boolean,
-				name: "Streaming",
+				name: t("plugins.obs.states.streaming.name"),
 				required: true,
 			},
 			() => {
@@ -79,7 +84,7 @@ export default definePlugin(
 			"recording",
 			{
 				type: Boolean,
-				name: "Recording",
+				name: t("plugins.obs.states.recording.name"),
 				required: true,
 			},
 			() => {
@@ -91,7 +96,7 @@ export default definePlugin(
 			"replayBuffering",
 			{
 				type: Boolean,
-				name: "Replay Buffering",
+				name: t("plugins.obs.states.replay_buffering.name"),
 				required: true,
 			},
 			() => {
@@ -103,7 +108,7 @@ export default definePlugin(
 			"virtualCamming",
 			{
 				type: Boolean,
-				name: "Virtual Cam Active",
+				name: t("plugins.obs.states.virtual_cam_active.name"),
 				required: true,
 			},
 			() => {

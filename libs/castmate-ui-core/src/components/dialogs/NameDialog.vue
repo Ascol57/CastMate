@@ -8,7 +8,7 @@
 				</p-float-label>
 			</p-input-group>
 			<div class="flex justify-content-end mt-1">
-				<p-button type="submit" label="Create"></p-button>
+				<p-button type="submit" :label="$tSync('system.create')"></p-button>
 			</div>
 		</form>
 	</div>

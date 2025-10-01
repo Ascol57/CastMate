@@ -12,7 +12,7 @@
 				class="non-windrag"
 				icon="mdi mdi-window-minimize"
 				text
-				aria-label="Minimize"
+				:aria-label="$tSync('system.minimize')"
 				@click="minimize"
 				tabindex="none"
 			></p-button>
@@ -20,11 +20,11 @@
 				class="non-windrag"
 				:icon="`mdi mdi-window-${windowState == 'maximized' ? 'restore' : 'maximize'}`"
 				text
-				aria-label="Maximize"
+				:aria-label="$tSync('system.maximize')"
 				@click="toggleMax"
 				tabindex="none"
 			></p-button>
-			<p-button class="non-windrag" icon="mdi mdi-close" text aria-label="Close" @click="close"></p-button>
+			<p-button class="non-windrag" icon="mdi mdi-close" text :aria-label="$tSync('system.close')" @click="close"></p-button>
 		</template>
 	</p-menubar>
 </template>

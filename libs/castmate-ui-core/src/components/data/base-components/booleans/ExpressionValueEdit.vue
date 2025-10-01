@@ -2,8 +2,8 @@
 	<div class="boolean-expression">
 		<p-tabs v-model:value="tabModel">
 			<p-tab-list>
-				<p-tab value="0" class="small-tab">State</p-tab>
-				<p-tab value="1" class="small-tab">Value</p-tab>
+				<p-tab value="0" class="small-tab">{{ $tSync("data.state") }}</p-tab>
+				<p-tab value="1" class="small-tab">{{ $tSync("data.value") }}</p-tab>
 			</p-tab-list>
 			<p-tab-panels>
 				<p-tab-panel value="0">

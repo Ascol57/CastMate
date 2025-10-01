@@ -6,34 +6,35 @@ import {
 	transformToOBSWS,
 } from "castmate-plugin-obs-shared"
 import { OBSConnection } from "./connection"
+import { t } from "castmate-translation"
 
 export function setupTransforms(obsDefault: ReactiveRef<OBSConnection>) {
 	const logger = usePluginLogger()
 
 	defineAction({
 		id: "transform",
-		name: "Source Transform",
+		name: t("plugins.obs.actions.transform.name"),
 		icon: "mdi mdi-move-resize",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: "OBS Connection",
+					name: t("plugins.obs.settings.obs_connections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				scene: {
 					type: String,
 					required: true,
-					name: "Scene",
+					name: t("plugins.obs.actions.transform.config.scene"),
 					async enum(context: { obs: OBSConnection }) {
 						return (await context?.obs?.getSceneAndGroupNames()) ?? []
 					},
 				},
 				source: {
 					type: Number,
-					name: "Source",
+					name: t("plugins.obs.actions.transform.config.source"),
 					required: true,
 					async enum(context: { obs: OBSConnection; scene: string }) {
 						if (!context.obs) return []
@@ -43,7 +44,7 @@ export function setupTransforms(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				transform: {
 					type: OBSSourceTransform,
-					name: "Transform",
+					name: t("plugins.obs.actions.transform.config.transform"),
 					required: true,
 					template: true,
 					default: OBSSourceTransform.factoryCreate(),

@@ -2,12 +2,12 @@
 	<div>
 		<form @submit.prevent="login">
 			<div class="mt-4">
-				<label-floater label="Username" v-slot="labelProps">
+				<label-floater :label="$tSync('system.username')" v-slot="labelProps">
 					<p-input-text v-model="username" ref="nameInput" autofocus v-bind="labelProps" class="w-full" />
 				</label-floater>
 			</div>
 			<div class="mt-4">
-				<label-floater label="Password" v-slot="labelProps" class="mt-4">
+				<label-floater :label="$tSync('system.password')" v-slot="labelProps" class="mt-4">
 					<p-password
 						v-model="password"
 						ref="nameInput"
@@ -19,7 +19,7 @@
 				</label-floater>
 			</div>
 			<div class="flex justify-content-end mt-1">
-				<p-button type="submit" label="Login"></p-button>
+				<p-button type="submit" :label="$tSync('system.login')"></p-button>
 			</div>
 		</form>
 	</div>

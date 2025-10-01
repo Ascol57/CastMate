@@ -12,13 +12,13 @@
 		</div>
 		<div class="segment-card-body" @mousedown="stopPropagation">
 			<inline-automation-edit
-				label="On Activate"
+				:label="$tSync('streamplan.on_activation')"
 				v-model="model.activationAutomation"
 				v-model:view="view.activationAutomation"
 				local-path="activationAutomation"
 			/>
 			<inline-automation-edit
-				label="On Deactivate"
+				:label="$tSync('streamplan.on_deactivation')"
 				v-model="model.deactivationAutomation"
 				v-model:view="view.deactivationAutomation"
 				local-path="deactivationAutomation"

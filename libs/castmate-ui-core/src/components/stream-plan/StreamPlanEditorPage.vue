@@ -2,13 +2,13 @@
 	<scrolling-tab-body v-model:scroll-x="view.scrollX" v-model:scroll-y="view.scrollY" inner-class="px-2">
 		<div style="height: 2rem" />
 		<inline-automation-edit
-			label="On Activate"
+			:label="$tSync('streamplan.on_activation')"
 			v-model="model.activationAutomation"
 			v-model:view="view.activationAutomation"
 			local-path="activationAutomation"
 		/>
 		<inline-automation-edit
-			label="On Deactivate"
+			:label="$tSync('streamplan.on_deactivation')"
 			v-model="model.deactivationAutomation"
 			v-model:view="view.deactivationAutomation"
 			local-path="deactivationAutomation"
@@ -23,14 +23,14 @@
 			<template #header>
 				<div class="flex flex-column p-1">
 					<div>
-						<p-button @click="addNewSegmentStart">Add Segments</p-button>
+						<p-button @click="addNewSegmentStart">{{ $tSync('streamplan.add_segments') }}</p-button>
 					</div>
 				</div>
 			</template>
 			<template #no-items>
 				<div class="flex flex-column align-items-center p-3">
-					<h3>Segments</h3>
-					<p-button @click="addNewSegmentEnd">Add Segments</p-button>
+					<h3>{{ $tSync('streamplan.segments') }}</h3>
+					<p-button @click="addNewSegmentEnd">{{ $tSync('streamplan.add_segments') }}</p-button>
 				</div>
 			</template>
 		</document-data-collection>

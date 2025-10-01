@@ -12,13 +12,13 @@
 		<p-divider />
 		<div class="flex flex-row justify-content-center align-items-center gap-1" v-if="step != 'done'">
 			<div class="flex-grow-1"></div>
-			<p-button @click="moveNextStep" :disabled="!ready"> Next </p-button>
+			<p-button @click="moveNextStep" :disabled="!ready"> {{ $tSync('system.next') }} </p-button>
 			<div class="flex-grow-1 flex flex-row justify-content-end w-0">
-				<p-button outlined @click="moveNextStep"> Skip </p-button>
+				<p-button outlined @click="moveNextStep"> {{ $tSync('system.skip') }} </p-button>
 			</div>
 		</div>
 		<div class="flex flex-row justify-content-center align-items-center" v-else>
-			<p-button @click="done"> Get Started! </p-button>
+			<p-button @click="done"> {{ $tSync('system.get_started') }} </p-button>
 		</div>
 	</div>
 </template>

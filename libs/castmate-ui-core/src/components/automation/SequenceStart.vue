@@ -9,7 +9,7 @@
 			<div class="test-button" @click="onButtonClick" @mousedown="stopPropagation">
 				<i class="mdi mdi-play" v-if="!activeTestSequence"></i>
 				<i class="mdi mdi-stop" v-else></i>
-				Test
+				{{ $tSync("system.test") }}
 			</div>
 		</div>
 		<slot></slot>

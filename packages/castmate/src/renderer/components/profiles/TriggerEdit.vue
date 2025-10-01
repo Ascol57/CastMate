@@ -43,7 +43,7 @@
 					v-model="modelObj.description"
 					@mousedown="stopPropagation"
 					style="flex: 1; min-width: 300px"
-					placeholder="Description"
+					:placeholder="$tSync('system.description')"
 					local-path="description"
 				/>
 			</div>

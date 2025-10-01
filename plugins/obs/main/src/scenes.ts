@@ -1,24 +1,25 @@
 import { ReactiveRef, defineAction } from "castmate-core"
+import { t } from "castmate-translation"
 import { OBSConnection } from "./connection"
 
 export function setupScenes(obsDefault: ReactiveRef<OBSConnection>) {
 	defineAction({
 		id: "scene",
-		name: "Change Scene",
-		description: "Changes the current scene in OBS",
+		name: t("plugins.obs.actions.scene.name"),
+		description: t("plugins.obs.actions.scene.description"),
 		icon: "mdi mdi-swap-horizontal-bold",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: "OBS Connection",
+					name: t("plugins.obs.settings.obs_connections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				scene: {
 					type: String,
-					name: "Scene",
+					name: t("plugins.obs.actions.scene.config.scene"),
 					required: true,
 					//template: true,
 					async enum(context: { obs: OBSConnection }) {
@@ -35,15 +36,15 @@ export function setupScenes(obsDefault: ReactiveRef<OBSConnection>) {
 
 	defineAction({
 		id: "prevScene",
-		name: "Previous Scene",
-		description: "Go back to the previous scene.",
+		name: t("plugins.obs.actions.prev_scene.name"),
+		description: t("plugins.obs.actions.prev_scene.description"),
 		icon: "mdi mdi-skip-backward",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: "OBS Connection",
+					name: t("plugins.obs.settings.obs_connections"),
 					required: true,
 					default: () => obsDefault.value,
 				},

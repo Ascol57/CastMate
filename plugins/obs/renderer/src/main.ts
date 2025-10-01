@@ -4,6 +4,7 @@ import {
 	ResourceSchemaEdit,
 	useDataInputStore,
 	usePluginStore,
+	tSync
 } from "castmate-ui-core"
 import "./css/icons.css"
 import { OBSSourceTransform } from "castmate-plugin-obs-shared"
@@ -29,7 +30,7 @@ import SourceTextActionComponent from "./components/action-components/SourceText
 import RefreshBrowserActionComponent from "./components/action-components/RefreshBrowserActionComponent.vue"
 import TransformActionComponent from "./components/action-components/TransformActionComponent.vue"
 
-export function initPlugin() {
+export async function initPlugin() {
 	const resourceStore = useResourceStore()
 
 	const pluginStore = usePluginStore()
@@ -41,10 +42,28 @@ export function initPlugin() {
 	resourceStore.registerConfigSchema("OBSConnection", {
 		type: Object,
 		properties: {
-			name: { type: String, name: "Connection Name", required: true, default: "OBS Connection" },
-			host: { type: String, name: "Hostname", required: true, default: "127.0.0.1" },
-			port: { type: Number, name: "Port", required: true, default: 4455 },
-			password: { type: String, name: "Password" },
+			name: { 
+				type: String, 
+				name: tSync("plugins.obs.connection.name"), 
+				required: true, 
+				default: "OBS Connection" 
+			},
+			host: { 
+				type: String, 
+				name: tSync("plugins.obs.connection.host"), 
+				required: true, 
+				default: "127.0.0.1" 
+			},
+			port: { 
+				type: Number, 
+				name: tSync("plugins.obs.connection.port"), 
+				required: true, 
+				default: 4455 
+			},
+			password: { 
+				type: String, 
+				name: tSync("plugins.obs.connection.password") 
+			},
 		},
 	})
 

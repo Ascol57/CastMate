@@ -8,6 +8,7 @@ import { initializeCastMate, finializeCastMateSetup, loadAutomations, setupCastM
 import { finishInitDashboards } from "castmate-plugin-dashboards-main"
 import { loadPlugins } from "./plugins"
 import { checkMigration, finishMigration, migrateAllOldAutomations } from "./migration/old-migration"
+import { TranslationService, initializeTranslationService } from "castmate-translation"
 
 const isDevelopment = false //!app.isPackaged // true //TODO: import.meta.env.DEV
 
@@ -72,6 +73,9 @@ app.whenReady().then(async () => {
 
 	//Creat initial systems
 	await initializeCastMate()
+
+	// Initialize translation service
+	await initializeTranslationService()
 
 	//Check if we need to migrate
 	await checkMigration()

@@ -1,23 +1,23 @@
 <template>
 	<div>
 		<h1 class="text-center mb-0">
-			<i class="mdi mdi-twitch twitch-purple"></i>Setup Twitch <migration-check-box :checked="ready" />
+			<i class="mdi mdi-twitch twitch-purple"></i>{{ $tSync('setup.setup_twitch') }} <migration-check-box :checked="ready" />
 		</h1>
 		<p class="m-0 mb-4 text-center">
-			Sign into <i><b>BOTH</b></i> the channel account and the bot account.<br />
+			{{ $tSync('setup.twitch_text_line_1') }}<br />
 			<span class="p-text-secondary text-sm">
-				If you don't have a bot account. Just sign in with your channel account twice.
+				{{ $tSync('setup.twitch_text_line_2') }}
 			</span>
 		</p>
 		<div class="flex-grow-1 flex flex-row justify-content-center align-items-center gap-4 account-box">
 			<div class="flex flex-column align-items-center gap-1">
-				<h3 class="my-0">Channel Account</h3>
-				<span class="my-0 text-300">Sign into your main channel account here.</span>
+				<h3 class="my-0">{{ $tSync('setup.channel_account') }}</h3>
+				<span class="my-0 text-300">{{ $tSync('setup.channel_account_description') }}</span>
 				<account-widget account-type="TwitchAccount" account-id="channel" />
 			</div>
 			<div class="flex flex-column align-items-center gap-1">
-				<h3 class="my-0">Bot Account</h3>
-				<span class="my-0 text-300">This account is used to send chat messages.</span>
+				<h3 class="my-0">{{ $tSync('setup.bot_account') }}</h3>
+				<span class="my-0 text-300">{{ $tSync('setup.bot_account_description') }}</span>
 				<account-widget account-type="TwitchAccount" account-id="bot" />
 			</div>
 		</div>

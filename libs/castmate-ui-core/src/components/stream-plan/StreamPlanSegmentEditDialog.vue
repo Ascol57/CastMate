@@ -2,7 +2,7 @@
 	<div style="width: 60vw">
 		<stream-plan-segment-edit v-model="config" v-if="config && view" v-model:view="view" :selected-ids="[]" />
 		<div class="flex justify-content-end mt-1">
-			<p-button label="Save" @click="submit"></p-button>
+			<p-button :label="$tSync('system.save')" @click="submit"></p-button>
 		</div>
 	</div>
 </template>

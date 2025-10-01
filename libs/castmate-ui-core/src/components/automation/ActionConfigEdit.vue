@@ -11,14 +11,14 @@
 		<data-input v-model="model.config" :schema="actionInfo.config" :context="model.config" local-path="config" />
 		<template v-if="isFlowAction(model) && actionInfo.type == 'flow'">
 			<div class="flow-title">
-				<span style="text-align: center; flex: 1">Flows</span>
+				<span style="text-align: center; flex: 1">{{ $tSync("automation.flows") }}</span>
 				<p-button text icon="mdi mdi-plus" size="small" @click="addFlow()"></p-button>
 			</div>
 
 			<data-binding-path local-path="subFlows">
 				<template v-if="actionInfo.flowConfig" v-for="(flow, i) in model.subFlows" :key="flow.id">
 					<div class="section-header">
-						<span style="padding-left: 1rem; flex: 1">Flow {{ i + 1 }}</span>
+						<span style="padding-left: 1rem; flex: 1">{{ $tSync("automation.flow") }} {{ i + 1 }}</span>
 						<p-button text icon="mdi mdi-delete" size="small" @click="deleteFlow(i)"></p-button>
 					</div>
 					<data-input
@@ -32,7 +32,7 @@
 		</template>
 		<template v-if="actionInfo.type == 'regular' && actionInfo.result">
 			<div class="section-title">
-				<span style="text-align: center; flex: 1">Returns</span>
+				<span style="text-align: center; flex: 1">{{ $tSync("automation.returns") }}</span>
 			</div>
 			<return-namer v-model="model.resultMapping" :result-schema="actionInfo.result" />
 		</template>

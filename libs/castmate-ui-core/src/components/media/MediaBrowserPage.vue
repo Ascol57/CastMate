@@ -1,11 +1,11 @@
 <template>
 	<scrolling-tab-body class="media-browser" inner-class="media-folder flex flex-column" ref="tabBody">
 		<div class="flex align-items-center p-3">
-			<p-button @click="openMediaFolder">Open Media Folder</p-button>
+			<p-button @click="openMediaFolder">{{ $tSync('media.open_media_folder') }}</p-button>
 			<div class="flex-grow-1" />
 			<p-icon-field>
 				<p-input-icon class="pi pi-search" />
-				<p-input-text v-model="filter" placeholder="Search" />
+				<p-input-text v-model="filter" :placeholder="$tSync('system.search')" />
 			</p-icon-field>
 		</div>
 

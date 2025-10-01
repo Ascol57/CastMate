@@ -1,0 +1,14 @@
+setup_twitch: Setup Twitch
+setup_obs: Setup OBS
+twitch_text_line_1: Sign into <i><b>BOTH</b></i> the channel account and the bot account.
+twitch_text_line_2: If you don't have a bot account. Just sign in with your channel account twice.
+channel_account: Channel Account
+channel_account_description: Sign into your main channel account here.
+bot_account: Bot Account
+bot_account_description: This account is used to send chat messages.
+obs_connection_description: CastMate needs to connect to OBS through the OBS Websocket Server in order for OBS actions to work.
+websocket_info: If the WebSocket Connect Info dialog is open on this computer, you can click this button to automatically detect the connection settings.
+grab_info: Grab Connection Info
+obs_connection_warning: If OBS is on a different PC, you'll need to enter the IP, Port, and Password.
+complete: Setup Complete!
+thanks_message: Thanks for setting up CastMate!

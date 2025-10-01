@@ -3,11 +3,11 @@
 		<obs-transform-data-group
 			v-model="model.position"
 			inner-class="flex flex-row gap-1"
-			label="Position"
+			:label="tSync('plugins.obs.renderer.transform.position')"
 			local-path="position"
 		>
 			<obs-transform-number-input
-				label="X"
+				:label="tSync('plugins.obs.renderer.transform.x')"
 				v-model="model.position.x"
 				input-id="x"
 				ws-prop="positionX"
@@ -16,7 +16,7 @@
 				local-path="x"
 			></obs-transform-number-input>
 			<obs-transform-number-input
-				label="Y"
+				:label="tSync('plugins.obs.renderer.transform.y')"
 				v-model="model.position.y"
 				input-id="y"
 				ws-prop="positionY"
@@ -26,7 +26,7 @@
 			></obs-transform-number-input>
 		</obs-transform-data-group>
 		<obs-transform-number-input
-			label="Rotation"
+			:label="tSync('plugins.obs.renderer.transform.rotation')"
 			v-model="model.rotation"
 			input-id="rotation"
 			ws-prop="rotation"
@@ -35,7 +35,7 @@
 			local-path="rotation"
 		/>
 		<obs-transform-enum-input
-			label="Alignment"
+			:label="tSync('plugins.obs.renderer.transform.alignment')"
 			v-model="model.alignment"
 			input-id="boundsAlignment"
 			ws-prop="boundsAlignment"
@@ -45,16 +45,16 @@
 		<obs-transform-data-group
 			v-model="model.scale"
 			inner-class="flex flex-row gap-1"
-			label="Size"
+			:label="tSync('plugins.obs.renderer.transform.size')"
 			local-path="scale"
 		>
 			<template #before>
 				<p class="text-color-secondary text-sm m-0">
-					This is <i>not</i> in pixels. It is a multiplier for the default size. (1.0 will be default size)
+					{{ tSync('plugins.obs.renderer.transform.size_note') }}
 				</p>
 			</template>
 			<obs-transform-number-input
-				label="X"
+				:label="tSync('plugins.obs.renderer.transform.x')"
 				v-model="model.scale.x"
 				input-id="x"
 				ws-prop="scaleY"
@@ -63,7 +63,7 @@
 				local-path="x"
 			/>
 			<obs-transform-number-input
-				label="Y"
+				:label="tSync('plugins.obs.renderer.transform.y')"
 				v-model="model.scale.y"
 				input-id="y"
 				ws-prop="scaleY"
@@ -72,10 +72,10 @@
 				local-path="y"
 			/>
 		</obs-transform-data-group>
-		<obs-transform-data-group v-model="model.crop" label="Crop" local-path="crop">
+		<obs-transform-data-group v-model="model.crop" :label="tSync('plugins.obs.renderer.transform.crop')" local-path="crop">
 			<div class="flex flex-row justify-content-center">
 				<obs-transform-number-input
-					label="Top"
+					:label="tSync('plugins.obs.renderer.transform.top')"
 					v-model="model.crop.top"
 					input-id="top"
 					ws-prop="cropTop"
@@ -85,7 +85,7 @@
 			</div>
 			<div class="flex flex-row justify-content-center gap-1">
 				<obs-transform-number-input
-					label="Left"
+					:label="tSync('plugins.obs.renderer.transform.left')"
 					v-model="model.crop.left"
 					input-id="cropLeft"
 					ws-prop="cropLeft"
@@ -93,7 +93,7 @@
 					local-path="left"
 				/>
 				<obs-transform-number-input
-					label="Right"
+					:label="tSync('plugins.obs.renderer.transform.right')"
 					v-model="model.crop.right"
 					input-id="x"
 					ws-prop="cropRight"
@@ -103,7 +103,7 @@
 			</div>
 			<div class="flex flex-row justify-content-center">
 				<obs-transform-number-input
-					label="Bottom"
+					:label="tSync('plugins.obs.renderer.transform.bottom')"
 					v-model="model.crop.bottom"
 					input-id="cropBottom"
 					ws-prop="cropBottom"
@@ -112,9 +112,9 @@
 				/>
 			</div>
 		</obs-transform-data-group>
-		<obs-transform-data-group label="Bounds" v-model="model.boundingBox" local-path="boundingBox">
+		<obs-transform-data-group :label="tSync('plugins.obs.renderer.transform.bounds')" v-model="model.boundingBox" local-path="boundingBox">
 			<obs-transform-enum-input
-				label="Alignment"
+				:label="tSync('plugins.obs.renderer.transform.alignment')"
 				v-model="model.boundingBox.alignment"
 				input-id="boundsAlignment"
 				ws-prop="boundsAlignment"
@@ -122,7 +122,7 @@
 				local-path="alignment"
 			/>
 			<obs-transform-enum-input
-				label="Bounds Type"
+				:label="tSync('plugins.obs.renderer.transform.bounds_type')"
 				v-model="model.boundingBox.boxType"
 				input-id="boundsType"
 				ws-prop="boundsType"
@@ -131,7 +131,7 @@
 			/>
 			<div class="flex flex-row justify-content-center gap-1">
 				<obs-transform-number-input
-					label="Width"
+					:label="tSync('plugins.obs.renderer.transform.width')"
 					v-model="model.boundingBox.width"
 					input-id="boundsWidth"
 					ws-prop="boundsWidth"
@@ -139,7 +139,7 @@
 					local-path="width"
 				/>
 				<obs-transform-number-input
-					label="Height"
+					:label="tSync('plugins.obs.renderer.transform.height')"
 					v-model="model.boundingBox.height"
 					input-id="boundsHeight"
 					ws-prop="boundsHeight"
@@ -153,7 +153,7 @@
 
 <script setup lang="ts">
 import { OBSSourceTransform, SchemaOBSSourceTransform, OBSBoundsType, OBSAlignment } from "castmate-plugin-obs-shared"
-import { SharedDataInputProps, CAutocomplete, LabelFloater, useDataBinding } from "castmate-ui-core"
+import { SharedDataInputProps, CAutocomplete, LabelFloater, useDataBinding, tSync } from "castmate-ui-core"
 import { useModel, computed } from "vue"
 
 import ObsTransformDataGroup from "./ObsTransformDataGroup.vue"
@@ -180,27 +180,27 @@ const alignmentEnum = computed<
 	}[]
 >(() => {
 	return [
-		{ name: "Center", value: OBSAlignment.OBS_ALIGN_CENTER },
-		{ name: "Left", value: OBSAlignment.OBS_ALIGN_LEFT },
-		{ name: "Right", value: OBSAlignment.OBS_ALIGN_RIGHT },
-		{ name: "Top", value: OBSAlignment.OBS_ALIGN_TOP },
-		{ name: "Bottom", value: OBSAlignment.OBS_ALIGN_BOTTOM },
-		{ name: "Top Left", value: OBSAlignment.OBS_ALIGN_TOP_LEFT },
-		{ name: "Top Right", value: OBSAlignment.OBS_ALIGN_TOP_RIGHT },
-		{ name: "Bottom Left", value: OBSAlignment.OBS_ALIGN_BOTTOM_LEFT },
-		{ name: "Bottom Right", value: OBSAlignment.OBS_ALIGN_BOTTOM_RIGHT },
+		{ name: tSync("plugins.obs.renderer.transform.alignment_values.center"), value: OBSAlignment.OBS_ALIGN_CENTER },
+		{ name: tSync("plugins.obs.renderer.transform.alignment_values.left"), value: OBSAlignment.OBS_ALIGN_LEFT },
+		{ name: tSync("plugins.obs.renderer.transform.alignment_values.right"), value: OBSAlignment.OBS_ALIGN_RIGHT },
+		{ name: tSync("plugins.obs.renderer.transform.alignment_values.top"), value: OBSAlignment.OBS_ALIGN_TOP },
+		{ name: tSync("plugins.obs.renderer.transform.alignment_values.bottom"), value: OBSAlignment.OBS_ALIGN_BOTTOM },
+		{ name: tSync("plugins.obs.renderer.transform.alignment_values.top_left"), value: OBSAlignment.OBS_ALIGN_TOP_LEFT },
+		{ name: tSync("plugins.obs.renderer.transform.alignment_values.top_right"), value: OBSAlignment.OBS_ALIGN_TOP_RIGHT },
+		{ name: tSync("plugins.obs.renderer.transform.alignment_values.bottom_left"), value: OBSAlignment.OBS_ALIGN_BOTTOM_LEFT },
+		{ name: tSync("plugins.obs.renderer.transform.alignment_values.bottom_right"), value: OBSAlignment.OBS_ALIGN_BOTTOM_RIGHT },
 	]
 })
 
 const boundsTypeEnum = computed<{ name: string; value: OBSBoundsType }[]>(() => {
 	return [
-		{ name: "None", value: "OBS_BOUNDS_NONE" },
-		{ name: "Stretch", value: "OBS_BOUNDS_STRETCH" },
-		{ name: "Scale Inner", value: "OBS_BOUNDS_SCALE_INNER" },
-		{ name: "Scale Outer", value: "OBS_BOUNDS_SCALE_OUTER" },
-		{ name: "Scale to Width", value: "OBS_BOUNDS_SCALE_TO_WIDTH" },
-		{ name: "Scale to Height", value: "OBS_BOUNDS_SCALE_TO_HEIGHT" },
-		{ name: "Max Only", value: "OBS_BOUNDS_MAX_ONLY" },
+		{ name: tSync("plugins.obs.renderer.transform.bounds_type_values.none"), value: "OBS_BOUNDS_NONE" },
+		{ name: tSync("plugins.obs.renderer.transform.bounds_type_values.stretch"), value: "OBS_BOUNDS_STRETCH" },
+		{ name: tSync("plugins.obs.renderer.transform.bounds_type_values.scale_inner"), value: "OBS_BOUNDS_SCALE_INNER" },
+		{ name: tSync("plugins.obs.renderer.transform.bounds_type_values.scale_outer"), value: "OBS_BOUNDS_SCALE_OUTER" },
+		{ name: tSync("plugins.obs.renderer.transform.bounds_type_values.scale_to_width"), value: "OBS_BOUNDS_SCALE_TO_WIDTH" },
+		{ name: tSync("plugins.obs.renderer.transform.bounds_type_values.scale_to_height"), value: "OBS_BOUNDS_SCALE_TO_HEIGHT" },
+		{ name: tSync("plugins.obs.renderer.transform.bounds_type_values.max_only"), value: "OBS_BOUNDS_MAX_ONLY" },
 	]
 })
 </script>

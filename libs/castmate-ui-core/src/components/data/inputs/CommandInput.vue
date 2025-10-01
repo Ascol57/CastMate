@@ -2,16 +2,16 @@
 	<div class="command-input">
 		<p-tabs v-model:value="tabModel">
 			<p-tab-list>
-				<p-tab value="command" class="small-tab">Command</p-tab>
-				<p-tab value="string" class="small-tab">Anywhere</p-tab>
-				<p-tab value="regex" class="small-tab">RegEx</p-tab>
+				<p-tab value="command" class="small-tab">{{ $tSync("data.command") }}</p-tab>
+				<p-tab value="string" class="small-tab">{{ $tSync("data.string") }}</p-tab>
+				<p-tab value="regex" class="small-tab">{{ $tSync("data.regex") }}</p-tab>
 			</p-tab-list>
 			<p-tab-panels>
 				<p-tab-panel value="command">
 					<template v-if="model?.mode == 'command'">
 						<command-match-input label="Command" v-model="matchModel" />
 						<template v-if="model?.arguments?.length">
-							<p>Command Variables</p>
+							<p>{{ $tSync("data.command_variables") }}</p>
 						</template>
 						<draggable-collection
 							v-if="model?.arguments"
@@ -30,11 +30,11 @@
 								/>
 							</template>
 						</draggable-collection>
-						<div v-if="model?.hasMessage" class="mt-1 command-message">Command Message</div>
+						<div v-if="model?.hasMessage" class="mt-1 command-message">{{ $tSync("data.command_message") }}</div>
 						<div class="flex flex-row mt-2 gap-1 justify-content-center">
-							<p-button @click="addParameter" size="small">Add Parameter</p-button>
+							<p-button @click="addParameter" size="small">{{ $tSync("data.add_parameter") }}</p-button>
 							<p-button @click="toggleMessage" size="small">
-								{{ model?.hasMessage ? "Remove Message" : "Add Message" }}</p-button
+								{{ model?.hasMessage ? $tSync("data.remove_message") : $tSync("data.add_message") }}</p-button
 							>
 						</div>
 						<div class="command-preview pt-1">
@@ -46,11 +46,11 @@
 					<command-match-input label="Match Anywhere" v-model="matchModel" />
 					<p-input-group class="mt-2" v-if="model?.mode == 'string'">
 						<c-check-box local-path="leftBoundary" v-model="leftBoundaryModel" />
-						<label for="leftBoundary" class="ml-2"> Left Break </label>
+						<label for="leftBoundary" class="ml-2"> {{ $tSync("data.left_boundary") }} </label>
 					</p-input-group>
 					<p-input-group class="mt-2" v-if="model?.mode == 'string'">
 						<c-check-box local-path="rightBondary" v-model="rightBoundaryModel" />
-						<label for="rightBoundary" class="ml-2"> Right Break </label>
+						<label for="rightBoundary" class="ml-2"> {{ $tSync("data.right_boundary") }} </label>
 					</p-input-group>
 					<div class="command-preview pt-1">
 						{{ previewString }}

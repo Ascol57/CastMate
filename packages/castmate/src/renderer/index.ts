@@ -13,6 +13,7 @@ import {
 	useInitStore,
 	useSatelliteConnection,
 	useSatelliteMedia,
+	tSync
 } from "castmate-ui-core"
 import { createApp } from "vue"
 import App from "./App.vue"
@@ -83,6 +84,7 @@ import { sendDashboardsToMain, sendOverlaysToMain } from "./util/overlay-util"
 import { setupProxyDialogService } from "../../../../libs/castmate-ui-core/src/util/dialog-helper"
 import { definePreset } from "@primevue/themes"
 import KeyFilter from "primevue/keyfilter"
+
 /*
 const router = createRouter({
 	history: createWebHistory(),
@@ -150,6 +152,9 @@ app.directive("tooltip", Tooltip)
 
 //app.use(router)
 app.use(pinia)
+
+// Rendre tSync disponible globalement dans tous les templates Vue
+app.config.globalProperties.$tSync = tSync
 
 const initStore = useInitStore()
 const pluginStore = usePluginStore()

@@ -2,36 +2,36 @@
 	<main-page-card>
 		<template #header>
 			<i class="obsi obsi-obs obs-color" /> {{ connection.config.name }}
-			<span style="color: var(--p-surface-400)" v-if="!connection.state.connected"> (Not Connected) </span>
+			<span style="color: var(--p-surface-400)" v-if="!connection.state.connected"> {{ tSync('plugins.obs.renderer.main_page.not_connected') }} </span>
 		</template>
 		<div class="flex flex-row">
 			<div class="flex flex-row justify-content-center flex-grow-1">
 				<template v-if="!connection.state.connected">
 					<div class="flex flex-column gap-2 text-center" v-if="!showConnectionIssue">
-						Not Connected
+						{{ tSync('plugins.obs.renderer.dashboard_card.disconnected') }}
 						<div class="flex flex-row gap-1">
 							<p-button size="small" @click="openObs" :disabled="!connection.config.local">
-								<span v-if="connection.config.local">Open OBS</span>
-								<span v-else>Can't Open Remote OBS</span>
+								<span v-if="connection.config.local">{{ tSync('plugins.obs.renderer.main_page.open_obs') }}</span>
+								<span v-else>{{ tSync('plugins.obs.renderer.main_page.cant_open_remote') }}</span>
 							</p-button>
-							<p-button size="small" @click="edit" severity="secondary"> Edit </p-button>
+							<p-button size="small" @click="edit" severity="secondary"> {{ tSync('plugins.obs.renderer.main_page.edit') }} </p-button>
 						</div>
 					</div>
 					<div class="flex flex-column gap-2 text-center" v-else>
-						OBS is running, but CastMate isn't connected.
+						{{ tSync('plugins.obs.renderer.main_page.obs_running_not_connected') }}
 						<div class="flex flex-row gap-1 justify-content-center">
-							<p-button size="small" @click="edit" severity="secondary"> Edit </p-button>
+							<p-button size="small" @click="edit" severity="secondary"> {{ tSync('plugins.obs.renderer.main_page.edit') }} </p-button>
 						</div>
 					</div>
 				</template>
 				<template v-else>
-					<main-page-card-item label="Streaming">
+					<main-page-card-item :label="tSync('plugins.obs.renderer.dashboard_card.streaming')">
 						<i
 							:style="{ color: connection.state.streaming ? 'blue' : 'var(--p-surface-400)' }"
 							:class="connection.state.streaming ? 'mdi mdi-broadcast' : 'mdi mdi-broadcast-off'"
 						/>
 					</main-page-card-item>
-					<main-page-card-item label="Recording">
+					<main-page-card-item :label="tSync('plugins.obs.renderer.dashboard_card.recording')">
 						<i
 							:style="{ color: connection.state.recording ? 'red' : 'var(--p-surface-400)' }"
 							:class="connection.state.recording ? 'mdi mdi-record' : 'mdi mdi-record'"
@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { MainPageCard, MainPageCardItem, useResourceEditDialog, useResourceIPCCaller, useState } from "castmate-ui-core"
+import { MainPageCard, MainPageCardItem, useResourceEditDialog, useResourceIPCCaller, useState, tSync } from "castmate-ui-core"
 import { OBSConnectionConfig, OBSConnectionState } from "castmate-plugin-obs-shared"
 import { ResourceData } from "castmate-schema"
 
@@ -98,14 +98,14 @@ const menuItems = computed<MenuItem[]>(() => {
 	let result: MenuItem[] = []
 
 	result.push({
-		label: "Refresh All Browsers",
+		label: tSync('plugins.obs.renderer.main_page.refresh_all_browsers'),
 		command(event) {
 			refreshAllBrowsers()
 		},
 	})
 
 	result.push({
-		label: "Edit Connection",
+		label: tSync('plugins.obs.renderer.main_page.edit_connection'),
 		command(event) {
 			edit()
 		},
