@@ -10,30 +10,45 @@ import {
 } from "castmate-core"
 import { OBSConnection, onOBSWebsocketEvent } from "castmate-plugin-obs-main"
 import { Command, getCommandDataSchema, matchAndParseCommand } from "castmate-schema"
+import { t, registerPluginTranslations, generatedTranslationsFromFiles } from "castmate-translation"
+import path from "path"
+
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("advss", generatedTranslationsFromFiles(translationFiles))
 
 export default definePlugin(
 	{
 		id: "advss",
-		name: "Advanced Scene Switcher",
-		description: "Integration for Advanced Scene Switcher by WarmUpTill",
+		name: t("plugins.advss.plugin.name"),
+		description: t("plugins.advss.plugin.description"),
 		color: "#256eff",
 		icon: "advi advi-advss",
 	},
 	() => {
 		defineAction({
 			id: "AdvSSMessage",
-			name: "Advanced Scene Switcher Message",
+			name: t("plugins.advss.actions.AdvSSMessage.name"),
 			icon: "advi advi-advss",
 			config: {
 				type: Object,
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: "OBS Connection",
+						name: t("plugins.advss.actions.AdvSSMessage.config.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
-					message: { type: String, required: true, name: "Message", template: true },
+					message: { type: String, required: true, name: t("plugins.advss.actions.AdvSSMessage.config.message"), template: true },
 				},
 			},
 			async invoke(config, contextData, abortSignal) {
@@ -49,18 +64,18 @@ export default definePlugin(
 
 		const advssEvent = defineTransformTrigger({
 			id: "advssEvent",
-			name: "Advanced Scene Switcher Event",
+			name: t("plugins.advss.triggers.advssEvent.name"),
 			icon: "advi advi-advss",
 			config: {
 				type: Object,
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: "OBS Connection",
+						name: t("plugins.advss.triggers.advssEvent.config.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
-					message: { type: Command, required: true, name: "Message" },
+					message: { type: Command, required: true, name: t("plugins.advss.triggers.advssEvent.config.message") },
 				},
 			},
 			invokeContext: {
@@ -68,11 +83,11 @@ export default definePlugin(
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: "OBS Connection",
+						name: t("plugins.advss.triggers.advssEvent.config.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
-					message: { type: String, required: true, name: "Message" },
+					message: { type: String, required: true, name: t("plugins.advss.triggers.advssEvent.context.message") },
 				},
 			},
 			async context(config) {

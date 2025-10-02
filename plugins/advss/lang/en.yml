@@ -1,0 +1,22 @@
+# Advanced Scene Switcher Plugin Translations - English
+plugin:
+  name: "Advanced Scene Switcher"
+  description: "Integration for Advanced Scene Switcher by WarmUpTill"
+
+actions:
+  AdvSSMessage:
+    name: "Advanced Scene Switcher Message"
+    description: "Send a message to Advanced Scene Switcher"
+    config:
+      obs: "OBS Connection"
+      message: "Message"
+
+triggers:
+  advssEvent:
+    name: "Advanced Scene Switcher Event"
+    description: "Triggered when Advanced Scene Switcher sends an event"
+    config:
+      obs: "OBS Connection"
+      message: "Message"
+    context:
+      message: "Message"

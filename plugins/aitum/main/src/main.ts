@@ -10,6 +10,21 @@ import {
 } from "castmate-core"
 import { OBSConnection, onOBSWebsocketEvent } from "castmate-plugin-obs-main"
 import { Command, getCommandDataSchema, matchAndParseCommand, Toggle } from "castmate-schema"
+import { t, registerPluginTranslations, generatedTranslationsFromFiles } from "castmate-translation"
+import path from "path"
+
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("aitum", generatedTranslationsFromFiles(translationFiles))
 
 const aitumVerticalVendor = "aitum-vertical-canvas"
 
@@ -53,28 +68,28 @@ async function getVerticalStatus(obsConnection: OBSConnection) {
 export default definePlugin(
 	{
 		id: "aitum",
-		name: "Aitum",
-		description: "Integration for Aitum OBS Plugins",
+		name: t("plugins.aitum.plugin.name"),
+		description: t("plugins.aitum.plugin.description"),
 		color: "#256eff",
 		icon: "atmi atmi-aitum",
 	},
 	() => {
 		defineAction({
 			id: "verticalScene",
-			name: "Change Vertical Scene",
+			name: t("plugins.aitum.actions.verticalScene.name"),
 			icon: "mdi mdi-swap-horizontal-bold",
 			config: {
 				type: Object,
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: "OBS Connection",
+						name: t("plugins.aitum.actions.verticalScene.config.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
 					scene: {
 						type: String,
-						name: "Scene",
+						name: t("plugins.aitum.actions.verticalScene.config.scene"),
 						required: true,
 						//template: true,
 						async enum(context: { obs: OBSConnection }) {
@@ -96,20 +111,20 @@ export default definePlugin(
 
 		defineAction({
 			id: "verticalStreamStartStop",
-			name: "Vertical Stream Start/Stop",
+			name: t("plugins.aitum.actions.verticalStreamStartStop.name"),
 			icon: "mdi mdi-broadcast",
 			config: {
 				type: Object,
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: "OBS Connection",
+						name: t("plugins.aitum.actions.verticalStreamStartStop.config.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
 					streaming: {
 						type: Toggle,
-						name: "Streaming",
+						name: t("plugins.aitum.actions.verticalStreamStartStop.config.streaming"),
 						required: true,
 						default: true,
 						template: true,
@@ -140,20 +155,20 @@ export default definePlugin(
 
 		defineAction({
 			id: "verticalRecordingStartStop",
-			name: "Vertical Recording Start/Stop",
+			name: t("plugins.aitum.actions.verticalRecordingStartStop.name"),
 			icon: "mdi mdi-record",
 			config: {
 				type: Object,
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: "OBS Connection",
+						name: t("plugins.aitum.actions.verticalRecordingStartStop.config.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
 					streaming: {
 						type: Toggle,
-						name: "Streaming",
+						name: t("plugins.aitum.actions.verticalRecordingStartStop.config.streaming"),
 						required: true,
 						default: true,
 						template: true,
@@ -184,20 +199,20 @@ export default definePlugin(
 
 		defineAction({
 			id: "verticalBacktrackStartStop",
-			name: "Vertical Backtrack Start/Stop",
+			name: t("plugins.aitum.actions.verticalBacktrackStartStop.name"),
 			icon: "atmi atmi-aitum",
 			config: {
 				type: Object,
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: "OBS Connection",
+						name: t("plugins.aitum.actions.verticalBacktrackStartStop.config.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
 					streaming: {
 						type: Toggle,
-						name: "Streaming",
+						name: t("plugins.aitum.actions.verticalBacktrackStartStop.config.streaming"),
 						required: true,
 						default: true,
 						template: true,
@@ -232,15 +247,15 @@ export default definePlugin(
 
 		defineAction({
 			id: "saveBacktrack",
-			name: "Save Backtrack",
-			description: "Saves the Vertical Backtrack",
+			name: t("plugins.aitum.actions.saveBacktrack.name"),
+			description: t("plugins.aitum.actions.saveBacktrack.description"),
 			icon: "mdi mdi-content-save",
 			config: {
 				type: Object,
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: "OBS Connection",
+						name: t("plugins.aitum.actions.saveBacktrack.config.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
@@ -256,21 +271,21 @@ export default definePlugin(
 
 		defineAction({
 			id: "verticalChapterMarker",
-			name: "Vertical Chapter Marker",
-			description: "Creates a Chapter Marker in the Vertical OBS recording",
+			name: t("plugins.aitum.actions.verticalChapterMarker.name"),
+			description: t("plugins.aitum.actions.verticalChapterMarker.description"),
 			icon: "mdi mdi-map-marker",
 			config: {
 				type: Object,
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: "OBS Connection",
+						name: t("plugins.aitum.actions.verticalChapterMarker.config.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
 					chapterName: {
 						type: String,
-						name: "Chapter Name",
+						name: t("plugins.aitum.actions.verticalChapterMarker.config.chapterName"),
 						template: true,
 					},
 				},

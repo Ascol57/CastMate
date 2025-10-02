@@ -1,0 +1,37 @@
+# Discord Plugin Translations - English
+plugin:
+  name: "Discord"
+  description: "Send messages and files to Discord channels via webhooks"
+
+settings:
+  discord_webhooks:
+    name: "Discord WebHooks"
+    description: "Manage Discord webhook connections"
+
+actions:
+  discord_message:
+    name: "Discord Message"
+    description: "Send a message to a Discord channel"
+    config:
+      webhook: "Channel Webhook"
+      message: "Message"
+      files: "Files"
+      file: "File"
+
+# Renderer-specific translations
+renderer:
+  connection:
+    name: "Connection Name"
+    webhook_url: "Webhook URL"
+    webhook_url_description: "Discord webhook URL for sending messages"
+  
+  validation:
+    name_required: "Connection name is required"
+    webhook_url_required: "Webhook URL is required"
+    invalid_webhook_url: "Invalid webhook URL format"
+  
+  messages:
+    connection_added: "Discord webhook connection added successfully"
+    connection_updated: "Discord webhook connection updated successfully"
+    connection_deleted: "Discord webhook connection deleted successfully"
+    test_message_sent: "Test message sent successfully"

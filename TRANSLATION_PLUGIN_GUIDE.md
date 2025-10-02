@@ -18,11 +18,16 @@ CastMate uses a centralized translation system built on YAML files that allows p
 
 ### Current Translation Status
 
-**Translated Plugins**: 1/28
+**Translated Plugins**: 6/28
 - ✅ **OBS Plugin** - Fully translated (EN, FR)
+- ✅ **Advanced Scene Switcher (advss)** - Fully translated (EN, FR)
+- ✅ **Aitum** - Fully translated (EN, FR)
+- ✅ **BlueSky** - Fully translated (EN, FR)
+- ✅ **Dashboards** - Fully translated (EN, FR)
+- ✅ **Discord** - Fully translated (EN, FR)
 
-**Untranslated Plugins**: 27/28
-- ❌ advss, aitum, bluesky, dashboards, discord, elgato, govee, http, input, iot, lifx, minecraft, os, overlays, philips-hue, random, remote, sound, spellcast, stream-plans, time, tplink-kasa, twinkly, twitch, variables, voicemod, wyze
+**Untranslated Plugins**: 22/28
+- ❌ elgato, govee, http, input, iot, lifx, minecraft, os, overlays, philips-hue, random, remote, sound, spellcast, stream-plans, time, tplink-kasa, twinkly, twitch, variables, voicemod, wyze
 
 ## How to Translate a Plugin
 
@@ -151,10 +156,19 @@ In your plugin's main entry file (`main/src/main.ts` or similar):
 ```typescript
 import { definePlugin } from "castmate-core"
 import { t, registerPluginTranslations, generatedTranslationsFromDirectory } from "castmate-translation"
-import path from "path"
 
-// Register plugin translations
-registerPluginTranslations("your-plugin-id", generatedTranslationsFromDirectory(path.resolve("../../plugins/your-plugin-id/lang")))
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("your-plugin-id", generatedTranslationsFromFiles(translationFiles))
 
 export default definePlugin(
   {

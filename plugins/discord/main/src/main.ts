@@ -11,11 +11,25 @@ import {
 	defineResourceSetting,
 	usePluginLogger,
 } from "castmate-core"
+import { t, registerPluginTranslations, generatedTranslationsFromFiles } from "castmate-translation"
 import { WebhookClient } from "discord.js"
 import { nanoid } from "nanoid/non-secure"
 import { FilePath } from "castmate-schema"
 import * as fs from "fs"
 import { Stream } from "stream"
+
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("discord", generatedTranslationsFromFiles(translationFiles))
 
 class DiscordWebHook extends FileResource<DiscordWebhookConfig> {
 	static resourceDirectory = "./discord/webhooks"
@@ -59,8 +73,8 @@ class DiscordWebHook extends FileResource<DiscordWebhookConfig> {
 export default definePlugin(
 	{
 		id: "discord",
-		name: "Discord",
-		description: "UI Description",
+		name: t("plugins.discord.plugin.name"),
+		description: t("plugins.discord.plugin.description"),
 		icon: "di di-discord",
 		color: "#7289da",
 	},
@@ -69,19 +83,19 @@ export default definePlugin(
 
 		definePluginResource(DiscordWebHook)
 
-		defineResourceSetting(DiscordWebHook, "Discord WebHooks")
+		defineResourceSetting(DiscordWebHook, t("plugins.discord.settings.discord_webhooks.name"))
 
 		defineAction({
 			id: "discordMessage",
-			name: "Discord Message",
+			name: t("plugins.discord.actions.discord_message.name"),
 			icon: "mdi mdi-message",
 			config: {
 				type: Object,
 				properties: {
-					webhook: { type: DiscordWebHook, name: "Channel Webhook", required: true },
+					webhook: { type: DiscordWebHook, name: t("plugins.discord.actions.discord_message.config.webhook"), required: true },
 					message: {
 						type: String,
-						name: "Message",
+						name: t("plugins.discord.actions.discord_message.config.message"),
 						required: true,
 						default: "",
 						template: true,
@@ -89,10 +103,10 @@ export default definePlugin(
 					},
 					files: {
 						type: Array,
-						name: "Files",
+						name: t("plugins.discord.actions.discord_message.config.files"),
 						items: {
 							type: FilePath,
-							name: "File",
+							name: t("plugins.discord.actions.discord_message.config.file"),
 							template: true,
 							required: true,
 						},

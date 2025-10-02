@@ -24,13 +24,13 @@
 					<template #header>
 						<div class="flex flex-column p-1">
 							<div>
-								<p-button @click="addNewSegmentStart">Add Page</p-button>
+								<p-button @click="addNewSegmentStart">{{ tSync('plugins.dashboards.renderer.editor.add_page') }}</p-button>
 							</div>
 						</div>
 					</template>
 					<template #no-items>
 						<div class="flex flex-column align-items-center p-3">
-							<p-button @click="addNewSegmentEnd">Add Page</p-button>
+							<p-button @click="addNewSegmentEnd">{{ tSync('plugins.dashboards.renderer.editor.add_page') }}</p-button>
 						</div>
 					</template>
 				</document-data-collection>
@@ -50,7 +50,7 @@
 import { DashboardConfig, DashboardPage } from "castmate-plugin-dashboards-shared"
 import { DashboardPageView, DashboardView } from "../dashboard-types"
 import DashboardPropertiesEdit from "./DashboardPropertiesEdit.vue"
-import { ScrollingTabBody, DocumentDataCollection } from "castmate-ui-core"
+import { ScrollingTabBody, DocumentDataCollection, tSync } from "castmate-ui-core"
 import { computed, useModel } from "vue"
 
 import PButton from "primevue/button"

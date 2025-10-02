@@ -94,5 +94,8 @@
         "xutility": "cpp",
         "ranges": "cpp",
         "span": "cpp"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
     }
 }

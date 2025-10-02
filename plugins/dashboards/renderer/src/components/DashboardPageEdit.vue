@@ -9,7 +9,7 @@
 					<p-input-text v-model="model.name" />
 				</span>
 			</div>
-			<p-button @click="addSection"> Add Section </p-button>
+			<p-button @click="addSection">{{ tSync('plugins.dashboards.renderer.editor.add_section') }}</p-button>
 		</div>
 		<div class="page-content" ref="pageDiv">
 			<row-wrap-document-data-collection
@@ -23,7 +23,7 @@
 			>
 				<template #no-items>
 					<div class="flex flex-column align-items-center p-3">
-						<p-button @click="addSection">Add Section</p-button>
+						<p-button @click="addSection">{{ tSync('plugins.dashboards.renderer.editor.add_section') }}</p-button>
 					</div>
 				</template>
 			</row-wrap-document-data-collection>
@@ -38,7 +38,7 @@ import { computed, provide, ref, useModel } from "vue"
 
 import DashboardSectionEdit from "./DashboardSectionEdit.vue"
 
-import { stopPropagation, RowWrapDocumentDataCollection } from "castmate-ui-core"
+import { stopPropagation, RowWrapDocumentDataCollection, tSync } from "castmate-ui-core"
 
 import PInputText from "primevue/inputtext"
 import PButton from "primevue/button"

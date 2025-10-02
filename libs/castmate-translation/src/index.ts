@@ -1,6 +1,5 @@
 import { usePluginLogger, defineIPCFunc } from "castmate-core"
 import * as yaml from 'yaml'
-import * as fs from 'fs'
 import * as path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -32,17 +31,21 @@ const translationFiles = import.meta.glob('../lang/**/*.{yml,yaml}', {
 // Core Translation Functions
 // ============================================================================
 
-export function generatedTranslationsFromDirectory(directory: string): GeneratedTranslations {
-    const translationsDir = directory
+export function generatedTranslationsFromFiles(filesContent: Object): GeneratedTranslations {
+    console.log(filesContent)
     const result: GeneratedTranslations = {}
 
-    // Read all YAML files in the translations directory
-    fs.readdirSync(translationsDir).forEach(file => {
-        const filePath = path.join(translationsDir, file)
-        const fileContent = fs.readFileSync(filePath, 'utf8')
-        const lang = path.basename(file, path.extname(file))
-        result[lang] = yaml.parse(fileContent)
-    })
+    // files content exemple: { 'en': 'content in yml...', 'fr': 'content in yml...' }
+
+    // Process each file from the filesContent parameter
+    for (const [lang, fileContent] of Object.entries(filesContent)) {
+        try {
+            // Parse the YAML content for this language
+            result[lang] = yaml.parse(fileContent as string)
+        } catch (error) {
+            logger.error(`Error parsing YAML content for language ${lang}:`, error)
+        }
+    }
 
     return result
 }
@@ -90,16 +93,16 @@ function generateCoreTranslations(): GeneratedTranslations {
  */
 function mergeTranslations(target: GeneratedTranslations, source: GeneratedTranslations): GeneratedTranslations {
     const result = { ...target }
-    
+
     for (const [lang, translations] of Object.entries(source)) {
         if (!result[lang]) {
             result[lang] = {}
         }
-        
+
         // Deep merge the translations for this language
         result[lang] = { ...result[lang], ...translations }
     }
-    
+
     return result
 }
 
@@ -131,7 +134,7 @@ class TranslationServiceImpl {
         // Load and merge core translations
         const coreTranslations = generateCoreTranslations()
         this.translations = mergeTranslations(this.translations, coreTranslations)
-        
+
         this.initialized = true
         this.logger.log('Translation service initialized with all plugin translations')
     }
@@ -143,7 +146,7 @@ class TranslationServiceImpl {
         if (this.initialized) {
             return
         }
-        
+
         const coreTranslations = generateCoreTranslations()
         this.translations = mergeTranslations(this.translations, coreTranslations)
         this.initialized = true
@@ -157,7 +160,7 @@ class TranslationServiceImpl {
         if (this.initialized) {
             return
         }
-        
+
         await this.initialize()
     }
 
@@ -168,21 +171,34 @@ class TranslationServiceImpl {
      */
     registerPluginTranslations(pluginId: string, translations: GeneratedTranslations) {
         logger.log(`Registering translations for plugin: ${pluginId}`)
-        
+
+        // Ensure the service is initialized before registering plugins
+        if (!this.initialized) {
+            logger.log("Translation service not initialized, initializing synchronously before registering plugin...")
+            this.initializeSync()
+        }
+
         // Merge plugin translations into the main structure
         for (const [lang, langTranslations] of Object.entries(translations)) {
+            // Ensure the language object exists
             if (!this.translations[lang]) {
                 this.translations[lang] = {}
             }
+
+            // Ensure the plugins sub-object exists
             if (!this.translations[lang].plugins) {
                 this.translations[lang].plugins = {}
             }
 
+            // Now safely assign the plugin translations
             this.translations[lang].plugins[pluginId] = langTranslations
         }
 
         logger.log(`Plugin translations registered for ${pluginId}`)
-        console.log(this.translations.en.plugins.obs.actions) // Debug output
+        // Debug output - safely check if the structure exists
+        if (this.translations.en?.plugins?.[pluginId]) {
+            console.log(`Registered translations for ${pluginId}:`, this.translations.en.plugins[pluginId])
+        }
     }
 
     t(key: string): string {
@@ -201,10 +217,10 @@ class TranslationServiceImpl {
         // Split the key by dots to navigate nested structure
         const keyParts = key.split('.')
         logger.log(`Key parts:`, keyParts)
-        
+
         // Try current language first - check both core and plugin translations
         let translation = this.getNestedTranslation(this.translations[this.currentLanguage], keyParts)
-        
+
         logger.log(`Found translation in current language:`, translation)
         if (translation && typeof translation === 'string') {
             return translation
@@ -212,14 +228,14 @@ class TranslationServiceImpl {
 
         // Fallback to "en" if translation not found in current language
         let fallbackTranslation = this.getNestedTranslation(this.translations['en'], keyParts)
-        
+
         logger.log(`Fallback translation in 'en':`, fallbackTranslation)
         return (fallbackTranslation && typeof fallbackTranslation === 'string') ? fallbackTranslation : key
     }
 
     private getNestedTranslation(translationObj: TranslationObject | undefined, keyParts: string[]): any {
         if (!translationObj) return undefined
-        
+
         let current = translationObj
         for (const part of keyParts) {
             if (current && typeof current === 'object' && part in current) {
@@ -246,13 +262,13 @@ class TranslationServiceImpl {
     getAllTranslations(): GeneratedTranslations {
         // Merge core and plugin translations
         const merged: GeneratedTranslations = {}
-        
+
         for (const lang of Object.keys(this.translations)) {
             merged[lang] = {
                 ...this.translations[lang]
             }
         }
-        
+
         return merged
     }
 }

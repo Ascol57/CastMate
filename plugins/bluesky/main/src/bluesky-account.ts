@@ -7,6 +7,7 @@ import {
 	usePluginLogger,
 } from "castmate-core"
 import { BlueSkyAccountConfig, BlueSkyAccountSecrets } from "castmate-plugin-bluesky-shared"
+import { t } from "castmate-translation"
 
 import { CredentialSession, Agent } from "@atproto/api"
 import { nanoid } from "nanoid/non-secure"
@@ -48,7 +49,7 @@ export class BlueSkyAccount extends Account<BlueSkyAccountSecrets, BlueSkyAccoun
 
 		this._secrets = {}
 		this._config = {
-			name: name ?? "BlueSky Account",
+			name: name ?? t("plugins.bluesky.accounts.default_name"),
 			scopes: [],
 		}
 	}
@@ -99,7 +100,7 @@ export class BlueSkyAccount extends Account<BlueSkyAccountSecrets, BlueSkyAccoun
 	async login() {
 		logger.log("TRY LOGIN BLUESKY")
 		const result = await GenericLoginService.getInstance().openLogin(
-			"Blue Sky Login",
+			t("plugins.bluesky.accounts.login_title"),
 			async (username, password) => {
 				const session = await this.tryLogin(username, password)
 

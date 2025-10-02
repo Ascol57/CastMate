@@ -24,7 +24,7 @@ export function initPlugin(app: App<Element>) {
 
 	const dashboardGroup = getResourceAsProjectGroup(app, {
 		resourceType: "Dashboard",
-		resourceName: "Dashboards",
+		resourceName: "Dashboards", // This could be translated but it's used as an identifier
 		groupIcon: "mdi mdi-view-dashboard",
 		documentType: "dashboard",
 		createView(resource: ResourceData<DashboardConfig>): DashboardView {

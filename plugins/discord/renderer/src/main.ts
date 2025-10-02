@@ -1,4 +1,4 @@
-import { useResourceStore, ResourceSettingList, ResourceSchemaEdit } from "castmate-ui-core"
+import { useResourceStore, ResourceSettingList, ResourceSchemaEdit, tSync } from "castmate-ui-core"
 import "./css/discord.css"
 
 export function initPlugin() {
@@ -11,8 +11,8 @@ export function initPlugin() {
 	resourceStore.registerConfigSchema("DiscordWebhook", {
 		type: Object,
 		properties: {
-			name: { type: String, name: "Connection Name", required: true },
-			webhookUrl: { type: String, name: "Webhook URL", required: true, secret: true },
+			name: { type: String, name: tSync("plugins.discord.renderer.connection.name"), required: true },
+			webhookUrl: { type: String, name: tSync("plugins.discord.renderer.connection.webhook_url"), required: true, secret: true },
 		},
 	})
 }

@@ -1,0 +1,25 @@
+# Traductions du Plugin Dashboards - Français
+plugin:
+  name: "Tableaux de bord"
+  description: "TABLEAUX DE BORD"
+
+# Traductions du renderer pour les composants UI
+renderer:
+  editor:
+    add_page: "Ajouter une page"
+    add_section: "Ajouter une section"
+    add_widget: "Ajouter un widget"
+    properties: "Propriétés"
+    permissions: "Permissions"
+    edit_share: "Modifier le partage"
+    
+  pages:
+    no_items: "Aucune page pour l'instant"
+    
+  sections:
+    no_items: "Aucune section pour l'instant"
+    
+  widgets:
+    no_items: "Aucun widget pour l'instant"
+    size: "Taille"
+    config: "Configuration"

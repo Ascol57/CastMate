@@ -1,0 +1,42 @@
+# Aitum Plugin Translations - English
+plugin:
+  name: "Aitum"
+  description: "Integration for Aitum OBS Plugins"
+
+actions:
+  verticalScene:
+    name: "Change Vertical Scene"
+    config:
+      obs: "OBS Connection"
+      scene: "Scene"
+
+  verticalStreamStartStop:
+    name: "Vertical Stream Start/Stop"
+    config:
+      obs: "OBS Connection"
+      streaming: "Streaming"
+
+  verticalRecordingStartStop:
+    name: "Vertical Recording Start/Stop"
+    config:
+      obs: "OBS Connection"
+      streaming: "Streaming"
+
+  verticalBacktrackStartStop:
+    name: "Vertical Backtrack Start/Stop"
+    config:
+      obs: "OBS Connection"
+      streaming: "Streaming"
+
+  saveBacktrack:
+    name: "Save Backtrack"
+    description: "Saves the Vertical Backtrack"
+    config:
+      obs: "OBS Connection"
+
+  verticalChapterMarker:
+    name: "Vertical Chapter Marker"
+    description: "Creates a Chapter Marker in the Vertical OBS recording"
+    config:
+      obs: "OBS Connection"
+      chapterName: "Chapter Name"

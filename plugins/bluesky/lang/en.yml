@@ -1,0 +1,18 @@
+# BlueSky Plugin Translations - English
+plugin:
+  name: "BlueSky"
+  description: "Blue Sky"
+
+settings:
+  BlueSkyAccounts: "BlueSky Accounts"
+
+actions:
+  post:
+    name: "BlueSky Post"
+    config:
+      account: "Account"
+      text: "Text"
+
+accounts:
+  default_name: "BlueSky Account"
+  login_title: "Blue Sky Login"

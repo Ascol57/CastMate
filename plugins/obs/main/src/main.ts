@@ -14,7 +14,7 @@ import {
 	defineReactiveState,
 	usePluginLogger,
 } from "castmate-core"
-import { t, registerPluginTranslations, generatedTranslationsFromDirectory } from "castmate-translation"
+import { t, registerPluginTranslations, generatedTranslationsFromFiles } from "castmate-translation"
 import { Color, Toggle } from "castmate-schema"
 import { OBSConnection, setupConnections, onOBSWebsocketEvent } from "./connection"
 import { setupSources } from "./sources"
@@ -25,10 +25,19 @@ import { setupTransforms } from "./transform"
 
 import { attemptQRReading, setupAutoConnect } from "./auto-connect"
 import { setupAudio } from "./audio"
-import { fileURLToPath } from "url"
-import path from "path"
 
-registerPluginTranslations("obs", generatedTranslationsFromDirectory(path.resolve("../../plugins/obs/lang")))
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("obs", generatedTranslationsFromFiles(translationFiles))
 
 export default definePlugin(
 	{

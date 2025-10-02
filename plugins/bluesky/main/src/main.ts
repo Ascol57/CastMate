@@ -8,29 +8,44 @@ import {
 	definePluginResource,
 } from "castmate-core"
 import { BlueSkyAccount } from "./bluesky-account"
+import { t, registerPluginTranslations, generatedTranslationsFromFiles } from "castmate-translation"
+import path from "path"
+
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("bluesky", generatedTranslationsFromFiles(translationFiles))
 
 export default definePlugin(
 	{
 		id: "bluesky",
-		name: "BlueSky",
-		description: "Blue Sky",
+		name: t("plugins.bluesky.plugin.name"),
+		description: t("plugins.bluesky.plugin.description"),
 		color: "#1086FE",
 		icon: "bsi bsi-logo",
 	},
 	() => {
 		definePluginResource(BlueSkyAccount)
 
-		defineResourceSetting(BlueSkyAccount, "BlueSky Accounts")
+		defineResourceSetting(BlueSkyAccount, t("plugins.bluesky.settings.BlueSkyAccounts"))
 
 		defineAction({
 			id: "post",
-			name: "BlueSky Post",
+			name: t("plugins.bluesky.actions.post.name"),
 			icon: "bsi bsi-logo",
 			config: {
 				type: Object,
 				properties: {
-					account: { type: BlueSkyAccount, name: "Account", required: true },
-					text: { type: String, name: "Text", required: true, template: true, multiLine: true },
+					account: { type: BlueSkyAccount, name: t("plugins.bluesky.actions.post.config.account"), required: true },
+					text: { type: String, name: t("plugins.bluesky.actions.post.config.text"), required: true, template: true, multiLine: true },
 				},
 			},
 			async invoke(config, contextData, abortSignal) {

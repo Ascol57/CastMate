@@ -1,0 +1,25 @@
+# Dashboards Plugin Translations - English
+plugin:
+  name: "Dashboards"
+  description: "DASHBOARDS"
+
+# Renderer translations for UI components
+renderer:
+  editor:
+    add_page: "Add Page"
+    add_section: "Add Section"
+    add_widget: "Add Widget"
+    properties: "Properties"
+    permissions: "Permissions"
+    edit_share: "Edit Share"
+    
+  pages:
+    no_items: "No pages yet"
+    
+  sections:
+    no_items: "No sections yet"
+    
+  widgets:
+    no_items: "No widgets yet"
+    size: "Size"
+    config: "Configuration"
