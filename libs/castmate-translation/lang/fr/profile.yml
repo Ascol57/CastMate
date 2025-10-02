@@ -1,5 +1,5 @@
 add_trigger: Ajouter un déclencheur
 no_triggers: Les déclencheurs sont la façon dont CastMate répond aux événements.
 activation: Activation
-on_activation: À l'activation
-on_deactivation: À la désactivation
+on_activate: À l'activation
+on_deactivate: À la désactivation

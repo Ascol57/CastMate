@@ -1,4 +1,5 @@
 import { defineTrigger } from "castmate-core"
+import { t } from "castmate-translation"
 import { Range } from "castmate-schema"
 import { onChannelAuth } from "./api-harness"
 import { ViewerCache } from "./viewer-cache"
@@ -8,7 +9,8 @@ import { inTwitchViewerGroup } from "./group"
 export function setupRaids() {
 	const raid = defineTrigger({
 		id: "raid",
-		name: "Incoming Raid",
+		name: t("plugins.twitch.triggers.raid.name"),
+		description: t("plugins.twitch.triggers.raid.description"),
 		icon: "mdi mdi-parachute",
 		version: "0.0.1",
 		config: {
@@ -16,11 +18,11 @@ export function setupRaids() {
 			properties: {
 				raiders: {
 					type: Range,
-					name: "Raider Count",
+					name: t("plugins.twitch.common.raiders"),
 					default: { min: 1 },
 					required: true,
 				},
-				group: { type: TwitchViewerGroup, name: "Raiding Streamer Group", required: true, default: {} },
+				group: { type: TwitchViewerGroup, name: t("plugins.twitch.common.viewerGroup"), required: true, default: {} },
 			},
 		},
 		context: {
@@ -41,7 +43,8 @@ export function setupRaids() {
 
 	const raidOut = defineTrigger({
 		id: "raidOut",
-		name: "Outgoing Raid",
+		name: t("plugins.twitch.triggers.raidOut.name"),
+		description: t("plugins.twitch.triggers.raidOut.description"),
 		icon: "mdi mdi-parachute",
 		version: "0.0.1",
 		config: {
@@ -49,11 +52,11 @@ export function setupRaids() {
 			properties: {
 				raiders: {
 					type: Range,
-					name: "Raider Count",
+					name: t("plugins.twitch.common.raiders"),
 					default: { min: 1 },
 					required: true,
 				},
-				group: { type: TwitchViewerGroup, name: "Raided Streamer Group", required: true, default: {} },
+				group: { type: TwitchViewerGroup, name: t("plugins.twitch.common.viewerGroup"), required: true, default: {} },
 			},
 		},
 		context: {

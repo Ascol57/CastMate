@@ -3,6 +3,10 @@ plugin:
   name: "OBS"
   description: "Provides OBS Control over OBS Websocket 5"
 
+common:
+  scene: "Scene"
+  source: "Source"
+
 settings:
   default_connection:
     name: "Default OBS Connection"
@@ -26,8 +30,6 @@ actions:
   scene:
     name: "Change Scene"
     description: "Changes the current scene in OBS"
-    config:
-      scene: "Scene"
   set_browser_url:
     name: "Set Browser Source URL"
     description: "Set the URL of a browser source"

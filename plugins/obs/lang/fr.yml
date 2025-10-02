@@ -3,6 +3,10 @@ plugin:
   name: "OBS"
   description: "Fournit le contrôle d'OBS via OBS WebSocket 5"
 
+common:
+  scene: "Scène"
+  source: "Source"
+
 settings:
   default_connection:
     name: "Connexion OBS par défaut"

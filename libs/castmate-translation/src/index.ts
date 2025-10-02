@@ -32,7 +32,6 @@ const translationFiles = import.meta.glob('../lang/**/*.{yml,yaml}', {
 // ============================================================================
 
 export function generatedTranslationsFromFiles(filesContent: Object): GeneratedTranslations {
-    console.log(filesContent)
     const result: GeneratedTranslations = {}
 
     // files content exemple: { 'en': 'content in yml...', 'fr': 'content in yml...' }
@@ -195,10 +194,6 @@ class TranslationServiceImpl {
         }
 
         logger.log(`Plugin translations registered for ${pluginId}`)
-        // Debug output - safely check if the structure exists
-        if (this.translations.en?.plugins?.[pluginId]) {
-            console.log(`Registered translations for ${pluginId}:`, this.translations.en.plugins[pluginId])
-        }
     }
 
     t(key: string): string {

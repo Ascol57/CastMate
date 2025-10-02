@@ -1,4 +1,5 @@
 import { defineTrigger, onLoad } from "castmate-core"
+import { t } from "castmate-translation"
 import { TwitchViewer, TwitchViewerGroup, TwitchViewerUnresolved } from "castmate-plugin-twitch-shared"
 import { inTwitchViewerGroup } from "./group"
 import { ViewerCache, onViewerSeen } from "./viewer-cache"
@@ -13,12 +14,12 @@ export function setupWalkOns() {
 
 	const walkon = defineTrigger({
 		id: "walkon",
-		name: "Walk on",
+		name: t("plugins.twitch.triggers.walkon.name"),
 		icon: "mdi mdi-walk",
 		config: {
 			type: Object,
 			properties: {
-				group: { type: TwitchViewerGroup, name: "Viewer Group", required: true, default: {} },
+				group: { type: TwitchViewerGroup, name: t("plugins.twitch.common.viewerGroup"), required: true, default: {} },
 			},
 		},
 		context: {

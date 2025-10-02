@@ -13,14 +13,15 @@ import { TwitchAccount } from "./twitch-auth"
 import { CommercialLength } from "@twurple/api"
 import { onChannelAuth, onStreamOnline } from "./api-harness"
 import { Duration, Timer, getTimeRemaining, isTimerStarted } from "castmate-schema"
+import { t } from "castmate-translation"
 
 export function setupAds() {
 	const logger = usePluginLogger("twitch-ad")
 
 	defineAction({
 		id: "runAd",
-		name: "Run Ad",
-		description: "Run an Ad. You should probably use the ad manager instead.",
+		name: t("plugins.twitch.actions.runAd.name"),
+		description: t("plugins.twitch.actions.runAd.description"),
 		icon: "mdi mdi-advertisements",
 		duration: {
 			propDependencies: "duration",
@@ -34,7 +35,7 @@ export function setupAds() {
 		config: {
 			type: Object,
 			properties: {
-				duration: { type: Number, name: "Duration", required: true, enum: [30, 60, 90, 120, 150, 180] },
+				duration: { type: Number, name: t("plugins.twitch.common.duration"), required: true, enum: [30, 60, 90, 120, 150, 180] },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {
@@ -47,45 +48,45 @@ export function setupAds() {
 
 	const adSnoozes = defineState("adSnoozes", {
 		type: Number,
-		name: "Ad Snoozes",
+		name: t("plugins.twitch.states.adSnoozes.name"),
 		default: 0,
 		required: true,
 	})
 
 	const inAdBreak = defineState("inAdBreak", {
 		type: Boolean,
-		name: "In Ad Break",
+		name: t("plugins.twitch.states.inAdBreak"),
 		default: false,
 		required: true,
 	})
 
 	const snoozeRefreshTimer = defineState("adSnoozeRefresh", {
 		type: Timer,
-		name: "Snooze Refresh",
+		name: t("plugins.twitch.states.adSnoozeRefresh"),
 		required: true,
 	})
 
 	const prerollFreeTime = defineState("prerollFreeTime", {
 		type: Timer,
-		name: "Preroll Free Time",
+		name: t("plugins.twitch.states.prerollFreeTime"),
 		required: true,
 	})
 
 	const nextAdDuration = defineState("nextAdDuration", {
 		type: Duration,
-		name: "Next Ad Duration",
+		name: t("plugins.twitch.states.nextAdDuration"),
 		required: true,
 	})
 
 	const nextAdTimer = defineState("nextAdTimer", {
 		type: Timer,
-		name: "Next Ad Time",
+		name: t("plugins.twitch.states.nextAdTimer"),
 		required: true,
 	})
 
 	const adTimer = defineState("adTimer", {
 		type: Timer,
-		name: "Current Ad Timer",
+		name: t("plugins.twitch.states.adTimer"),
 		required: true,
 	})
 
@@ -272,8 +273,8 @@ export function setupAds() {
 
 	defineAction({
 		id: "snoozeAds",
-		name: "Snooze Ads",
-		description: "Snoozes the next ad if you have any snoozes remaining.",
+		name: t("plugins.twitch.actions.snoozeAds.name"),
+		description: t("plugins.twitch.actions.snoozeAds.description"),
 		icon: "mdi mdi-sleep",
 		config: {
 			type: Object,
@@ -290,8 +291,8 @@ export function setupAds() {
 
 	const adStarted = defineTrigger({
 		id: "adStarted",
-		name: "Ad Started",
-		description: "An ad break has started",
+		name: t("plugins.twitch.triggers.adStarted.name"),
+		description: t("plugins.twitch.triggers.adStarted.description"),
 		icon: "mdi mdi-advertisements",
 		config: {
 			type: Object,
@@ -310,8 +311,8 @@ export function setupAds() {
 
 	const adEnded = defineTrigger({
 		id: "adEnded",
-		name: "Ad Ended",
-		description: "An ad break has finished",
+		name: t("plugins.twitch.triggers.adEnded.name"),
+		description: t("plugins.twitch.triggers.adEnded.description"),
 		icon: "mdi mdi-advertisements",
 		config: {
 			type: Object,
@@ -330,13 +331,13 @@ export function setupAds() {
 
 	const adSchedule = defineTrigger({
 		id: "adSchedule",
-		name: "Ad Schedule",
-		description: "Runs in advance of an scheduled ad.",
+		name: t("plugins.twitch.triggers.adSchedule.name"),
+		description: t("plugins.twitch.triggers.adSchedule.description"),
 		icon: "mdi mdi-advertisements",
 		config: {
 			type: Object,
 			properties: {
-				advance: { type: Duration, name: "Advance", required: true, default: 60 },
+				advance: { type: Duration, name: t("plugins.twitch.common.advance"), required: true, default: 60 },
 			},
 		},
 		context: {

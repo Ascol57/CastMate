@@ -4,19 +4,21 @@ import { ViewerCache } from "./viewer-cache"
 import { TwitchViewer, TwitchViewerGroup } from "castmate-plugin-twitch-shared"
 import { inTwitchViewerGroup } from "./group"
 import { TwitchAccount } from "./twitch-auth"
+import { t } from "castmate-translation"
 
 export function setupFollows() {
 	const logger = usePluginLogger()
 
 	const follow = defineTrigger({
 		id: "follow",
-		name: "Followed",
+		name: t("plugins.twitch.triggers.follow.name"),
+		description: t("plugins.twitch.triggers.follow.description"),
 		icon: "mdi mdi-heart",
 		version: "0.0.1",
 		config: {
 			type: Object,
 			properties: {
-				group: { type: TwitchViewerGroup, name: "Viewer Group", required: true, default: {} },
+				group: { type: TwitchViewerGroup, name: t("plugins.twitch.common.viewerGroup"), required: true, default: {} },
 			},
 		},
 		context: {
@@ -37,12 +39,12 @@ export function setupFollows() {
 		type: Number,
 		required: true,
 		default: 0,
-		name: "Followers",
+		name: t("plugins.twitch.states.followers"),
 	})
 
 	const lastFollower = defineState("lastFollower", {
 		type: TwitchViewer,
-		name: "Last Follower",
+		name: t("plugins.twitch.states.lastFollower"),
 	})
 
 	async function updateFollowCount() {

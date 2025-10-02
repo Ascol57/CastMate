@@ -23,6 +23,7 @@ import PTree from "primevue/tree"
 import PButton from "primevue/button"
 import { TreeNode } from "primevue/treenode"
 import { computed, useModel } from "vue"
+import { tSync } from "castmate-ui-core"
 
 const props = defineProps<{
 	modelValue: TwitchViewerGroupProperties
@@ -152,32 +153,32 @@ const treeNodes = computed<TreeNode[]>(() => {
 	const result: TreeNode[] = [
 		{
 			key: "following",
-			label: "Followers",
+			label: tSync("plugins.twitch.common.followers"),
 			data: "following",
 		},
 		{
 			key: "vip",
-			label: "VIPs",
+			label: tSync("plugins.twitch.common.vips"),
 			data: "vip",
 		},
 		{
 			key: "subscribed",
-			label: "Subscribers",
+			label: tSync("plugins.twitch.common.subscribed"),
 			data: "subscribed",
 			children: [
-				{ key: "subTier1", label: "Tier 1", data: "subTier1" },
-				{ key: "subTier2", label: "Tier 2", data: "subTier2" },
-				{ key: "subTier3", label: "Tier 3", data: "subTier3" },
+				{ key: "subTier1", label: tSync("plugins.twitch.subscription.tier1"), data: "subTier1" },
+				{ key: "subTier2", label: tSync("plugins.twitch.subscription.tier2"), data: "subTier2" },
+				{ key: "subTier3", label: tSync("plugins.twitch.subscription.tier3"), data: "subTier3" },
 			],
 		},
 		{
 			key: "mod",
-			label: "Mods",
+			label: tSync("plugins.twitch.common.mod"),
 			data: "mod",
 		},
 		{
 			key: "broadcaster",
-			label: "Broadcaster",
+			label: tSync("plugins.twitch.common.broadcaster"),
 			data: "broadcaster",
 		},
 	]
@@ -185,7 +186,7 @@ const treeNodes = computed<TreeNode[]>(() => {
 	if (props.schema.anonymous) {
 		result.unshift({
 			key: "anonymous",
-			label: "Anonymous",
+			label: tSync("plugins.twitch.common.anonymous"),
 			data: "anonymous",
 		})
 	}

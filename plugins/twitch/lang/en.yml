@@ -1,0 +1,273 @@
+plugin:
+  name: "Twitch"
+  description: "Integrate Twitch streams and viewers into your Castmate setup."
+
+common:
+  duration: "Duration"
+  advance: "Advance"
+  reward: "Reward"
+  viewerGroup: "Viewer Group"
+  message: "Message"
+  command: "Command"
+  cooldown: "Cooldown"
+  viewer: "Viewer"
+  messageDefault: "Thanks for using CastMate!"
+  streamer: "Streamer"
+  color: "Color"
+  bits: "Bits"
+  level: "Level"
+  reason: "Reason"
+  title: "Title"
+  choices: "Outcomes"
+  choice: "Outcome"
+  raiders: "Raiders Count"
+  properties: "Properties"
+  category: "Category"
+  condition: "Condition"
+  followers: "Followers"
+  vips: "VIPs"
+  subscribers: "Subscribers"
+  subscribed: "Subscribers"
+  mod: "Moderators"
+  broadcaster: "Broadcaster"
+  anonymous: "Anonymous"
+  channel: "Channel"
+  offline: "Offline"
+  live: "Live"
+  signInto: "Sign into"
+
+actions:
+  runAd:
+    name: "Run Ad"
+    description: "Runs an Ad. You should probably use the ad manager instead."
+  
+  snoozeAds:
+    name: "Snooze Ads"
+    description: "Snoozes the next ad if you have any snoozes remaining."
+  
+  chat:
+    name: "Send Chat Message"
+    description: "Sends a message to the channel chat."
+  
+  shoutout:
+    name: "Shoutout Viewer"
+    description: "Gives a shoutout to a viewer in chat."
+  
+  announcement:
+    name: "Make Announcement"
+    description: "Makes an announcement in chat."
+  
+  createClip:
+    name: "Create Clip"
+    description: "Create's a clip"
+  
+  streamMarker:
+    name: "Place Stream Marker"
+    description: "Places a marker in the stream for use in the video editor"
+    config:
+      markerName: "Marker Name"
+  
+  addViewerToGroup:
+    name: "Add Viewer to Group"
+    description: "Adds a viewer to a viewer group."
+
+  removeViewerFromGroup:
+    name: "Remove Viewer from Group"
+    description: "Removes a viewer from a viewer group."
+  
+  clearViewerGroup:
+    name: "Clear Viewer Group"
+    description: "Becareful you can't undo this!!"
+  
+  timeout:
+    name: "Timeout Viewer"
+    description: "Timeout a viewer from chat."
+
+  ban:
+    name: "Ban Viewer"
+    description: "Ban a viewer from chat."
+  
+  unban:
+    name: "Unban Viewer"
+    description: "Unban a viewer from chat."
+  
+  createPoll:
+    name: "Create Poll"
+    description: "Create a poll in the channel."
+  
+  createPrediction:
+    name: "Create Prediction"
+    description: "Creates a prediction in the channel."
+
+
+triggers:
+  adStarted:
+    name: "Ad Started"
+    description: "An ad breack has started"
+  
+  adEnded:
+    name: "Ad Ended"
+    description: "An ad break has ended"
+
+  adSchedule:
+    name: "Ad Schedule"
+    description: "Runs in advance of an scheduled ad."
+
+  redemption:
+    name: "Channel Point Reward"
+    description: "A viewer has redeemed a channel point reward."
+  
+  chat:
+    name: "Chat Message"
+    description: "A message has been sent in chat."
+
+  firstTimeChat:
+    name: "First Time Chatter"
+    description: "A viewer has sent their first message in chat."
+
+  shoutoutSent:
+    name: "Shoutout Sent"
+    description: "Fires when /shoutout is used"
+
+  bits:
+    name: "Bits Cheered"
+    description: "Fires when a user cheers with bits."
+  
+  follow:
+    name: "Followed"
+    description: "Fires when a user follows the channel."
+
+  hypeTrainStarted:
+    name: "Hype Train Started"
+    description: "Fires when a hype train starts."
+  
+  hypeTrainLevelUp:
+    name: "Hype Train Level Up"
+    description: "Fires when a hype train levels up."
+  
+  hypeTrainEnded:
+    name: "Hype Train Ended"
+    description: "Fires when a hype train ends."
+  
+  ban:
+    name: "Viewer Banned"
+    description: "Fires when a viewer is banned from chat."
+
+  timeout:
+    name: "Viewer Timed Out"
+    description: "Fires when a viewer is timed out from chat."
+
+  pollStarted:
+    name: "Poll Started"
+    description: "Fires when a poll is started."
+  
+  pollEnded:
+    name: "Poll Ended"
+    description: "Fires when a poll is ended."
+  
+  predictionStarted:
+    name: "Prediction Started"
+    description: "Fires when a prediction is started."
+  
+  predictionLocked:
+    name: "Prediction Locked"
+    description: "Fires when a prediction is locked."
+  
+  predictionSettled:
+    name: "Prediction Settled"
+    description: "Fires when a prediction is settled."
+  
+  raid:
+    name: "Raid"
+    description: "Fires when the channel is raided."
+
+  raidOut:
+    name: "Outgoing Raid"
+    description: "Fires when the streamer raids another channel."
+
+  subscription:
+    name: "New Subscription"
+    description: "Fires when a viewer subscribes to the channel."
+  
+  giftedSub:
+    name: "Gifted Subscription"
+    description: "Fires when a viewer gifts a subscription to another viewer."
+  
+  walkon:
+    name: "Walk on"
+    description: "Fires when a viewer walks on the stream."
+
+subscription:
+  tier1: "Tier 1"
+  tier2: "Tier 2"
+  tier3: "Tier 3"
+  totalMonths: "Months"
+  streakMonths: "Streak Months"
+  subs: "Subs Gifted"
+
+states:
+  adSnoozes: "Ad Snoozes"
+  inAdBreak: "In Ad Break"
+  adSnoozeRefresh: "Ad Snooze Refresh Timer"
+  prerollFreeTime: "Preroll Free Time Timer"
+  nextAdDuration: "Next Ad Duration"
+  nextAdTimer: "Next Ad Timer"
+  adTimer: "Ad Timer"
+
+  followers: "Followers"
+  lastFollower: "Last Follower"
+
+  hypeTrainLevel: "Hype Train Level"
+  hypeTrainProgress: "Hype Train Point Progress"
+  hypeTrainGoal: "Hype Train Point Goal"
+  hypeTrainTotal: "Hype Train Point Total"
+  hypeTrainExists: "Hype Train Exists"
+
+  pollId: "Current Poll ID"
+  pollTitle: "Current Poll Title"
+
+  predictionTitle: "Prediction Title"
+  predictionId: "Prediction ID"
+  predictionExists: "Prediction Exists"
+  predictionTotal: "Prediction Point Total"
+
+  subscribers: "Subscribers"
+  subscriberPoints: "Subscriber Points"
+  lastSubscriber: "Last Subscriber"
+
+renderer:
+  twitchViewerGroupEdit:
+    text: "Trigger runs for Everyone"
+    button: "Customize"
+  
+  twitchAccountSettings:
+    channelAccount: "Channel Account"
+    channelAccountDescription: "Sign into your main channel account here."
+    botAccount: "Bot Account"
+    botAccountDescription: "This account is used to send chat messages."
+
+  twitchCategoryInput:
+    text: "Type Twitch Category Name"
+  
+  channelPointGroupHeader:
+    castmateRewards: "CastMate Rewards"
+    otherRewards: "Other Rewards"
+  
+  channelPointsEditPage:
+    button: "Create CastMate Reward"
+    title: "Other Channel Point Rewards"
+    description: "These rewards can't be enabled and disabled with CastMate profiles. But you can still use them in triggers."
+    linkDashboard: "Open Dashboard"
+  
+  groupPage:
+    addMember: "Add Member"
+  
+  mainPage:
+    channelAccountDescription: "CastMate needs your Twitch account to run"
+    botAccountDescription: "CastMate needs a bot account to run. You can use a separate bot account or just sign into your channel again."
+  
+  StreamInfoDashboard:
+    updateInfo: "Updated Twitch Info"
+    failedUpdate: "Failed Update"
+    twitchInfo: "Twitch Info"
+    addTag: "Add Tag"

@@ -9,6 +9,7 @@ import {
 	onLoad,
 	onUnload,
 } from "castmate-core"
+import { t, registerPluginTranslations, generatedTranslationsFromFiles } from "castmate-translation"
 import { TwitchAccount } from "./twitch-auth"
 import { setupChat } from "./chat"
 import { setupSubscriptions } from "./subscriptions"
@@ -30,11 +31,24 @@ import { setupCategoryCache } from "./category-cache"
 import { setupInfoManager } from "./info-manager"
 import { setupWalkOns } from "./walk-on"
 
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("twitch", generatedTranslationsFromFiles(translationFiles))
+
 export default definePlugin(
 	{
 		id: "twitch",
-		name: "Twitch",
-		description: "Provides Twitch triggers for chat, raids, and more",
+		name: t("plugins.twitch.plugin.name"),
+		description: t("plugins.twitch.plugin.description"),
 		icon: "mdi mdi-twitch",
 		color: "#9146FF", //"#5E5172",
 	},
@@ -51,7 +65,7 @@ export default definePlugin(
 
 		defineResourceSetting(TwitchAccount, "Twitch Accounts")
 
-		onUnload(() => {})
+		onUnload(() => { })
 
 		onChannelAuth((channel) => {
 			//Pass the auth token to the pubsub so it can auth with the CastMate servers
@@ -99,8 +113,8 @@ export default definePlugin(
 const twitchSatellite = defineSatellitePlugin(
 	{
 		id: "twitch",
-		name: "Twitch",
-		description: "Provides Twitch triggers for chat, raids, and more",
+		name: t("plugins.twitch.plugin.name"),
+		description: t("plugins.twitch.plugin.description"),
 		icon: "mdi mdi-twitch",
 		color: "#9146FF", //"#5E5172",
 	},

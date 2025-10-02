@@ -10,7 +10,7 @@
 					:local-path="`[${i}]`"
 				/>
 			</template>
-			<p-button severity="secondary" size="small" v-if="canAddTag" @click="addTag"> Add Tag</p-button>
+			<p-button severity="secondary" size="small" v-if="canAddTag" @click="addTag"> {{ tSync("plugins.twitch.renderer.StreamInfoDashboard.addTag") }}</p-button>
 		</div>
 		<data-input-base-menu
 			v-model="model"
@@ -32,6 +32,7 @@ import {
 	TemplateToggle,
 	useDataBinding,
 	useCommitUndo,
+	tSync,
 } from "castmate-ui-core"
 import { useModel, ref, computed } from "vue"
 

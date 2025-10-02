@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { DataInput, ResourceProxyFactory } from "castmate-ui-core"
+import { DataInput, ResourceProxyFactory, tSync } from "castmate-ui-core"
 import { TwitchViewerGroupRule } from "castmate-plugin-twitch-shared"
 import { computed, useModel } from "vue"
 import { Schema } from "castmate-schema"
@@ -38,7 +38,7 @@ const groupSchema: Schema = {
 	type: ResourceProxyFactory,
 	resourceType: "CustomTwitchViewerGroup",
 	required: true,
-	name: "Group",
+	name: tSync("plugins.twitch.common.viewerGroup"),
 }
 
 const groupRef = computed({

@@ -1,12 +1,13 @@
 import { defineAction, defineState, defineTrigger } from "castmate-core"
 import { onChannelAuth } from "./api-harness"
 import { Duration } from "castmate-schema"
+import { t } from "castmate-translation"
 
 export function setupPredictions() {
 	defineAction({
 		id: "createPrediction",
-		name: "Create Prediction",
-		description: "Creates a twitch prediction.",
+		name: t("plugins.twitch.actions.createPrediction.name"),
+		description: t("plugins.twitch.actions.createPrediction.description"),
 		icon: "mdi mdi-crystal-ball",
 		duration: {
 			dragType: "length",
@@ -17,32 +18,32 @@ export function setupPredictions() {
 		config: {
 			type: Object,
 			properties: {
-				title: { type: String, name: "Title", template: true, required: true, default: "" },
-				duration: { type: Duration, name: "Duration", template: true, required: true, default: 30 },
+				title: { type: String, name: t("plugins.twitch.common.title"), template: true, required: true, default: "" },
+				duration: { type: Duration, name: t("plugins.twitch.common.duration"), template: true, required: true, default: 30 },
 				outcomes: {
 					type: Array,
-					name: "Outcomes",
+					name: t("plugins.twitch.common.choices"),
 					items: {
 						type: String,
-						name: "Outcome",
+						name: t("plugins.twitch.common.choice"),
 						template: true,
 					},
 					required: true,
 				},
 			},
 		},
-		async invoke(config, contextData, abortSignal) {},
+		async invoke(config, contextData, abortSignal) { },
 	})
 
 	const predictionStarted = defineTrigger({
 		id: "predictionStarted",
-		name: "Prediction Started",
-		description: "Fires when a prediction is first opened to viewers.",
+		name: t("plugins.twitch.triggers.predictionStarted.name"),
+		description: t("plugins.twitch.triggers.predictionStarted.description"),
 		icon: "mdi mdi-crystal-ball",
 		config: {
 			type: Object,
 			properties: {
-				title: { type: String, required: true, name: "title", default: "" },
+				title: { type: String, required: true, name: t("plugins.twitch.common.title"), default: "" },
 			},
 		},
 		context: {
@@ -74,13 +75,13 @@ export function setupPredictions() {
 
 	const predictionLocked = defineTrigger({
 		id: "predictionLocked",
-		name: "Prediction Locked",
-		description: "Fires when a prediction is locked and no more points can be added.",
+		name: t("plugins.twitch.triggers.predictionLocked.name"),
+		description: t("plugins.twitch.triggers.predictionLocked.description"),
 		icon: "mdi mdi-crystal-ball",
 		config: {
 			type: Object,
 			properties: {
-				title: { type: String, required: true, name: "title", default: "" },
+				title: { type: String, required: true, name: t("plugins.twitch.common.title"), default: "" },
 			},
 		},
 		context: {
@@ -112,13 +113,13 @@ export function setupPredictions() {
 
 	const predictionSettled = defineTrigger({
 		id: "predictionSettled",
-		name: "Prediction Settled",
-		description: "Fires when the streamer picks the winning outcome of the prediction.",
+		name: t("plugins.twitch.triggers.predictionSettled.name"),
+		description: t("plugins.twitch.triggers.predictionSettled.description"),
 		icon: "mdi mdi-crystal-ball",
 		config: {
 			type: Object,
 			properties: {
-				title: { type: String, required: true, name: "title", default: "" },
+				title: { type: String, required: true, name: t("plugins.twitch.common.title"), default: "" },
 			},
 		},
 		context: {
@@ -150,26 +151,26 @@ export function setupPredictions() {
 
 	const predictionTitle = defineState("predictionTitle", {
 		type: String,
-		name: "Prediction Title",
+		name: t("plugins.twitch.states.predictionTitle"),
 	})
 
 	const predictionId = defineState("predictionId", {
 		type: String,
-		name: "Prediction ID",
+		name: t("plugins.twitch.states.predictionId"),
 	})
 
 	const predictionExists = defineState("predictionExists", {
 		type: Boolean,
 		required: true,
 		default: false,
-		name: "Prediction Exists",
+		name: t("plugins.twitch.states.predictionExists"),
 	})
 
 	const predictionTotal = defineState("predictionTotal", {
 		type: Number,
 		required: true,
 		default: 0,
-		name: "Prediction Point Total",
+		name: t("plugins.twitch.states.predictionTotal"),
 	})
 
 	onChannelAuth((channel, service) => {

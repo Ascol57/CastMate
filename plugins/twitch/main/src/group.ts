@@ -24,6 +24,7 @@ import { nanoid } from "nanoid/non-secure"
 import { ViewerCache } from "./viewer-cache"
 import { TwitchAccount } from "./twitch-auth"
 import { evaluateHalfBooleanExpression } from "castmate-core/src/util/boolean-helpers"
+import { t } from "castmate-translation"
 
 const logger = usePluginLogger("twitch")
 
@@ -104,13 +105,14 @@ export function setupViewerGroups() {
 
 	defineAction({
 		id: "addViewerToGroup",
-		name: "Add Viewer to Group",
+		name: t("plugins.twitch.actions.addViewerToGroup.name"),
+		description: t("plugins.twitch.actions.addViewerToGroup.description"),
 		icon: "mdi mdi-account-group",
 		config: {
 			type: Object,
 			properties: {
-				group: { type: CustomTwitchViewerGroup, name: "Group", required: true },
-				viewer: { type: TwitchViewer, name: "Viewer", required: true, template: true },
+				group: { type: CustomTwitchViewerGroup, name: t("plugins.twitch.common.viewerGroup"), required: true },
+				viewer: { type: TwitchViewer, name: t("plugins.twitch.common.viewer"), required: true, template: true },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {
@@ -120,13 +122,14 @@ export function setupViewerGroups() {
 
 	defineAction({
 		id: "removeViewerFromGroup",
-		name: "Remove Viewer from Group",
+		name: t("plugins.twitch.actions.removeViewerFromGroup.name"),
+		description: t("plugins.twitch.actions.removeViewerFromGroup.description"),
 		icon: "mdi mdi-account-group",
 		config: {
 			type: Object,
 			properties: {
-				group: { type: CustomTwitchViewerGroup, name: "Group", required: true },
-				viewer: { type: TwitchViewer, name: "Viewer", required: true, template: true },
+				group: { type: CustomTwitchViewerGroup, name: t("plugins.twitch.common.viewerGroup"), required: true },
+				viewer: { type: TwitchViewer, name: t("plugins.twitch.common.viewer"), required: true, template: true },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {
@@ -136,8 +139,8 @@ export function setupViewerGroups() {
 
 	defineAction({
 		id: "clearViewerGroup",
-		name: "Clear Viewer Group",
-		description: "Becareful you can't undo this!!",
+		name: t("plugins.twitch.actions.clearViewerGroup.name"),
+		description: t("plugins.twitch.actions.clearViewerGroup.description"),
 		icon: "mdi mdi-account-group",
 		config: {
 			type: Object,

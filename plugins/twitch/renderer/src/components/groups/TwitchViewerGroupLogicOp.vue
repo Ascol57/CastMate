@@ -31,11 +31,11 @@
 			/>
 		</div>
 		<div class="flex flex-row gap-1 py-1 px-1">
-			<p-button text size="small" @click="addGroup"><i class="mdi mdi-plus" />Group</p-button>
-			<p-button text size="small" @click="addInlineGroup"><i class="mdi mdi-plus" />Viewers</p-button>
-			<p-button text size="small" @click="addProperties"><i class="mdi mdi-plus" /> Properties</p-button>
-			<p-button text size="small" @click="addCategory"><i class="mdi mdi-plus" /> Category</p-button>
-			<p-button text size="small" @click="addCondition"><i class="mdi mdi-plus" /> Condition</p-button>
+			<p-button text size="small" @click="addGroup"><i class="mdi mdi-plus" />{{ tSync("plugins.twitch.common.viewerGroup") }}</p-button>
+			<p-button text size="small" @click="addInlineGroup"><i class="mdi mdi-plus" />{{ tSync("plugins.twitch.common.viewers") }}</p-button>
+			<p-button text size="small" @click="addProperties"><i class="mdi mdi-plus" />{{ tSync("plugins.twitch.common.properties") }}</p-button>
+			<p-button text size="small" @click="addCategory"><i class="mdi mdi-plus" />{{ tSync("plugins.twitch.common.category") }}</p-button>
+			<p-button text size="small" @click="addCondition"><i class="mdi mdi-plus" />{{ tSync("plugins.twitch.common.condition") }}</p-button>
 		</div>
 	</div>
 </template>
@@ -53,6 +53,7 @@ import TwitchViewerGroupRuleNegator from "./TwitchViewerGroupRuleNegator.vue"
 
 import PSelect from "primevue/dropdown"
 import PButton from "primevue/button"
+import { tSync } from "castmate-ui-core"
 
 const props = defineProps<{
 	modelValue: TwitchViewerGroupAnd | TwitchViewerGroupOr

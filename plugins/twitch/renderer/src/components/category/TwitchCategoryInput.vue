@@ -28,7 +28,7 @@
 					@select="onSelect"
 				>
 					<template #empty>
-						<div class="text-center p-text-secondary">Type Twitch Category Name</div>
+						<div class="text-center p-text-secondary">{{ tSync("plugins.twitch.renderer.twitchCategoryInput.text") }}</div>
 					</template>
 
 					<template #item="{ item, focused, highlighted, onClick }">
@@ -64,6 +64,7 @@ import {
 	useDataBinding,
 	useUndoCommitter,
 	useCommitUndo,
+	tSync
 } from "castmate-ui-core"
 import { computed, onMounted, ref, useModel, watch, nextTick } from "vue"
 import { useCategoryStore } from "../../util/category"

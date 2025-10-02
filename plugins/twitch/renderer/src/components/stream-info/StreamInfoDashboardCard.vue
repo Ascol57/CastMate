@@ -3,13 +3,13 @@
 		<data-input v-model="editValue" :schema="StreamInfoSchema" local-path="streamInfo" />
 		<div class="flex flex-row">
 			<div class="flex-grow-1"></div>
-			<p-button @click="save" :loading="updatingInfo" size="small" class="mt-1">Save</p-button>
+			<p-button @click="save" :loading="updatingInfo" size="small" class="mt-1">{{tSync("system.save")}}</p-button>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { MainPageCard, DataInput } from "castmate-ui-core"
+import { MainPageCard, DataInput, tSync } from "castmate-ui-core"
 import { useCategoryStore } from "../../util/category"
 import PButton from "primevue/button"
 import { onMounted, ref, watch, watchEffect } from "vue"
@@ -32,9 +32,9 @@ async function save() {
 	updatingInfo.value = true
 	try {
 		await categoryStore.setStreamInfo(editValue.value)
-		toast.add({ severity: "success", summary: "Updated Twitch Info", life: 1000 })
+		toast.add({ severity: "success", summary: tSync("plugins.twitch.remember.StreamInfoDashboard.updateInfo"), life: 1000 })
 	} catch (err) {
-		toast.add({ severity: "error", summary: "Failed Update", life: 5000 })
+		toast.add({ severity: "error", summary: tSync("plugins.twitch.remember.StreamInfoDashboard.failedUpdate"), life: 5000 })
 	} finally {
 		updatingInfo.value = false
 	}

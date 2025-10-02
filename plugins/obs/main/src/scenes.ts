@@ -19,7 +19,7 @@ export function setupScenes(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				scene: {
 					type: String,
-					name: t("plugins.obs.actions.scene.config.scene"),
+					name: t("plugins.obs.common.scene"),
 					required: true,
 					//template: true,
 					async enum(context: { obs: OBSConnection }) {

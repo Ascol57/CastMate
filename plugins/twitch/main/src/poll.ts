@@ -1,24 +1,26 @@
 import { defineAction, defineState, defineTrigger } from "castmate-core"
+import { t } from "castmate-translation"
 import { TwitchAPIService, onChannelAuth } from "./api-harness"
 import { TwitchAccount } from "./twitch-auth"
 import { abortableSleep, setAbortableTimeout } from "castmate-core/src/util/abort-utils"
 import { Duration } from "castmate-schema"
 import _maxBy from "lodash/maxBy"
+
 export function setupPolls() {
 	const pollId = defineState("pollId", {
 		type: String,
-		name: "Poll Id",
+		name: t("plugins.twitch.states.pollId"),
 	})
 
 	const pollTitle = defineState("pollTitle", {
 		type: String,
-		name: "Poll Title",
+		name: t("plugins.twitch.states.pollTitle"),
 	})
 
 	defineAction({
 		id: "createPoll",
-		name: "Create Poll",
-		description: "Create's a twitch poll",
+		name: t("plugins.twitch.actions.createPoll.name"),
+		description: t("plugins.twitch.actions.createPoll.description"),
 		icon: "mdi mdi-poll",
 		duration: {
 			dragType: "length",
@@ -29,12 +31,12 @@ export function setupPolls() {
 		config: {
 			type: Object,
 			properties: {
-				title: { type: String, name: "Title", template: true, required: true, default: "" },
-				duration: { type: Duration, name: "Duration", template: true, required: true, default: 30 },
+				title: { type: String, name: t("plugins.twitch.common.title"), template: true, required: true, default: "" },
+				duration: { type: Duration, name: t("plugins.twitch.common.duration"), template: true, required: true, default: 30 },
 				choices: {
 					type: Array,
-					name: "Outcomes",
-					items: { type: String, name: "Outcome", required: true },
+					name: t("plugins.twitch.common.choices"),
+					items: { type: String, name: t("plugins.twitch.common.choice"), required: true },
 					required: true,
 					default: [],
 				},
@@ -55,8 +57,8 @@ export function setupPolls() {
 
 	const pollStarted = defineTrigger({
 		id: "pollStarted",
-		name: "Poll Started",
-		description: "Fires when a poll starts",
+		name: t("plugins.twitch.triggers.pollStarted.name"),
+		description: t("plugins.twitch.triggers.pollStarted.description"),
 		icon: "mdi mdi-poll",
 		config: {
 			type: Object,
@@ -93,8 +95,8 @@ export function setupPolls() {
 
 	const pollEnded = defineTrigger({
 		id: "pollEnded",
-		name: "Poll Ended",
-		description: "Fires when a poll closes.",
+		name: t("plugins.twitch.triggers.pollEnded.name"),
+		description: t("plugins.twitch.triggers.pollEnded.description"),
 		icon: "mdi mdi-poll",
 		config: {
 			type: Object,
@@ -175,6 +177,6 @@ export function setupPolls() {
 			})
 		})
 
-		service.eventsub.onChannelPollProgress(account.twitchId, (event) => {})
+		service.eventsub.onChannelPollProgress(account.twitchId, (event) => { })
 	})
 }

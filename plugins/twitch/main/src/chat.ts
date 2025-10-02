@@ -1,5 +1,6 @@
 import { ChatClient, ChatMessage, parseEmotePositions } from "@twurple/chat"
 import { defineTrigger, defineAction, defineTransformTrigger, usePluginLogger, onLoad, EmoteCache } from "castmate-core"
+import { t } from "castmate-translation"
 import { TwitchAccount } from "./twitch-auth"
 import { TwitchAPIService, onBotAuth, onChannelAuth } from "./api-harness"
 import {
@@ -65,13 +66,14 @@ export function setupChat() {
 
 	defineAction({
 		id: "chat",
-		name: "Chat Message",
+		name: t("plugins.twitch.actions.chat.name"),
+		description: t("plugins.twitch.actions.chat.description"),
 		icon: "mdi mdi-chat",
 		version: "0.0.1",
 		config: {
 			type: Object,
 			properties: {
-				message: { type: String, template: true, required: true, default: "", name: "Message" },
+				message: { type: String, template: true, required: true, default: "", name: t("plugins.twitch.common.message") },
 			},
 		},
 		async invoke(config, context, abortSignal) {
@@ -86,7 +88,8 @@ export function setupChat() {
 
 	const chat = defineTransformTrigger({
 		id: "chat",
-		name: "Chat Command",
+		name: t("plugins.twitch.triggers.chat.name"),
+		description: t("plugins.twitch.triggers.chat.description"),
 		icon: "mdi mdi-chat",
 		version: "0.0.1",
 		config: {
@@ -94,18 +97,18 @@ export function setupChat() {
 			properties: {
 				command: {
 					type: Command,
-					name: "Command",
+					name: t("plugins.twitch.common.command"),
 					required: true,
 				},
-				cooldown: { type: Duration, name: "Cooldown" },
-				group: { type: TwitchViewerGroup, name: "Viewer Group", required: true, default: {} },
+				cooldown: { type: Duration, name: t("plugins.twitch.common.cooldown") },
+				group: { type: TwitchViewerGroup, name: t("plugins.twitch.common.viewerGroup"), required: true, default: {} },
 			},
 		},
 		invokeContext: {
 			type: Object,
 			properties: {
-				viewer: { type: TwitchViewer, required: true, default: "27082158", name: "Viewer" },
-				message: { type: String, required: true, default: "Thanks for using CastMate!" },
+				viewer: { type: TwitchViewer, required: true, default: "27082158", name: t("plugins.twitch.common.viewer") },
+				message: { type: String, required: true, default: t("plugins.twitch.common.messageDefault") },
 				messageId: { type: String, required: true, default: "1234", view: false },
 			},
 		},
@@ -114,7 +117,7 @@ export function setupChat() {
 				type: Object,
 				properties: {
 					viewer: { type: TwitchViewer, required: true, default: "27082158" },
-					message: { type: String, required: true, default: "Thanks for using CastMate!" },
+					message: { type: String, required: true, default: t("plugins.twitch.common.messageDefault") },
 					messageId: { type: String, required: true, default: "1234", view: false },
 					...getCommandDataSchema(config.command).properties,
 				},
@@ -152,7 +155,8 @@ export function setupChat() {
 
 	const firstTimeChat = defineTrigger({
 		id: "firstTimeChat",
-		name: "First Time Chatter",
+		name: t("plugins.twitch.triggers.firstTimeChat.name"),
+		description: t("plugins.twitch.triggers.firstTimeChat.description"),
 		icon: "mdi mdi-medal",
 		version: "0.0.1",
 		config: {
@@ -162,8 +166,8 @@ export function setupChat() {
 		context: {
 			type: Object,
 			properties: {
-				viewer: { type: TwitchViewer, required: true, default: "27082158", name: "Viewer" },
-				message: { type: String, required: true, default: "Thanks for using CastMate!" },
+				viewer: { type: TwitchViewer, required: true, default: "27082158", name: t("plugins.twitch.common.viewer") },
+				message: { type: String, required: true, default: t("plugins.twitch.common.messageDefault") },
 				messageId: { type: String, required: true, default: "1234", view: false },
 			},
 		},
@@ -174,13 +178,13 @@ export function setupChat() {
 
 	defineAction({
 		id: "shoutout",
-		name: "Shoutout",
-		description: "Sends a shout out",
+		name: t("plugins.twitch.actions.shoutout.name"),
+		description: t("plugins.twitch.actions.shoutout.description"),
 		icon: "mdi mdi-bullhorn",
 		config: {
 			type: Object,
 			properties: {
-				streamer: { type: TwitchViewer, name: "Streamer", required: true, template: true },
+				streamer: { type: TwitchViewer, name: t("plugins.twitch.common.streamer"), required: true, template: true },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {
@@ -191,14 +195,14 @@ export function setupChat() {
 
 	const shoutoutSent = defineTrigger({
 		id: "shoutoutSent",
-		name: "Shout Out Sent",
-		description: "Fires when /shoutout is used",
+		name: t("plugins.twitch.triggers.shoutoutSent.name"),
+		description: t("plugins.twitch.triggers.shoutoutSent.description"),
 		icon: "mdi mdi-chat",
 		version: "0.0.1",
 		config: {
 			type: Object,
 			properties: {
-				group: { type: TwitchViewerGroup, name: "Viewer Group", required: true, default: {} },
+				group: { type: TwitchViewerGroup, name: t("plugins.twitch.common.viewerGroup"), required: true, default: {} },
 			},
 		},
 		context: {
@@ -218,16 +222,16 @@ export function setupChat() {
 
 	defineAction({
 		id: "annoucement",
-		name: "Make Announcement",
-		description: "Sends an announcement in chat",
+		name: t("plugins.twitch.actions.announcement.name"),
+		description: t("plugins.twitch.actions.announcement.description"),
 		icon: "mdi mdi-chat-alert",
 		config: {
 			type: Object,
 			properties: {
-				message: { type: String, name: "Message", required: true, template: true, default: "" },
+				message: { type: String, name: t("plugins.twitch.common.message"), required: true, template: true, default: "" },
 				color: {
 					type: String,
-					name: "Color",
+					name: t("plugins.twitch.common.color"),
 					required: true,
 					default: "primary",
 					enum: ["primary", "blue", "green", "orange", "purple"],
@@ -246,15 +250,15 @@ export function setupChat() {
 
 	const bits = defineTrigger({
 		id: "bits",
-		name: "Bits Cheered",
-		description: "Fires a user cheers with bits",
+		name: t("plugins.twitch.triggers.bits.name"),
+		description: t("plugins.twitch.triggers.bits.description"),
 		icon: "twi twi-bits",
 		version: "0.0.1",
 		config: {
 			type: Object,
 			properties: {
-				bits: { type: Range, name: "Bits Cheered", required: true, default: {} },
-				group: { type: TwitchViewerGroup, name: "Viewer Group", required: true, default: {}, anonymous: true },
+				bits: { type: Range, name: t("plugins.twitch.common.bits"), required: true, default: {} },
+				group: { type: TwitchViewerGroup, name: t("plugins.twitch.common.viewerGroup"), required: true, default: {}, anonymous: true },
 			},
 		},
 		context: {
@@ -262,7 +266,7 @@ export function setupChat() {
 			properties: {
 				bits: { type: Number, required: true, default: 100 },
 				viewer: { type: TwitchViewer, required: true, default: "27082158" },
-				message: { type: String, required: true, default: "Thanks for using CastMate" },
+				message: { type: String, required: true, default: t("plugins.twitch.common.messageDefault") },
 			},
 		},
 		async handle(config, context) {

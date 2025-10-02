@@ -9,6 +9,7 @@ import {
 	useProjectStore,
 	useResourceStore,
 	useStreamPlanStore,
+	tSync
 } from "castmate-ui-core"
 import {
 	TwitchViewer,

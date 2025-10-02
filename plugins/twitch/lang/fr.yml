@@ -1,0 +1,271 @@
+plugin:
+  name: "Twitch"
+  description: "Intégrez les streams et les viewers Twitch dans votre configuration CastMate."
+
+common:
+  duration: "Durée"
+  advance: "Avance"
+  reward: "Récompense"
+  viewerGroup: "Groupe de Viewers"
+  message: "Message"
+  command: "Commande"
+  cooldown: "Temps de recharge"
+  viewer: "Viewer"
+  messageDefault: "Merci d'utiliser CastMate !"
+  streamer: "Streamer"
+  color: "Couleur"
+  bits: "Bits"
+  level: "Niveau"
+  reason: "Raison"
+  title: "Titre"
+  choices: "Résultats"
+  choice: "Résultat"
+  raiders: "Nombre de Raiders"
+  properties: "Propriétés"
+  category: "Catégorie"
+  condition: "Condition"
+  followers: "Followers"
+  vips: "VIPs"
+  subscribed: "Abonnés"
+  mod: "Modérateurs"
+  broadcaster: "Diffuseur"
+  anonymous: "Anonyme"
+  channel: "Chaîne"
+  offline: "Hors ligne"
+  live: "En direct"
+  signInto: "Se connecter à"
+
+actions:
+  runAd:
+    name: "Diffuser une Pub"
+    description: "Diffuse une publicité. Vous devriez probablement utiliser le gestionnaire de pub à la place."
+  
+  snoozeAds:
+    name: "Reporter les Pubs"
+    description: "Reporte la prochaine pub si il vous reste des reports disponibles."
+  
+  chat:
+    name: "Envoyer un Message Chat"
+    description: "Envoie un message dans le chat de la chaîne."
+  
+  shoutout:
+    name: "Faire un Shoutout"
+    description: "Fait un shoutout à un viewer dans le chat."
+  
+  announcement:
+    name: "Faire une Annonce"
+    description: "Fait une annonce dans le chat."
+  
+  createClip:
+    name: "Créer un Clip"
+    description: "Crée un clip"
+  
+  streamMarker:
+    name: "Placer un Marqueur de Stream"
+    description: "Place un marqueur dans le stream pour utilisation dans l'éditeur vidéo"
+    config:
+      markerName: "Nom du Marqueur"
+  
+  addViewerToGroup:
+    name: "Ajouter un Viewer au Groupe"
+    description: "Ajoute un viewer à un groupe de viewers."
+
+  removeViewerFromGroup:
+    name: "Retirer un Viewer du Groupe"
+    description: "Retire un viewer d'un groupe de viewers."
+  
+  clearViewerGroup:
+    name: "Vider le Groupe de Viewers"
+    description: "Attention, vous ne pouvez pas annuler cette action !!"
+  
+  timeout:
+    name: "Timeout un Viewer"
+    description: "Met un viewer en timeout du chat."
+
+  ban:
+    name: "Bannir un Viewer"
+    description: "Bannit un viewer du chat."
+  
+  unban:
+    name: "Débannir un Viewer"
+    description: "Débannit un viewer du chat."
+  
+  createPoll:
+    name: "Créer un Sondage"
+    description: "Crée un sondage dans la chaîne."
+  
+  createPrediction:
+    name: "Créer une Prédiction"
+    description: "Crée une prédiction dans la chaîne."
+
+triggers:
+  adStarted:
+    name: "Pub Commencée"
+    description: "Une pause pub a commencé"
+  
+  adEnded:
+    name: "Pub Terminée"
+    description: "Une pause pub s'est terminée"
+
+  adSchedule:
+    name: "Programmation Pub"
+    description: "Se déclenche en avance d'une pub programmée."
+
+  redemption:
+    name: "Récompense Points de Chaîne"
+    description: "Un viewer a échangé une récompense de points de chaîne."
+  
+  chat:
+    name: "Message Chat"
+    description: "Un message a été envoyé dans le chat."
+
+  firstTimeChat:
+    name: "Premier Message Chat"
+    description: "Un viewer a envoyé son premier message dans le chat."
+
+  shoutoutSent:
+    name: "Shoutout Envoyé"
+    description: "Se déclenche quand /shoutout est utilisé"
+
+  bits:
+    name: "Bits Donnés"
+    description: "Se déclenche quand un utilisateur donne des bits."
+  
+  follow:
+    name: "Nouveau Follow"
+    description: "Se déclenche quand un utilisateur suit la chaîne."
+
+  hypeTrainStarted:
+    name: "Hype Train Commencé"
+    description: "Se déclenche quand un hype train démarre."
+  
+  hypeTrainLevelUp:
+    name: "Hype Train Monte de Niveau"
+    description: "Se déclenche quand un hype train monte de niveau."
+  
+  hypeTrainEnded:
+    name: "Hype Train Terminé"
+    description: "Se déclenche quand un hype train se termine."
+  
+  ban:
+    name: "Viewer Banni"
+    description: "Se déclenche quand un viewer est banni du chat."
+
+  timeout:
+    name: "Viewer en Timeout"
+    description: "Se déclenche quand un viewer est mis en timeout du chat."
+
+  pollStarted:
+    name: "Sondage Commencé"
+    description: "Se déclenche quand un sondage est lancé."
+  
+  pollEnded:
+    name: "Sondage Terminé"
+    description: "Se déclenche quand un sondage se termine."
+  
+  predictionStarted:
+    name: "Prédiction Commencée"
+    description: "Se déclenche quand une prédiction est lancée."
+  
+  predictionLocked:
+    name: "Prédiction Verrouillée"
+    description: "Se déclenche quand une prédiction est verrouillée."
+  
+  predictionSettled:
+    name: "Prédiction Réglée"
+    description: "Se déclenche quand une prédiction est réglée."
+  
+  raid:
+    name: "Raid"
+    description: "Se déclenche quand la chaîne est raidée."
+
+  raidOut:
+    name: "Raid Sortant"
+    description: "Se déclenche quand le streamer raide une autre chaîne."
+
+  subscription:
+    name: "Nouvel Abonnement"
+    description: "Se déclenche quand un viewer s'abonne à la chaîne."
+  
+  giftedSub:
+    name: "Abonnement Offert"
+    description: "Se déclenche quand un viewer offre un abonnement à un autre viewer."
+  
+  walkon:
+    name: "Entrée en Scène"
+    description: "Se déclenche quand un viewer entre sur le stream."
+
+subscription:
+  tier1: "Tier 1"
+  tier2: "Tier 2"
+  tier3: "Tier 3"
+  totalMonths: "Mois"
+  streakMonths: "Mois Consécutifs"
+  subs: "Abonnements Offerts"
+
+states:
+  adSnoozes: "Reports de Pub"
+  inAdBreak: "En Pause Pub"
+  adSnoozeRefresh: "Timer de Rechargement Report Pub"
+  prerollFreeTime: "Timer Temps Sans Preroll"
+  nextAdDuration: "Durée Prochaine Pub"
+  nextAdTimer: "Timer Prochaine Pub"
+  adTimer: "Timer Pub"
+
+  followers: "Followers"
+  lastFollower: "Dernier Follower"
+
+  hypeTrainLevel: "Niveau Hype Train"
+  hypeTrainProgress: "Progression Points Hype Train"
+  hypeTrainGoal: "Objectif Points Hype Train"
+  hypeTrainTotal: "Total Points Hype Train"
+  hypeTrainExists: "Hype Train Existe"
+
+  pollId: "ID Sondage Actuel"
+  pollTitle: "Titre Sondage Actuel"
+
+  predictionTitle: "Titre Prédiction"
+  predictionId: "ID Prédiction"
+  predictionExists: "Prédiction Existe"
+  predictionTotal: "Total Points Prédiction"
+
+  subscribers: "Abonnés"
+  subscriberPoints: "Points Abonnés"
+  lastSubscriber: "Dernier Abonné"
+
+renderer:
+  twitchViewerGroupEdit:
+    text: "Le trigger se déclenche pour Tout le Monde"
+    button: "Personnaliser"
+  
+  twitchAccountSettings:
+    channelAccount: "Compte de Chaîne"
+    channelAccountDescription: "Connectez-vous à votre compte de chaîne principal ici."
+    botAccount: "Compte Bot"
+    botAccountDescription: "Ce compte est utilisé pour envoyer les messages du chat."
+
+  twitchCategoryInput:
+    text: "Tapez le Nom de la Catégorie Twitch"
+  
+  channelPointGroupHeader:
+    castmateRewards: "Récompenses CastMate"
+    otherRewards: "Autres Récompenses"
+  
+  channelPointsEditPage:
+    button: "Créer une Récompense CastMate"
+    title: "Autres Récompenses de Points de Chaîne"
+    description: "Ces récompenses ne peuvent pas être activées et désactivées avec les profils CastMate. Mais vous pouvez toujours les utiliser dans les triggers."
+    linkDashboard: "Ouvrir le Tableau de Bord"
+  
+  groupPage:
+    addMember: "Ajouter un Membre"
+  
+  mainPage:
+    channelAccountDescription: "CastMate a besoin de votre compte Twitch pour fonctionner"
+    botAccountDescription: "CastMate a besoin d'un compte bot pour fonctionner. Vous pouvez utiliser un compte bot séparé ou simplement vous reconnecter avec votre chaîne."
+  
+  StreamInfoDashboard:
+    updateInfo: "Mises à Jour des Infos Twitch"
+    failedUpdate: "Échec de la Mise à Jour"
+    twitchInfo: "Infos Twitch"
+    addTag: "Ajouter un Tag"

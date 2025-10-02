@@ -2,6 +2,7 @@ import { ApiClient } from "@twurple/api"
 import { EventSubWsListener } from "@twurple/eventsub-ws"
 import { TwitchAccount } from "./twitch-auth"
 import { defineState, defineTrigger, usePluginLogger } from "castmate-core"
+import { t } from "castmate-translation"
 import { Range } from "castmate-schema"
 import { TwitchAPIService, onBotAuth, onChannelAuth } from "./api-harness"
 import { ViewerCache } from "./viewer-cache"
@@ -13,18 +14,19 @@ export function setupSubscriptions() {
 
 	const subscription = defineTrigger({
 		id: "subscription",
-		name: "Subscriber",
+		name: t("plugins.twitch.triggers.subscription.name"),
+		description: t("plugins.twitch.triggers.subscription.description"),
 		icon: "mdi mdi-star-outline",
 		version: "0.0.1",
 		config: {
 			type: Object,
 			properties: {
-				tier1: { type: Boolean, name: "Tier 1", required: true, default: true },
-				tier2: { type: Boolean, name: "Tier 2", required: true, default: true },
-				tier3: { type: Boolean, name: "Tier 3", required: true, default: true },
-				totalMonths: { type: Range, name: "Months", required: true, default: { min: 1 } },
-				streakMonths: { type: Range, name: "Streak Months", required: true, default: { min: 1 } },
-				group: { type: TwitchViewerGroup, name: "Viewer Group", required: true, default: {} },
+				tier1: { type: Boolean, name: t("plugins.twitch.subscription.tier1"), required: true, default: true },
+				tier2: { type: Boolean, name: t("plugins.twitch.subscription.tier2"), required: true, default: true },
+				tier3: { type: Boolean, name: t("plugins.twitch.subscription.tier3"), required: true, default: true },
+				totalMonths: { type: Range, name: t("plugins.twitch.subscription.totalMonths"), required: true, default: { min: 1 } },
+				streakMonths: { type: Range, name: t("plugins.twitch.subscription.streakMonths"), required: true, default: { min: 1 } },
+				group: { type: TwitchViewerGroup, name: t("plugins.twitch.common.viewerGroup"), required: true, default: {} },
 			},
 		},
 		context: {
@@ -56,18 +58,18 @@ export function setupSubscriptions() {
 
 	const giftSub = defineTrigger({
 		id: "giftedSub",
-		name: "Gifted Subscription",
-		description: "Fires for when a user gifts subs. Based on the number of subs gifted..",
+		name: t("plugins.twitch.triggers.giftedSub.name"),
+		description: t("plugins.twitch.triggers.giftedSub.description"),
 		icon: "mdi mdi-star-outline",
 		version: "0.0.1",
 		config: {
 			type: Object,
 			properties: {
-				tier1: { type: Boolean, name: "Tier 1", required: true, default: true },
-				tier2: { type: Boolean, name: "Tier 2", required: true, default: true },
-				tier3: { type: Boolean, name: "Tier 3", required: true, default: true },
-				subs: { type: Range, name: "Subs Gifted", required: true, default: { min: 1 } },
-				group: { type: TwitchViewerGroup, name: "Viewer Group", required: true, anonymous: true },
+				tier1: { type: Boolean, name: t("plugins.twitch.subscription.tier1"), required: true, default: true },
+				tier2: { type: Boolean, name: t("plugins.twitch.subscription.tier2"), required: true, default: true },
+				tier3: { type: Boolean, name: t("plugins.twitch.subscription.tier3"), required: true, default: true },
+				subs: { type: Range, name: t("plugins.twitch.subscription.subs"), required: true, default: { min: 1 } },
+				group: { type: TwitchViewerGroup, name: t("plugins.twitch.common.viewerGroup"), required: true, anonymous: true },
 			},
 		},
 		context: {
@@ -97,21 +99,21 @@ export function setupSubscriptions() {
 		type: Number,
 		required: true,
 		default: 0,
-		name: "Subscribers",
+		name: t("plugins.twitch.states.subscribers"),
 	})
 
 	const subscriberPoints = defineState("subscriberPoints", {
 		type: Number,
 		required: true,
 		default: 0,
-		name: "Subscriber Points",
+		name: t("plugins.twitch.states.subscriberPoints"),
 	})
 
 	const lastSubscriber = defineState(
 		"lastSubscriber",
 		{
 			type: TwitchViewer,
-			name: "Last Subscriber",
+			name: t("plugins.twitch.states.lastSubscriber"),
 		},
 		true
 	)
@@ -123,7 +125,7 @@ export function setupSubscriptions() {
 			)
 			subscribers.value = subs.total
 			subscriberPoints.value = subs.points
-		} catch {}
+		} catch { }
 	}
 
 	onChannelAuth(async (channel, service) => {

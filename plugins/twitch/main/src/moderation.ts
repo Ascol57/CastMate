@@ -1,4 +1,5 @@
 import { defineAction, defineTrigger } from "castmate-core"
+import { t } from "castmate-translation"
 import { onChannelAuth } from "./api-harness"
 import { TwitchAccount } from "./twitch-auth"
 import { ViewerCache } from "./viewer-cache"
@@ -9,14 +10,15 @@ import { inTwitchViewerGroup } from "./group"
 export function setupModeration() {
 	defineAction({
 		id: "timeout",
-		name: "Timeout Viewer",
+		name: t("plugins.twitch.actions.timeout.name"),
+		description: t("plugins.twitch.actions.timeout.description"),
 		icon: "mdi mdi-timer-remove-outline",
 		config: {
 			type: Object,
 			properties: {
-				viewer: { type: TwitchViewer, name: "Viewer", required: true, template: true },
-				duration: { type: Duration, name: "Duration", required: true, template: true, default: 15 },
-				reason: { type: String, name: "Reason", template: true },
+				viewer: { type: TwitchViewer, name: t("plugins.twitch.common.viewer"), required: true, template: true },
+				duration: { type: Duration, name: t("plugins.twitch.common.duration"), required: true, template: true, default: 15 },
+				reason: { type: String, name: t("plugins.twitch.common.reason"), template: true },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {
@@ -30,13 +32,14 @@ export function setupModeration() {
 
 	defineAction({
 		id: "ban",
-		name: "Ban Viewer",
+		name: t("plugins.twitch.actions.ban.name"),
+		description: t("plugins.twitch.actions.ban.description"),
 		icon: "mdi mdi-cancel",
 		config: {
 			type: Object,
 			properties: {
-				viewer: { type: TwitchViewer, name: "Viewer", required: true, template: true },
-				reason: { type: String, name: "Reason", template: true },
+				viewer: { type: TwitchViewer, name: t("plugins.twitch.common.viewer"), required: true, template: true },
+				reason: { type: String, name: t("plugins.twitch.common.reason"), template: true },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {
@@ -49,12 +52,13 @@ export function setupModeration() {
 
 	defineAction({
 		id: "unban",
-		name: "Unban Viewer",
+		name: t("plugins.twitch.actions.unban.name"),
+		description: t("plugins.twitch.actions.unban.description"),
 		icon: "mdi mdi-cancel",
 		config: {
 			type: Object,
 			properties: {
-				viewer: { type: TwitchViewer, name: "Viewer", required: true, template: true },
+				viewer: { type: TwitchViewer, name: t("plugins.twitch.common.viewer"), required: true, template: true },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {
@@ -64,12 +68,13 @@ export function setupModeration() {
 
 	const ban = defineTrigger({
 		id: "ban",
-		name: "Viewer Banned",
+		name: t("plugins.twitch.triggers.ban.name"),
+		description: t("plugins.twitch.triggers.ban.description"),
 		icon: "mdi mdi-cancel",
 		config: {
 			type: Object,
 			properties: {
-				group: { type: TwitchViewerGroup, name: "Viewer Group", required: true, default: {} },
+				group: { type: TwitchViewerGroup, name: t("plugins.twitch.common.viewerGroup"), required: true, default: {} },
 			},
 		},
 		context: {
@@ -89,12 +94,13 @@ export function setupModeration() {
 
 	const timedout = defineTrigger({
 		id: "timeout",
-		name: "Viewer Timed Out",
+		name: t("plugins.twitch.triggers.timeout.name"),
+		description: t("plugins.twitch.triggers.timeout.description"),
 		icon: "mdi mdi-timer-remove-outline",
 		config: {
 			type: Object,
 			properties: {
-				group: { type: TwitchViewerGroup, name: "Viewer Group", required: true, default: {} },
+				group: { type: TwitchViewerGroup, name: t("plugins.twitch.common.viewerGroup"), required: true, default: {} },
 			},
 		},
 		context: {

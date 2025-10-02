@@ -1,8 +1,8 @@
 <template>
 	<div class="group-edit">
 		<div class="flex flex-column align-items-center justify-content-center" v-if="!model?.rule">
-			<p>Trigger runs for Everyone</p>
-			<p-button @click="addEither">Customize</p-button>
+			<p>{{ tSync("plugins.twitch.renderer.twitchViewerGroupEdit.text") }}</p>
+			<p-button @click="addEither">{{ tSync("plugins.twitch.renderer.twitchViewerGroupEdit.button") }}</p-button>
 		</div>
 		<twitch-viewer-group-logic-op
 			:schema="schema"
@@ -22,6 +22,7 @@ import TwitchViewerGroupLogicOp from "./groups/TwitchViewerGroupLogicOp.vue"
 import PButton from "primevue/button"
 import PCheckBox from "primevue/checkbox"
 import PDropDown from "primevue/dropdown"
+import { tSync } from "castmate-ui-core"
 
 const props = defineProps<{
 	schema: SchemaTwitchViewerGroup

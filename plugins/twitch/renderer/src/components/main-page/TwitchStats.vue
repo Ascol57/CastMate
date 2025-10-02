@@ -1,27 +1,27 @@
 <template>
 	<div class="stat-block flex flex-row p-3" v-if="channelAccount?.state.authenticated">
-		<main-page-card-item label="Channel">
+		<main-page-card-item :label="tSync('plugins.twitch.common.channel')">
 			<p-avatar :image="channelAccount?.config.icon" shape="circle" />
 		</main-page-card-item>
-		<main-page-card-item label="Followers">
+		<main-page-card-item :label="tSync('plugins.twitch.common.followers')">
 			<span v-if="channelAccount?.state.authenticated">{{ followers?.value }}</span
 			><span v-else>--</span>
 		</main-page-card-item>
-		<main-page-card-item label="Subscribers">
+		<main-page-card-item :label="tSync('plugins.twitch.common.subscribers')">
 			<span v-if="channelAccount?.state.authenticated">{{ subscribers?.value }}</span
 			><span v-else>--</span>
 		</main-page-card-item>
-		<main-page-card-item v-if="live?.value" label="Viewers">
-			<span v-if="channelAccount?.state.authenticated">LIVE</span><span v-else>--</span>
+		<main-page-card-item v-if="live?.value" :label="tSync('plugins.twitch.common.viewers')">
+			<span v-if="channelAccount?.state.authenticated">{{ tSync('plugins.twitch.common.live') }}</span><span v-else>--</span>
 		</main-page-card-item>
-		<main-page-card-item v-else label="Offline">
+		<main-page-card-item v-else :label="tSync('plugins.twitch.common.offline')">
 			<span>--</span>
 		</main-page-card-item>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { useState, MainPageCardItem } from "castmate-ui-core"
+import { useState, MainPageCardItem, tSync } from "castmate-ui-core"
 import { useChannelAccountResource } from "../../main"
 import PAvatar from "primevue/avatar"
 

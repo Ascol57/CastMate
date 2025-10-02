@@ -1,13 +1,15 @@
 import { defineState, defineTrigger, startPerfTime, usePluginLogger } from "castmate-core"
 import { Range } from "castmate-schema"
 import { onChannelAuth } from "./api-harness"
+import { t } from "castmate-translation"
 
 export function setupHypeTrains() {
 	const logger = usePluginLogger()
 
 	const hypeTrainStarted = defineTrigger({
 		id: "hypeTrainStarted",
-		name: "Hype Train Started",
+		name: t("plugins.twitch.hypeTrainStarted.name"),
+		description: t("plugins.twitch.hypeTrainStarted.description"),
 		icon: "mdi mdi-train-car-caboose",
 		version: "0.0.1",
 		config: {
@@ -30,7 +32,8 @@ export function setupHypeTrains() {
 
 	const hypeTrainLevelUp = defineTrigger({
 		id: "hypeTrainLevelUp",
-		name: "Hype Train Level Reached",
+		name: t("plugins.twitch.hypeTrainLevelUp.name"),
+		description: t("plugins.twitch.hypeTrainLevelUp.description"),
 		icon: "mdi mdi-train-car-caboose",
 		version: "0.0.1",
 		config: {
@@ -38,7 +41,7 @@ export function setupHypeTrains() {
 			properties: {
 				level: {
 					type: Range,
-					name: "Level",
+					name: t("plugins.twitch.common.level"),
 					default: { min: 1 },
 					required: true,
 				},
@@ -60,7 +63,8 @@ export function setupHypeTrains() {
 
 	const hypeTrainEnded = defineTrigger({
 		id: "hypeTrainEnded",
-		name: "Hype Train Ended",
+		name: t("plugins.twitch.hypeTrainEnded.name"),
+		description: t("plugins.twitch.hypeTrainEnded.description"),
 		icon: "mdi mdi-train-car-caboose",
 		version: "0.0.1",
 		config: {
@@ -68,7 +72,7 @@ export function setupHypeTrains() {
 			properties: {
 				level: {
 					type: Range,
-					name: "Level",
+					name: t("plugins.twitch.common.level"),
 					default: { min: 1 },
 					required: true,
 				},
@@ -90,31 +94,31 @@ export function setupHypeTrains() {
 
 	const hypeTrainLevel = defineState("hypeTrainLevel", {
 		type: Number,
-		name: "Hype Train Level",
+		name: t("plugins.twitch.states.hypeTrainLevel"),
 		required: true,
 		default: 0,
 	})
 	const hypeTrainProgress = defineState("hypeTrainProgress", {
 		type: Number,
-		name: "Hype Train Point Progress",
+		name: t("plugins.twitch.states.hypeTrainProgress"),
 		required: true,
 		default: 0,
 	})
 	const hypeTrainGoal = defineState("hypeTrainGoal", {
 		type: Number,
-		name: "Hype Train Point Goal",
+		name: t("plugins.twitch.states.hypeTrainGoal"),
 		required: true,
 		default: 0,
 	})
 	const hypeTrainTotal = defineState("hypeTrainTotal", {
 		type: Number,
-		name: "Hype Train Point Total",
+		name: t("plugins.twitch.states.hypeTrainTotal"),
 		required: true,
 		default: 0,
 	})
 	const hypeTrainExists = defineState("hypeTrainExists", {
 		type: Boolean,
-		name: "Hype Train Exists",
+		name: t("plugins.twitch.states.hypeTrainExists"),
 		required: true,
 		default: false,
 	})

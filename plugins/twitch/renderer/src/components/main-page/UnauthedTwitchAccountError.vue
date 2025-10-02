@@ -5,14 +5,14 @@
 				{{ authMessage }}
 			</div>
 			<p-button class="flex-shrink-0" @click="forceAuth" :loading="doingLogin" severity="danger">
-				Sign into {{ category }}
+				{{ tSync('plugins.twitch.common.signInto') }} {{ category }}
 			</p-button>
 		</div>
 	</p-message>
 </template>
 
 <script setup lang="ts">
-import { useResource, useResourceIPCCaller } from "castmate-ui-core"
+import { useResource, useResourceIPCCaller, tSync } from "castmate-ui-core"
 import { AccountState, ResourceData } from "castmate-schema"
 import { TwitchAccountConfig } from "castmate-plugin-twitch-shared"
 

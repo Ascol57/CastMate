@@ -1,7 +1,7 @@
 <template>
 	<div class="inline-group p-1">
 		<div class="inline-group-header flex flex-row mb-5">
-			<p-button text size="small" @click="model.userIds.push('')"><i class="mdi mdi-plus" />Viewer</p-button>
+			<p-button text size="small" @click="model.userIds.push('')"><i class="mdi mdi-plus" />{{ tSync("plugins.twitch.common.viewer") }}</p-button>
 			<div class="flex-grow-1"></div>
 			<p-button
 				text
@@ -29,7 +29,7 @@
 import { TwitchViewer, TwitchViewerGroupInlineList } from "castmate-plugin-twitch-shared"
 
 import { useModel } from "vue"
-import { DataInput, DataBindingPath } from "castmate-ui-core"
+import { DataInput, DataBindingPath, tSync } from "castmate-ui-core"
 import PButton from "primevue/button"
 import { declareSchema } from "castmate-schema"
 
@@ -45,7 +45,7 @@ const emit = defineEmits(["delete"])
 const viewerSchema = declareSchema({
 	type: TwitchViewer,
 	required: true,
-	name: "Viewer",
+	name: tSync('plugins.twitch.common.viewer'),
 })
 </script>
 

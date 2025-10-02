@@ -35,6 +35,7 @@ import * as path from "path"
 import { ensureDirectory, loadYAML, resolveProjectPath, writeYAML } from "castmate-core/src/io/file-system"
 import _debounce from "lodash/debounce"
 import { PluginManager } from "castmate-core/src/plugins/plugin-manager"
+import { t } from "castmate-translation"
 
 //Helper interface to work with both EventSubChannelRewardEvent and HelixCustomReward
 interface TwurpleReward {
@@ -97,7 +98,7 @@ function removeTitle<T extends { title: string }>(titleHaver: T): Omit<T, "title
 }
 
 interface ChannelPointRewardConstructor {
-	new (...args: any): ChannelPointReward
+	new(...args: any): ChannelPointReward
 	resourceDirectory: string
 }
 
@@ -500,14 +501,14 @@ export function setupChannelPointRewards() {
 
 	const redemption = defineTrigger({
 		id: "redemption",
-		name: "Channel Point Reward",
+		name: t("plugins.twitch.triggers.redemption.name"),
 		version: "0.0.1",
 		icon: "twi twi-channel-points",
 		config: {
 			type: Object,
 			properties: {
-				reward: { type: ChannelPointReward, name: "Reward", required: true },
-				group: { type: TwitchViewerGroup, name: "Viewer Group", required: true, default: {} },
+				reward: { type: ChannelPointReward, name: t("plugins.twitch.common.reward"), required: true },
+				group: { type: TwitchViewerGroup, name: t("plugins.twitch.common.viewerGroup"), required: true, default: {} },
 			},
 		},
 		context: {
@@ -516,7 +517,7 @@ export function setupChannelPointRewards() {
 				viewer: { type: TwitchViewer, required: true, default: "27082158" },
 				reward: { type: ChannelPointReward, required: true, view: false },
 				redemptionId: { type: String, required: true, view: false },
-				message: { type: String, default: "Thanks for using CastMate!" },
+				message: { type: String, default: t("plugins.twitch.common.messageDefault") },
 			},
 		},
 		async handle(config, context) {

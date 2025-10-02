@@ -19,7 +19,7 @@
 							<i class="pi pi-search" />
 							<p-input-text v-model="filters['global'].value" placeholder="Search" />
 						</span>-->
-						<p-button @click="createDialog()"> Create CastMate Reward</p-button>
+						<p-button @click="createDialog()"> {{ tSync("plugins.twitch.renderer.channelPointsEditPage.button") }} </p-button>
 					</div>
 				</template>
 				<!--<template #empty> ... </template> -->
@@ -35,10 +35,9 @@
 						<div>
 							<div class="flex flex-row">
 								<div class="flex-1">
-									<h3 class="my-0">Other Channel Point Rewards</h3>
+									<h3 class="my-0">{{ tSync("plugins.twitch.renderer.channelPointsEditPage.title") }}</h3>
 									<h4 class="my-0">
-										These rewards aren't can't be enabled and disabled with CastMate profiles. But
-										you can still use them in triggers.
+										{{ tSync("plugins.twitch.renderer.channelPointsEditPage.description") }}
 									</h4>
 								</div>
 								<a
@@ -46,7 +45,7 @@
 									href="https://dashboard.twitch.tv/viewer-rewards/channel-points/rewards"
 									target="_blank"
 								>
-									Open Dashboard
+									{{ tSync("plugins.twitch.renderer.channelPointsEditPage.linkDashboard") }}
 								</a>
 							</div>
 						</div>
@@ -139,7 +138,7 @@ import { useResourceArray, useResourceData } from "castmate-ui-core"
 import { ResourceData } from "castmate-schema"
 import ChannelPointPreview from "./ChannelPointPreview.vue"
 import { ChannelPointRewardConfig, ChannelPointRewardState } from "castmate-plugin-twitch-shared"
-import { DurationLabel } from "castmate-ui-core"
+import { DurationLabel, tSync } from "castmate-ui-core"
 import { Duration } from "castmate-schema"
 import { useResourceEditDialog, useResourceCreateDialog, useResourceDeleteDialog } from "castmate-ui-core"
 

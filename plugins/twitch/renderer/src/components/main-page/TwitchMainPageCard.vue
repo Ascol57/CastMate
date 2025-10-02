@@ -1,16 +1,16 @@
 <template>
 	<main-page-card>
-		<template #header> <i class="mdi mdi-twitch twitch-purple" /> Twitch </template>
+		<template #header> <i class="mdi mdi-twitch twitch-purple" /> {{ tSync("plugins.twitch.plugin.name") }} </template>
 		<div class="flex flex-column flex-grow-1 gap-2">
 			<unauthed-twitch-account-error
 				account-id="channel"
-				category="Channel"
-				auth-message="CastMate needs your Twitch account to run"
+				:category="tSync('plugins.twitch.common.channel')"
+				:auth-message="tSync('plugins.twitch.mainPage.channelAccountDescription')"
 			/>
 			<unauthed-twitch-account-error
 				account-id="bot"
-				category="Bot"
-				auth-message="CastMate needs a bot account to run. You can use a separate bot account or just sign into your channel again."
+				:category="tSync('plugins.twitch.common.bot')"
+				:auth-message="tSync('plugins.twitch.mainPage.botAccountDescription')"
 			/>
 			<div class="flex flex-row justify-content-center">
 				<twitch-stats />
@@ -26,4 +26,5 @@ import { MainPageCard } from "castmate-ui-core"
 import UnauthedTwitchAccountError from "./UnauthedTwitchAccountError.vue"
 import TwitchStats from "./TwitchStats.vue"
 import StreamInfoDashboardCard from "../stream-info/StreamInfoDashboardCard.vue"
+import { tSync } from "castmate-ui-core"
 </script>

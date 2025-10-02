@@ -1,12 +1,13 @@
 import { defineAction } from "castmate-core"
+import { t } from "castmate-translation"
 import { TwitchAccount } from "./twitch-auth"
 import { TwitchAPIService, onChannelAuth } from "./api-harness"
 
 export function setupClips() {
 	defineAction({
 		id: "createClip",
-		name: "Create Clip",
-		description: "Create's a clip",
+		name: t("plugins.twitch.actions.createClip.name"),
+		description: t("plugins.twitch.actions.createClip.description"),
 		icon: "mdi mdi-filmstrip",
 		config: {
 			type: Object,
@@ -29,13 +30,13 @@ export function setupClips() {
 
 	defineAction({
 		id: "streamMarker",
-		name: "Place Stream Marker",
-		description: "Places a marker in the stream for use in the video editor",
+		name: t("plugins.twitch.actions.streamMarker.name"),
+		description: t("plugins.twitch.actions.streamMarker.description"),
 		icon: "mdi mdi-map-marker-star",
 		config: {
 			type: Object,
 			properties: {
-				markerName: { type: String, name: "Marker Name", template: true },
+				markerName: { type: String, name: t("plugins.twitch.actions.streamMarker.config.markerName"), template: true },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {

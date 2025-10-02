@@ -12,7 +12,7 @@
 					<div style="width: 20rem">
 						<twitch-viewer-input
 							v-model="memberAdder"
-							:schema="{ type: TwitchViewer, name: 'Add Member' }"
+							:schema="{ type: TwitchViewer, name: tSync('plugins.twitch.renderer.groupPage.addMember') }"
 						/>
 					</div>
 					<div class="flex-grow-1"></div>
@@ -48,7 +48,7 @@ import PButton from "primevue/button"
 import PInputText from "primevue/inputtext"
 //import { FilterMatchMode } from "primevue/api"
 import { computed, onMounted, ref, watch, watchEffect } from "vue"
-import { useResource, useResourceIPCCaller } from "castmate-ui-core"
+import { useResource, useResourceIPCCaller, tSync } from "castmate-ui-core"
 import { ResourceData } from "castmate-schema"
 import {
 	TwitchViewer,
@@ -97,8 +97,8 @@ const confirm = useConfirm()
 
 function tryDelete(user: TwitchViewerDisplayData) {
 	confirm.require({
-		header: `Delete ${user.displayName}?`,
-		message: `Are you sure you want to delete ${user.id}`,
+		header: `${tSync("system.delete")} ${user.displayName}?`,
+		message: `${tSync("system.delete_confirmation")} ${user.id}`,
 		icon: "mdi mdi-delete",
 		accept() {
 			removeId(user.id)
