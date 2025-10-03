@@ -15,14 +15,14 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				scene: {
 					type: String,
 					required: true,
-					name: t("plugins.obs.actions.source_visibility.config.scene"),
+					name: t("plugins.obs.common.scene"),
 					template: true,
 					async enum(context: { obs: OBSConnection }) {
 						return (await context?.obs?.getSceneAndGroupNames()) ?? []
@@ -30,7 +30,7 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				source: {
 					type: Number,
-					name: t("plugins.obs.actions.source_visibility.config.source"),
+					name: t("plugins.obs.common.source"),
 					required: true,
 					template: true,
 					async enum(context: { obs: OBSConnection; scene: string }) {
@@ -41,7 +41,7 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				enabled: {
 					type: Toggle,
-					name: t("plugins.obs.actions.source_visibility.config.enabled"),
+					name: t("plugins.obs.common.sourceVisibility"),
 					required: true,
 					default: true,
 					template: true,
@@ -91,14 +91,14 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				sourceName: {
 					type: String,
 					//template: true,
-					name: t("plugins.obs.actions.filter_visibility.config.source"),
+					name: t("plugins.obs.common.source"),
 					required: true,
 					template: true,
 					async enum(context: { obs: OBSConnection }) {
@@ -115,7 +115,7 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				filterName: {
 					type: String,
-					name: t("plugins.obs.actions.filter_visibility.config.filter"),
+					name: t("plugins.obs.common.filterVisibility"),
 					//template: true,
 					required: true,
 					template: true,
@@ -177,19 +177,20 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 	defineAction({
 		id: "screenshot",
 		name: t("plugins.obs.actions.screenshot.name"),
+		description: t("plugins.obs.actions.screenshot.description"),
 		icon: "mdi mdi-camera",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				sourceName: {
 					type: String,
-					name: t("plugins.obs.actions.screenshot.config.source_name"),
+					name: t("plugins.obs.common.source"),
 					template: true,
 					async enum(context: { obs: OBSConnection }) {
 						const obs = context?.obs?.connection
@@ -270,19 +271,20 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 	defineAction({
 		id: "text",
 		name: t("plugins.obs.actions.text.name"),
+		description: t("plugins.obs.actions.text.description"),
 		icon: "mdi mdi-form-textbox",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				sourceName: {
 					type: String,
-					name: t("plugins.obs.actions.text.config.source_name"),
+					name: t("plugins.obs.common.source"),
 					required: true,
 					async enum(context: { obs: OBSConnection }) {
 						const obs = context?.obs?.connection
@@ -294,7 +296,7 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				text: {
 					type: String,
-					name: t("plugins.obs.actions.text.config.text"),
+					name: t("plugins.obs.common.text"),
 					template: true,
 					required: true,
 					multiLine: true,
@@ -315,19 +317,20 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 	defineAction({
 		id: "refreshBrowser",
 		name: t("plugins.obs.actions.refresh_browser.name"),
+		description: t("plugins.obs.actions.refresh_browser.description"),
 		icon: "mdi mdi-refresh",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				sourceName: {
 					type: String,
-					name: t("plugins.obs.actions.refresh_browser.config.source_name"),
+					name: t("plugins.obs.common.source"),
 					required: true,
 					async enum(context: { obs: OBSConnection }) {
 						const obs = context?.obs?.connection
@@ -358,13 +361,13 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				sourceName: {
 					type: String,
-					name: t("plugins.obs.actions.set_browser_url.config.source_name"),
+					name: t("plugins.obs.common.source"),
 					required: true,
 					async enum(context: { obs: OBSConnection }) {
 						const obs = context?.obs?.connection
@@ -376,7 +379,7 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				url: {
 					type: String,
-					name: t("plugins.obs.actions.set_browser_url.config.url"),
+					name: t("plugins.obs.common.url"),
 					required: true,
 					template: true,
 				},
@@ -397,19 +400,20 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 	defineAction({
 		id: "setImage",
 		name: t("plugins.obs.actions.set_image.name"),
+		description: t("plugins.obs.actions.set_image.description"),
 		icon: "mdi mdi-refresh",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				sourceName: {
 					type: String,
-					name: t("plugins.obs.actions.set_image.config.source_name"),
+					name: t("plugins.obs.common.source"),
 					required: true,
 					async enum(context: { obs: OBSConnection }) {
 						const obs = context?.obs?.connection

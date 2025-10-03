@@ -13,7 +13,7 @@ export function setupScenes(obsDefault: ReactiveRef<OBSConnection>) {
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
@@ -44,7 +44,7 @@ export function setupScenes(obsDefault: ReactiveRef<OBSConnection>) {
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},

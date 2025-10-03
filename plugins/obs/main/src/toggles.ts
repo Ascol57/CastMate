@@ -7,19 +7,20 @@ export function setupToggles(obsDefault: ReactiveRef<OBSConnection>) {
 	defineAction({
 		id: "streamStartStop",
 		name: t("plugins.obs.actions.toggle_streaming.name"),
+		description: t("plugins.obs.actions.toggle_streaming.description"),
 		icon: "mdi mdi-broadcast",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnection"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				streaming: {
 					type: Toggle,
-					name: t("plugins.obs.actions.toggle_streaming.config.streaming"),
+					name: t("plugins.obs.common.streaming"),
 					required: true,
 					default: true,
 					template: true,
@@ -42,19 +43,20 @@ export function setupToggles(obsDefault: ReactiveRef<OBSConnection>) {
 	defineAction({
 		id: "recordingStartStop",
 		name: t("plugins.obs.actions.toggle_recording.name"),
+		description: t("plugins.obs.actions.toggle_recording.description"),
 		icon: "mdi mdi-record",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				recording: {
 					type: Toggle,
-					name: t("plugins.obs.actions.toggle_recording.config.recording"),
+					name: t("plugins.obs.common.recording"),
 					required: true,
 					default: true,
 					template: true,
@@ -83,13 +85,13 @@ export function setupToggles(obsDefault: ReactiveRef<OBSConnection>) {
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				virtualCam: {
 					type: Toggle,
-					name: t("plugins.obs.actions.toggle_virtual_cam.config.virtual_cam"),
+					name: t("plugins.obs.common.virtualCam"),
 					required: true,
 					default: true,
 					template: true,
@@ -112,19 +114,20 @@ export function setupToggles(obsDefault: ReactiveRef<OBSConnection>) {
 	defineAction({
 		id: "replayBufferStartStop",
 		name: t("plugins.obs.actions.toggle_replay_buffer.name"),
+		description: t("plugins.obs.actions.toggle_replay_buffer.description"),
 		icon: "mdi mdi-replay",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				replayBuffer: {
 					type: Toggle,
-					name: t("plugins.obs.actions.toggle_replay_buffer.config.replay_buffer"),
+					name: t("plugins.obs.common.replayBuffer"),
 					required: true,
 					default: true,
 					template: true,
@@ -147,13 +150,14 @@ export function setupToggles(obsDefault: ReactiveRef<OBSConnection>) {
 	defineAction({
 		id: "replaySave",
 		name: t("plugins.obs.actions.save_replay.name"),
+		description: t("plugins.obs.actions.save_replay.description"),
 		icon: "mdi mdi-content-save",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
@@ -179,19 +183,20 @@ export function setupToggles(obsDefault: ReactiveRef<OBSConnection>) {
 	defineAction({
 		id: "toggleStudioMode",
 		name: t("plugins.obs.actions.toggle_studio_mode.name"),
+		description: t("plugins.obs.actions.toggle_studio_mode.description"),
 		icon: "mdi mdi-dock-window",
 		config: {
 			type: Object,
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				studioMode: {
 					type: Toggle,
-					name: t("plugins.obs.actions.toggle_studio_mode.config.studio_mode"),
+					name: t("plugins.obs.common.studioMode"),
 					required: true,
 					default: true,
 					template: true,
@@ -220,7 +225,7 @@ export function setupToggles(obsDefault: ReactiveRef<OBSConnection>) {
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},

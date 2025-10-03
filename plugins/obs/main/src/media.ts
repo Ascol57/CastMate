@@ -50,20 +50,20 @@ export function setupMedia(obsDefault: ReactiveRef<OBSConnection>) {
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				source: {
 					type: String,
-					name: t("plugins.obs.actions.media_action.config.source"),
+					name: t("plugins.obs.common.source"),
 					required: true,
 					async enum(context: { obs: OBSConnection }) {
 						return await context.obs.getInputs(["ffmpeg_source", "vlc_source"])
 					},
 				},
 				action: {
-					name: t("plugins.obs.actions.media_action.config.action"),
+					name: t("plugins.obs.common.action"),
 					type: String,
 					enum: ["Play", "Pause", "Restart", "Stop", "Next", "Previous"],
 					required: true,
@@ -131,12 +131,12 @@ export function setupMedia(obsDefault: ReactiveRef<OBSConnection>) {
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				scene: {
-					name: t("plugins.obs.actions.play_media.config.scene"),
+					name: t("plugins.obs.common.scene"),
 					type: String,
 					required: true,
 					async enum(context: { obs: OBSConnection }) {
@@ -145,7 +145,7 @@ export function setupMedia(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				source: {
 					type: Number,
-					name: t("plugins.obs.actions.play_media.config.source"),
+					name: t("plugins.obs.common.source"),
 					required: true,
 					async enum(context: { scene: string; obs: OBSConnection }) {
 						return await context.obs.getSceneSources(context.scene, "ffmpeg_source")
@@ -192,7 +192,7 @@ export function setupMedia(obsDefault: ReactiveRef<OBSConnection>) {
 
 			const remainingMs = startTime + duration * 1000 - now
 
-			await abortableSleep(remainingMs, abortSignal, async () => {})
+			await abortableSleep(remainingMs, abortSignal, async () => { })
 
 			await config.obs.connection.call("SetSceneItemEnabled", {
 				sceneName: config.scene,
@@ -212,13 +212,13 @@ export function setupMedia(obsDefault: ReactiveRef<OBSConnection>) {
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				chapterName: {
 					type: String,
-					name: t("plugins.obs.actions.chapter_marker.config.chapter_name"),
+					name: t("plugins.obs.common.chapterName"),
 					template: true,
 				},
 			},

@@ -30,14 +30,14 @@ export function setupAudio(obsDefault: ReactiveRef<OBSConnection>) {
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.actions.mute.config.obs_connection"),
+					name: t("plugins.obs.common.obsConnection"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				source: {
 					type: String,
 					template: true,
-					name: t("plugins.obs.actions.mute.config.source"),
+					name: t("plugins.obs.common.source"),
 					required: true,
 					async enum(context: { obs: OBSConnection }) {
 						return await context.obs.getInputs()
@@ -45,7 +45,7 @@ export function setupAudio(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				muted: {
 					type: Toggle,
-					name: t("plugins.obs.actions.mute.config.muted"),
+					name: t("plugins.obs.common.muted"),
 					required: true,
 					default: true,
 					template: true,
@@ -83,14 +83,14 @@ export function setupAudio(obsDefault: ReactiveRef<OBSConnection>) {
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.actions.volume.config.obs_connection"),
+					name: t("plugins.obs.common.obsConnection"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				source: {
 					type: String,
 					template: true,
-					name: t("plugins.obs.actions.volume.config.source"),
+					name: t("plugins.obs.common.source"),
 					required: true,
 					async enum(context: { obs: OBSConnection }) {
 						return await context.obs.getInputs()
@@ -98,7 +98,7 @@ export function setupAudio(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				volume: {
 					type: Number,
-					name: t("plugins.obs.actions.volume.config.volume"),
+					name: t("plugins.obs.common.volume"),
 					required: true,
 					default: 100,
 					min: 0,

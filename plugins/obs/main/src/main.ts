@@ -42,8 +42,8 @@ registerPluginTranslations("obs", generatedTranslationsFromFiles(translationFile
 export default definePlugin(
 	{
 		id: "obs",
-		name: "OBS",
-		description: "Provides OBS Control over OBS Websocket 5",
+		name: t("plugins.obs.name"),
+		description: t("plugins.obs.description"),
 		color: "#256eff",
 		icon: "obsi obsi-obs",
 	},
@@ -56,17 +56,17 @@ export default definePlugin(
 
 		const obsDefault = defineSetting("obsDefault", {
 			type: OBSConnection,
-			name: t("plugins.obs.settings.default_connection.name"),
+			name: t("plugins.obs.common.defaultConnection"),
 			required: true,
 		})
 
-		defineResourceSetting(OBSConnection, t("plugins.obs.settings.obs_connections"))
+		defineResourceSetting(OBSConnection, t("plugins.obs.common.obsConnections"))
 
 		defineReactiveState(
 			"scene",
 			{
 				type: String,
-				name: t("plugins.obs.states.scene.name"),
+				name: t("plugins.obs.states.scene"),
 				required: true,
 				async enum() {
 					return await obsDefault.value.getSceneNames()
@@ -81,7 +81,7 @@ export default definePlugin(
 			"streaming",
 			{
 				type: Boolean,
-				name: t("plugins.obs.states.streaming.name"),
+				name: t("plugins.obs.states.streaming"),
 				required: true,
 			},
 			() => {
@@ -93,7 +93,7 @@ export default definePlugin(
 			"recording",
 			{
 				type: Boolean,
-				name: t("plugins.obs.states.recording.name"),
+				name: t("plugins.obs.states.recording"),
 				required: true,
 			},
 			() => {
@@ -105,7 +105,7 @@ export default definePlugin(
 			"replayBuffering",
 			{
 				type: Boolean,
-				name: t("plugins.obs.states.replay_buffering.name"),
+				name: t("plugins.obs.states.replay_buffering"),
 				required: true,
 			},
 			() => {
@@ -117,7 +117,7 @@ export default definePlugin(
 			"virtualCamming",
 			{
 				type: Boolean,
-				name: t("plugins.obs.states.virtual_cam_active.name"),
+				name: t("plugins.obs.states.virtual_cam_active"),
 				required: true,
 			},
 			() => {
@@ -146,20 +146,21 @@ export default definePlugin(
 
 		defineAction({
 			id: "hotkey",
-			name: "Hotkey",
+			name: t("plugins.obs.actions.hotkey.name"),
+			description: t("plugins.obs.actions.hotkey.description"),
 			icon: "mdi mdi-keyboard-variant",
 			config: {
 				type: Object,
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: "OBS Connection",
+						name: t("plugins.obs.common.obsConnections"),
 						required: true,
 						default: () => obsDefault.value,
 					},
 					hotkey: {
 						type: String,
-						name: "Hotkey",
+						name: t("plugins.obs.common.hotkey"),
 						required: true,
 						async enum(context: { obs: OBSConnection }) {
 							if (!context.obs) return []

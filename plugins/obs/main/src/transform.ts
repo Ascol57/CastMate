@@ -20,21 +20,21 @@ export function setupTransforms(obsDefault: ReactiveRef<OBSConnection>) {
 			properties: {
 				obs: {
 					type: OBSConnection,
-					name: t("plugins.obs.settings.obs_connections"),
+					name: t("plugins.obs.common.obsConnections"),
 					required: true,
 					default: () => obsDefault.value,
 				},
 				scene: {
 					type: String,
 					required: true,
-					name: t("plugins.obs.actions.transform.config.scene"),
+					name: t("plugins.obs.common.scene"),
 					async enum(context: { obs: OBSConnection }) {
 						return (await context?.obs?.getSceneAndGroupNames()) ?? []
 					},
 				},
 				source: {
 					type: Number,
-					name: t("plugins.obs.actions.transform.config.source"),
+					name: t("plugins.obs.common.source"),
 					required: true,
 					async enum(context: { obs: OBSConnection; scene: string }) {
 						if (!context.obs) return []
@@ -44,7 +44,7 @@ export function setupTransforms(obsDefault: ReactiveRef<OBSConnection>) {
 				},
 				transform: {
 					type: OBSSourceTransform,
-					name: t("plugins.obs.actions.transform.config.transform"),
+					name: t("plugins.obs.common.transform"),
 					required: true,
 					template: true,
 					default: OBSSourceTransform.factoryCreate(),
