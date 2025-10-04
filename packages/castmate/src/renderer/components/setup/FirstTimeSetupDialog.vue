@@ -1,5 +1,8 @@
 <template>
 	<div class="setup-dialog">
+		<div class="setup-step" v-if="step == 'language'">
+			<setup-language v-model:ready="ready" />
+		</div>
 		<div class="setup-step" v-if="step == 'twitch'">
 			<setup-accounts v-model:ready="ready" />
 		</div>
@@ -18,7 +21,7 @@
 			</div>
 		</div>
 		<div class="flex flex-row justify-content-center align-items-center" v-else>
-			<p-button @click="done"> {{ $tSync('system.get_started') }} </p-button>
+			<p-button @click="done"> {{ $tSync('system.getStarted') }} </p-button>
 		</div>
 	</div>
 </template>
@@ -27,6 +30,7 @@
 import SetupObs from "./SetupObs.vue"
 import SetupAccounts from "./SetupAccounts.vue"
 import SetupDone from "./SetupDone.vue"
+import SetupLanguage from "./SetupLanguage.vue"
 import PButton from "primevue/button"
 import PDivider from "primevue/divider"
 import { ref } from "vue"
@@ -38,16 +42,19 @@ import {
 	useResource,
 	useResourceArray,
 	useResourceStore,
+	refreshLanguage
 } from "castmate-ui-core"
 import { ProfileConfig } from "castmate-schema"
 import { ResourceData } from "castmate-schema"
 
-const step = ref("twitch")
+const step = ref("language")
 
 const ready = ref(false)
 
 function moveNextStep() {
-	if (step.value == "twitch") {
+	if (step.value == "language") {
+		step.value = "twitch"
+	} else if (step.value == "twitch") {
 		step.value = "obs"
 	} else if (step.value == "obs") {
 		step.value = "done"
@@ -89,6 +96,5 @@ function done() {
 </script>
 
 <style scoped>
-.setup-step {
-}
+.setup-step {}
 </style>

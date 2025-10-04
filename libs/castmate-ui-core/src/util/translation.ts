@@ -2,7 +2,7 @@ import { useIpcCaller } from "./electron"
 import { ref, reactive } from "vue"
 
 interface GeneratedTranslations {
-    [language: string]: {[key: string]: any}
+    [language: string]: { [key: string]: any }
 }
 
 class TranslationUIService {
@@ -19,6 +19,7 @@ class TranslationUIService {
     private getAllTranslationsIPC = useIpcCaller<() => GeneratedTranslations>("translation", "getAllTranslations")
     private initializeIPC = useIpcCaller<() => boolean>("translation", "initialize")
     private registerPluginTranslationsIPC = useIpcCaller<(pluginId: string, translations: GeneratedTranslations) => boolean>("translation", "registerPluginTranslations")
+    private refreshLanguageIPC = useIpcCaller<() => boolean>("translation", "refreshLanguage")
 
     private constructor() { }
 
@@ -37,15 +38,15 @@ class TranslationUIService {
         try {
             // Initialize the main process translation service
             await this.initializeIPC()
-            
+
             // Load current state
             this.currentLanguage.value = await this.getCurrentLanguageIPC()
             this.availableLanguages.value = await this.getAvailableLanguagesIPC()
-            
+
             // Load all translations for local caching
             const allTranslations = await this.getAllTranslationsIPC()
             Object.assign(this.translations, allTranslations)
-            
+
             this.initialized.value = true
         } catch (error) {
             console.error("Failed to initialize translation UI service:", error)
@@ -66,31 +67,31 @@ class TranslationUIService {
     }
 
     // Synchronous version using cached translations
-    tSync(key: string): string {        
+    tSync(key: string): string {
         if (!this.initialized.value) {
             return key
         }
 
         // Split the key by dots to navigate nested structure
         const keyParts = key.split('.')
-        
+
         // Try current language first
         let translation = this.getNestedTranslation(this.translations[this.currentLanguage.value], keyParts)
-        
+
         if (translation && typeof translation === 'string') {
             return translation
         }
 
         // Fallback to "en" if translation not found in current language
         const fallbackTranslation = this.getNestedTranslation(this.translations['en'], keyParts)
-        
+
         const result = (fallbackTranslation && typeof fallbackTranslation === 'string') ? fallbackTranslation : key
         return result
     }
 
     private getNestedTranslation(translationObj: any, keyParts: string[]): any {
         if (!translationObj) return undefined
-        
+
         let current = translationObj
         for (const part of keyParts) {
             if (current && typeof current === 'object' && part in current) {
@@ -106,7 +107,7 @@ class TranslationUIService {
         try {
             await this.setLanguageIPC(language)
             this.currentLanguage.value = language
-            
+
             // Refresh translations after language change
             const allTranslations = await this.getAllTranslationsIPC()
             Object.assign(this.translations, allTranslations)
@@ -130,6 +131,11 @@ class TranslationUIService {
     isInitialized(): boolean {
         return this.initialized.value
     }
+
+    // Public method to refresh language
+    refreshLanguage() {
+        this.refreshLanguageIPC()
+    }
 }
 
 // Export the singleton instance
@@ -145,8 +151,17 @@ export function tSync(key: string): string {
     return TranslationUIServiceInstance.tSync(key)
 }
 
-// Export the service instance for advanced usage
-export { TranslationUIServiceInstance as TranslationService }
+export function getCurrentLanguage(): string {
+    return TranslationUIServiceInstance.getCurrentLanguage()
+}
+
+export function setCurrentLanguage(language: string) {
+    return TranslationUIServiceInstance.setLanguage(language)
+}
+
+export function refreshLanguage() {
+    TranslationUIServiceInstance.refreshLanguage()
+}
 
 // Initialize the service when imported
 TranslationUIServiceInstance.initialize()

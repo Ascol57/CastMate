@@ -1,7 +1,8 @@
-import { usePluginLogger, defineIPCFunc } from "castmate-core"
+import { usePluginLogger, defineIPCFunc, defineSetting, getSettingValue, setSettingValue } from "castmate-core"
 import * as yaml from 'yaml'
 import * as path from 'path'
 import { fileURLToPath } from 'url'
+import { BrowserWindow } from 'electron'
 
 // ============================================================================
 // Types and Interfaces
@@ -26,6 +27,30 @@ const translationFiles = import.meta.glob('../lang/**/*.{yml,yaml}', {
     query: '?raw',
     eager: true
 })
+
+// ============================================================================
+// Utility Functions
+// ============================================================================
+
+/**
+ * Get the user's preferred language from the system
+ */
+function getSystemLanguage(): string {
+    try {
+        // Use Intl API as fallback (works on all platforms)
+        const intlLang = Intl.DateTimeFormat().resolvedOptions().locale
+        if (intlLang) {
+            // Extract language code (e.g., "en-US" -> "en")
+            return intlLang.split('-')[0].toLowerCase()
+        }
+
+        // Default fallback
+        return 'en'
+    } catch (error) {
+        logger.error('Error detecting system language:', error)
+        return 'en'
+    }
+}
 
 // ============================================================================
 // Core Translation Functions
@@ -112,11 +137,22 @@ function mergeTranslations(target: GeneratedTranslations, source: GeneratedTrans
 class TranslationServiceImpl {
     private static instance: TranslationServiceImpl | null = null
     private translations: GeneratedTranslations = {}
-    private currentLanguage: string = 'fr'
+    private currentLanguage: string = "en"
     private initialized: boolean = false
     private logger = usePluginLogger("translation")
 
-    private constructor() { }
+    private constructor() {
+        try {
+            // Try to detect and set system language at initialization
+            const systemLang = getSystemLanguage()
+            this.currentLanguage = systemLang
+            this.logger.log(`System language detected and set: ${this.currentLanguage}`)
+        } catch (error) {
+            this.logger.error("Error detecting system language in constructor:", error)
+            this.currentLanguage = "en"
+            this.logger.log("Fallback to 'en' due to error")
+        }
+    }
 
     static getInstance(): TranslationServiceImpl {
         if (!TranslationServiceImpl.instance) {
@@ -130,12 +166,55 @@ class TranslationServiceImpl {
             return
         }
 
-        // Load and merge core translations
-        const coreTranslations = generateCoreTranslations()
-        this.translations = mergeTranslations(this.translations, coreTranslations)
+        try {
+            // Load and merge core translations
+            const coreTranslations = generateCoreTranslations()
+            this.translations = mergeTranslations(this.translations, coreTranslations)
 
-        this.initialized = true
-        this.logger.log('Translation service initialized with all plugin translations')
+            // Validate and adjust current language based on available translations
+            this.validateAndSetLanguage()
+
+            this.initialized = true
+            this.logger.log('Translation service initialized with all plugin translations')
+        } catch (error) {
+            this.logger.error('Error during translation service initialization:', error)
+            // Set minimal state to prevent further errors
+            this.translations = { en: {} }
+            this.currentLanguage = 'en'
+            this.initialized = true
+            this.logger.log('Translation service initialized with minimal fallback state')
+        }
+    }
+
+    /**
+     * Validate that the current language is available in translations
+     * If not available, fallback to 'en' or the first available language
+     */
+    private validateAndSetLanguage() {
+        const availableLanguages = Object.keys(this.translations)
+
+        if (availableLanguages.length === 0) {
+            this.logger.log('No translations available, keeping current language setting')
+            return
+        }
+
+        // Check if current language is available
+        if (availableLanguages.includes(this.currentLanguage)) {
+            this.logger.log(`Current language '${this.currentLanguage}' is available`)
+            return
+        }
+
+        // Fallback to 'en' if available
+        if (availableLanguages.includes('en')) {
+            this.logger.log(`Current language '${this.currentLanguage}' not available, falling back to 'en'`)
+            this.currentLanguage = 'en'
+            return
+        }
+
+        // Fallback to first available language
+        const firstLang = availableLanguages[0]
+        this.logger.log(`Neither '${this.currentLanguage}' nor 'en' available, falling back to '${firstLang}'`)
+        this.currentLanguage = firstLang
     }
 
     /**
@@ -146,10 +225,23 @@ class TranslationServiceImpl {
             return
         }
 
-        const coreTranslations = generateCoreTranslations()
-        this.translations = mergeTranslations(this.translations, coreTranslations)
-        this.initialized = true
-        logger.log('Translation service initialized synchronously (core only)')
+        try {
+            const coreTranslations = generateCoreTranslations()
+            this.translations = mergeTranslations(this.translations, coreTranslations)
+
+            // Validate and adjust current language based on available translations
+            this.validateAndSetLanguage()
+
+            this.initialized = true
+            logger.log('Translation service initialized synchronously (core only)')
+        } catch (error) {
+            logger.error('Error during synchronous translation service initialization:', error)
+            // Set minimal state to prevent further errors
+            this.translations = { en: {} }
+            this.currentLanguage = 'en'
+            this.initialized = true
+            logger.log('Translation service initialized synchronously with minimal fallback state')
+        }
     }
 
     /**
@@ -169,63 +261,91 @@ class TranslationServiceImpl {
      * @param translations Translations object with language codes as keys
      */
     registerPluginTranslations(pluginId: string, translations: GeneratedTranslations) {
-        logger.log(`Registering translations for plugin: ${pluginId}`)
+        try {
+            logger.log(`Registering translations for plugin: ${pluginId}`)
 
-        // Ensure the service is initialized before registering plugins
-        if (!this.initialized) {
-            logger.log("Translation service not initialized, initializing synchronously before registering plugin...")
-            this.initializeSync()
-        }
-
-        // Merge plugin translations into the main structure
-        for (const [lang, langTranslations] of Object.entries(translations)) {
-            // Ensure the language object exists
-            if (!this.translations[lang]) {
-                this.translations[lang] = {}
+            // Ensure the service is initialized before registering plugins
+            if (!this.initialized) {
+                logger.log("Translation service not initialized, initializing synchronously before registering plugin...")
+                this.initializeSync()
             }
 
-            // Ensure the plugins sub-object exists
-            if (!this.translations[lang].plugins) {
-                this.translations[lang].plugins = {}
+            // Validate input parameters
+            if (!pluginId || typeof pluginId !== 'string') {
+                logger.error('Invalid pluginId provided to registerPluginTranslations')
+                return
             }
 
-            // Now safely assign the plugin translations
-            this.translations[lang].plugins[pluginId] = langTranslations
-        }
+            if (!translations || typeof translations !== 'object') {
+                logger.error('Invalid translations object provided to registerPluginTranslations')
+                return
+            }
 
-        logger.log(`Plugin translations registered for ${pluginId}`)
+            // Merge plugin translations into the main structure
+            for (const [lang, langTranslations] of Object.entries(translations)) {
+                if (!lang || typeof langTranslations !== 'object') {
+                    logger.error(`Invalid language entry for plugin ${pluginId}: ${lang}`)
+                    continue
+                }
+
+                // Ensure the language object exists
+                if (!this.translations[lang]) {
+                    this.translations[lang] = {}
+                }
+
+                // Ensure the plugins sub-object exists
+                if (!this.translations[lang].plugins) {
+                    this.translations[lang].plugins = {}
+                }
+
+                // Now safely assign the plugin translations
+                this.translations[lang].plugins[pluginId] = langTranslations
+            }
+
+            logger.log(`Plugin translations registered for ${pluginId}`)
+        } catch (error) {
+            logger.error(`Error registering plugin translations for ${pluginId}:`, error)
+        }
     }
 
     t(key: string): string {
-        if (!this.initialized) {
-            logger.log("Translation Service not initialized, initializing synchronously...")
-            // Pour l'instant, on initialise seulement les traductions du core
-            const coreTranslations = generateCoreTranslations()
-            this.translations = mergeTranslations(this.translations, coreTranslations)
-            this.initialized = true
-            logger.log("Plugin translations not loaded in synchronous initialization. Call initializeAsync() first.")
+        try {
+            if (!key || typeof key !== 'string') {
+                logger.error('Invalid translation key provided:', key)
+                return String(key) || 'INVALID_KEY'
+            }
+
+            if (!this.initialized) {
+                logger.log("Translation Service not initialized, initializing synchronously...")
+                this.initializeSync()
+                logger.log("Plugin translations not loaded in synchronous initialization. Call initializeAsync() first.")
+            }
+
+            logger.log(`Looking for translation key: "${key}"`)
+            logger.log(`Current language: ${this.currentLanguage}`)
+
+            // Split the key by dots to navigate nested structure
+            const keyParts = key.split('.')
+            logger.log(`Key parts:`, keyParts)
+
+            // Try current language first - check both core and plugin translations
+            let translation = this.getNestedTranslation(this.translations[this.currentLanguage], keyParts)
+
+            logger.log(`Found translation in current language:`, translation)
+            if (translation && typeof translation === 'string') {
+                return translation
+            }
+
+            // Fallback to "en" if translation not found in current language
+            let fallbackTranslation = this.getNestedTranslation(this.translations['en'], keyParts)
+
+            logger.log(`Fallback translation in 'en':`, fallbackTranslation)
+            return (fallbackTranslation && typeof fallbackTranslation === 'string') ? fallbackTranslation : key
+
+        } catch (error) {
+            logger.error(`Error in translation lookup for key "${key}":`, error)
+            return key // Return the key as fallback
         }
-
-        logger.log(`Looking for translation key: "${key}"`)
-        logger.log(`Current language: ${this.currentLanguage}`)
-
-        // Split the key by dots to navigate nested structure
-        const keyParts = key.split('.')
-        logger.log(`Key parts:`, keyParts)
-
-        // Try current language first - check both core and plugin translations
-        let translation = this.getNestedTranslation(this.translations[this.currentLanguage], keyParts)
-
-        logger.log(`Found translation in current language:`, translation)
-        if (translation && typeof translation === 'string') {
-            return translation
-        }
-
-        // Fallback to "en" if translation not found in current language
-        let fallbackTranslation = this.getNestedTranslation(this.translations['en'], keyParts)
-
-        logger.log(`Fallback translation in 'en':`, fallbackTranslation)
-        return (fallbackTranslation && typeof fallbackTranslation === 'string') ? fallbackTranslation : key
     }
 
     private getNestedTranslation(translationObj: TranslationObject | undefined, keyParts: string[]): any {
@@ -244,6 +364,7 @@ class TranslationServiceImpl {
 
     setLanguage(language: string) {
         this.currentLanguage = language
+        setSettingValue("castmate", "language", language)
     }
 
     getAvailableLanguages(): string[] {
@@ -252,6 +373,10 @@ class TranslationServiceImpl {
 
     getCurrentLanguage(): string {
         return this.currentLanguage
+    }
+
+    getSystemLanguage(): string {
+        return getSystemLanguage()
     }
 
     getAllTranslations(): GeneratedTranslations {
@@ -278,6 +403,17 @@ defineIPCFunc("translation", "getTranslation", (key: string) => {
 
 defineIPCFunc("translation", "setLanguage", (language: string) => {
     TranslationService.setLanguage(language)
+
+    // setSettingsValue("castmate", "language", language)
+
+    // Rafraîchir la fenêtre pour appliquer le changement de langue (équivalent à Ctrl+R)
+    const windows = BrowserWindow.getAllWindows()
+    if (windows.length > 0) {
+        windows.forEach(win => {
+            win.webContents.reload()
+        })
+    }
+
     return true
 })
 
@@ -287,6 +423,10 @@ defineIPCFunc("translation", "getAvailableLanguages", () => {
 
 defineIPCFunc("translation", "getCurrentLanguage", () => {
     return TranslationService.getCurrentLanguage()
+})
+
+defineIPCFunc("translation", "getSystemLanguage", () => {
+    return TranslationService.getSystemLanguage()
 })
 
 defineIPCFunc("translation", "getAllTranslations", () => {
@@ -332,3 +472,28 @@ export function tSync(key: string): string {
 export async function initializeTranslationService(): Promise<void> {
     await TranslationService.initializeAsync()
 }
+
+// Export system language detection function
+export function detectSystemLanguage(): string {
+    return getSystemLanguage()
+}
+
+function refreshLanguage(): void {
+    logger.log("Refreshing language to:", getSettingValue("castmate", "language") || "en")
+    TranslationService.setLanguage(getSettingValue("castmate", "language") || "en")
+
+    // Rafraîchir la fenêtre pour appliquer le changement de langue (équivalent à Ctrl+R)
+    const windows = BrowserWindow.getAllWindows()
+    if (windows.length > 0) {
+        windows.forEach(win => {
+            win.webContents.reload()
+        })
+    }
+}
+
+defineIPCFunc("translation", "refreshLanguage", () => {
+    refreshLanguage()
+    return true
+})
+
+export { refreshLanguage }

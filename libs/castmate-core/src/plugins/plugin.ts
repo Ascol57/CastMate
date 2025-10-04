@@ -386,6 +386,19 @@ export function getSettingValue<T>(plugin: string, id: string) {
 	throw new Error()
 }
 
+export function setSettingValue<T>(plugin: string, id: string, value: T) {
+	const pluginObj = PluginManager.getInstance().getPlugin(plugin)
+	if (!pluginObj) throw new Error()
+
+	const setting = pluginObj.settings.get(id)
+	if (!setting) throw new Error()
+	if (setting.type == "value") {
+		setting.ref.value = value
+	} else if (setting.type == "secret") {
+		setting.ref.value = value
+	}
+}
+
 export function useSetting<T>(plugin: string, id: string) {
 	const pluginObj = PluginManager.getInstance().getPlugin(plugin)
 	if (!pluginObj) throw new Error()

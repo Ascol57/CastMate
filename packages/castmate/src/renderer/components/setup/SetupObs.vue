@@ -1,7 +1,9 @@
 <template>
 	<div>
-		<h1 class="text-center mb-0"><i class="obsi obsi-obs obs-blue"></i>{{ $tSync('setup.setup_obs') }} <migration-check-box :checked="ready" /></h1>
-		<p class="p-text-secondary text-center">{{ $tSync('setup.obs_connection_description') }}</p>
+		<h1 class="text-center mb-0"><i class="obsi obsi-obs obs-blue"></i>{{ tSync('setup.setup_obs') }}
+			<migration-check-box :checked="ready" />
+		</h1>
+		<p class="p-text-secondary text-center">{{ tSync('setup.obs_connection_description') }}</p>
 		<div class="flex flex-row align-items-start justify-content-center gap-4 w-full image-row">
 			<img class="guide-image" src="../../assets/setup/websocket-dropdown.png"></img>
 			<img class="guide-image" src="../../assets/setup/websocket-settings.png"></img>
@@ -10,19 +12,19 @@
 		<div class="flex flex-row gap-1">
 			<div class="flex-grow-1 w-0 flex flex-column justify-content-center">
 				<p class="text-center p-text-secondary">
-					{{ $tSync('setup.websocket_info') }}
+					{{ tSync('setup.websocket_info') }}
 				</p>
 				<div class="flex flex-row justify-content-center">
-					<p-button @click="readQR">{{ $tSync('setup.grab_info') }}</p-button>
+					<p-button @click="readQR">{{ tSync('setup.grab_info') }}</p-button>
 				</div>
 				<p class="text-center p-text-secondary">
-					{{ $tSync('setup.obs_connection_warning') }}
+					{{ tSync('setup.obs_connection_warning') }}
 				</p>
 			</div>
 			<div class="flex-grow-1 w-0">
 				<data-input v-model="obsConfig" :schema="obsConfigSchema"></data-input>
 				<div class="flex flex-row justify-content-center">
-					<p-button @click="saveSettings">{{ $tSync('common.save') }}</p-button>
+					<p-button @click="saveSettings">{{ tSync('system.save') }}</p-button>
 				</div>
 			</div>
 		</div>
@@ -32,7 +34,7 @@
 <script setup lang="ts">
 import { SchemaType } from "castmate-schema"
 import { declareSchema } from "castmate-schema"
-import { DataInput, useIpcCaller, useResource, useResourceStore, useSettingValue, usePluginStore } from "castmate-ui-core"
+import { DataInput, useIpcCaller, useResource, useResourceStore, useSettingValue, usePluginStore, tSync } from "castmate-ui-core"
 import { ref, onMounted, computed, useModel, watch } from "vue"
 
 import MigrationCheckBox from "../migration/MigrationCheckBox.vue"
@@ -111,7 +113,7 @@ async function saveSettings() {
 			name: "Main OBS",
 			...obsConfig.value
 		})
-		
+
 		await pluginStore.updateSettings([{
 			pluginId: "obs",
 			settingId: "obsDefault",

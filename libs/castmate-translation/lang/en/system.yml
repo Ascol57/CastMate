@@ -36,3 +36,5 @@ pending: Pending
 delete: Delete
 delete_confirmation: Are you sure you want to delete
 edit: Edit
+getStarted: Get Started
+language: Language

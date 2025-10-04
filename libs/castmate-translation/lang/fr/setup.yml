@@ -1,14 +1,14 @@
-setup_twitch: Configurer Twitch
-setup_obs: Configurer OBS
-twitch_text_line_1: Connectez-vous aux <i><b>DEUX</b></i> comptes : le compte de la chaîne et le compte bot.
-twitch_text_line_2: Si vous n'avez pas de compte bot, connectez-vous simplement avec votre compte de chaîne deux fois.
+setup_twitch: Configuration de Twitch
+setup_obs: Configuration d'OBS
+twitch_text_line_1: Connectez-vous à <i><b>LA FOIS</b></i> au compte de la chaîne et au compte du bot.
+twitch_text_line_2: Si vous n'avez pas de compte bot, connectez-vous simplement deux fois avec votre compte de chaîne.
 channel_account: Compte de la chaîne
-channel_account_description: Connectez-vous ici avec votre compte de chaîne principal.
-bot_account: Compte bot
+channel_account_description: Connectez-vous ici à votre compte principal de chaîne.
+bot_account: Compte Bot
 bot_account_description: Ce compte est utilisé pour envoyer des messages dans le chat.
-obs_connection_description: CastMate doit se connecter à OBS via le serveur Websocket OBS pour que les actions OBS fonctionnent.
-websocket_info: Si la boîte de dialogue d'information de connexion WebSocket est ouverte sur cet ordinateur, vous pouvez cliquer sur ce bouton pour détecter automatiquement les paramètres de connexion.
-grab_info: Récupérer les infos de connexion
-obs_connection_warning: Si OBS est sur un autre PC, vous devrez entrer l'IP, le port et le mot de passe.
+obs_connection_description: CastMate doit se connecter à OBS via le serveur Websocket d'OBS pour que les actions OBS fonctionnent.
+websocket_info: Si la boîte de dialogue d'informations de connexion WebSocket est ouverte sur cet ordinateur, vous pouvez cliquer sur ce bouton pour détecter automatiquement les paramètres de connexion.
+grab_info: Récupérer les informations de connexion
+obs_connection_warning: Si OBS est sur un autre PC, vous devrez saisir l'IP, le port et le mot de passe.
 complete: Configuration terminée !
 thanks_message: Merci d'avoir configuré CastMate !

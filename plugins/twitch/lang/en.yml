@@ -35,6 +35,7 @@ common:
   offline: "Offline"
   live: "Live"
   signInto: "Sign into"
+  bot: "Bot"
 
 actions:
   runAd:

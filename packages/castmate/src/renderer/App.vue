@@ -6,6 +6,7 @@
 			<project-view />
 			<docking-area style="flex: 1" v-model="dockingStore.rootDockArea" />
 		</div>
+		<!-- Loading Screen -->
 		<div class="load-row" v-else>
 			<h3>Loading CastMate</h3>
 			<p-progress-spinner />
@@ -37,7 +38,7 @@ import PProgressSpinner from "primevue/progressspinner"
 import PConfirmDialog from "primevue/confirmdialog"
 
 import { setupGenericLoginService, useInitStore } from "castmate-ui-core"
-import { onMounted } from "vue"
+import { onMounted, ref } from "vue"
 import { useDialog } from "primevue/usedialog"
 import MigrationDialog from "./components/migration/MigrationDialog.vue"
 import FirstTimeSetupDialog from "./components/setup/FirstTimeSetupDialog.vue"

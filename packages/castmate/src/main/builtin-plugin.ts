@@ -20,6 +20,7 @@ import {
 	globalLogger,
 } from "castmate-core"
 import { getExpressionHash } from "castmate-core/src/util/boolean-helpers"
+import { detectSystemLanguage, refreshLanguage } from "castmate-translation"
 
 interface ConditionalTrigger {
 	conditionHash: number
@@ -45,8 +46,23 @@ export default definePlugin(
 			name: "Internal Webserver Port",
 		})
 
+		const language = defineSetting("language", {
+			type: String,
+			required: true,
+			default: detectSystemLanguage(),
+			name: "Language",
+		})
+
+		runOnChange(
+			() => language.value,
+			() => {
+				refreshLanguage()
+			}
+		)
+
 		onLoad(() => {
 			WebService.getInstance().startHttp(port.value)
+			refreshLanguage()
 		})
 
 		runOnChange(
