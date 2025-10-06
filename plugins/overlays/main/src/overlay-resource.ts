@@ -30,6 +30,7 @@ import { OverlayWebsocketService } from "./websocket-bridge"
 import { OBSConnection } from "castmate-plugin-obs-main"
 
 import { SoundOutput } from "castmate-plugin-sound-main"
+import { t } from "castmate-translation"
 
 const logger = usePluginLogger("overlays")
 
@@ -217,16 +218,16 @@ export function setupOverlayResources() {
 
 	defineAction({
 		id: "widgetVisibility",
-		name: "Widget Visibility",
-		description: "Toggles a Widget's visibliity on an overlay.",
+		name: t("plugins.overlays.actions.widgetVisibility.name"),
+		description: t("plugins.overlays.actions.widgetVisibility.description"),
 		icon: "mdi mdi-eye",
 		config: {
 			type: Object,
 			properties: {
-				widget: { type: OverlayWidget, required: true, name: "Widget" },
+				widget: { type: OverlayWidget, required: true, name: t("plugins.overlays.common.widget") },
 				enabled: {
 					type: Toggle,
-					name: "Widget Visibility",
+					name: t("plugins.overlays.common.widgetVisibility"),
 					required: true,
 					default: true,
 					template: true,
@@ -238,7 +239,7 @@ export function setupOverlayResources() {
 		result: {
 			type: Object,
 			properties: {
-				widgetVisible: { type: Boolean, name: "Widget Visible", required: true },
+				widgetVisible: { type: Boolean, name: t("plugins.overlays.common.widgetVisibility"), required: true },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {

@@ -3,11 +3,13 @@ import { OverlayWidget } from "castmate-plugin-overlays-shared"
 import { OverlayWebsocketService } from "./websocket-bridge"
 import { Duration } from "castmate-schema"
 import { Overlay } from "./overlay-resource"
+import { t } from "castmate-translation"
 
 export function setupAlerts() {
 	defineAction({
 		id: "alert",
-		name: "Show Alert",
+		name: t("plugins.overlays.actions.alert.name"),
+		description: t("plugins.overlays.actions.alert.description"),
 		icon: "mdi mdi-alert-box-outline",
 		duration: {
 			propDependencies: ["alert"],
@@ -38,14 +40,14 @@ export function setupAlerts() {
 			properties: {
 				alert: {
 					type: OverlayWidget,
-					name: "Alert Box",
+					name: t("plugins.overlays.common.alertBox"),
 					required: true,
 					widgetType: { plugin: "overlays", widget: "alert" },
 				},
-				title: { type: String, name: "Title", template: true, required: true, default: "", multiLine: true },
+				title: { type: String, name: t("plugins.overlays.common.title"), template: true, required: true, default: "", multiLine: true },
 				subtitle: {
 					type: String,
-					name: "Subtitle",
+					name: t("plugins.overlays.common.subtitle"),
 					template: true,
 					required: true,
 					default: "",

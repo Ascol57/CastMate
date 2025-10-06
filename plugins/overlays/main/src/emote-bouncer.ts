@@ -1,11 +1,13 @@
 import { EmoteCache, defineAction } from "castmate-core"
 import { OverlayWidget } from "castmate-plugin-overlays-shared"
 import { OverlayWebsocketService } from "./websocket-bridge"
+import { t } from "castmate-translation"
 
 export function setupEmoteBouncer() {
 	defineAction({
 		id: "spawnEmotes",
-		name: "Bounce Emotes",
+		name: t("plugins.overlays.actions.spawnEmotes.name"),
+		description: t("plugins.overlays.actions.spawnEmotes.description"),
 		icon: "mdi mdi-emoticon",
 		config: {
 			type: Object,
@@ -13,10 +15,10 @@ export function setupEmoteBouncer() {
 				bouncer: {
 					type: OverlayWidget,
 					required: true,
-					name: "Emote Bouncer",
+					name: t("plugins.overlays.common.emoteBouncer"),
 					widgetType: { plugin: "overlays", widget: "emote-bounce" },
 				},
-				message: { type: String, required: true, template: true, name: "Emote Message" },
+				message: { type: String, required: true, template: true, name: t("plugins.overlays.common.emoteMessage") },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {

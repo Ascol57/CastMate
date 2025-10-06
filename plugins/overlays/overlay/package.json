@@ -15,6 +15,7 @@
 		"@vueuse/core": "*",
 		"castmate-overlay-core": "workspace:^",
 		"castmate-schema": "workspace:^",
+		"castmate-ui-core": "workspace:^",
 		"chromatism2": "*",
 		"electron": "^34.2.0",
 		"nanoid": "^5.0.7",

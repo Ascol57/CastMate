@@ -1,0 +1,46 @@
+plugin:
+  name: "Overlays"
+  description: "Create and manage custom overlays for your streams."
+
+common:
+  alertBox: "Alert Box"
+  title: "Title"
+  subtitle: "Subtitle"
+  emoteBouncer: "Emote Bouncer"
+  emoteMessage: "Emote Message"
+  widget: "Widget"
+  widgetVisibility: "Widget Visibility"
+  media: "Media"
+  duration: "Duration"
+  randomWeight: "Random Weight"
+  transition: "Transition"
+  appearDelay: "Appear Delay"
+  vanishAdvance: "Vanish Advance"
+  subtitle: "Subtitle"
+  defaultTitle: "Title"
+  defaultMessage: "This is a sample message!"
+
+textProperties:
+  textBelowMedia: "Text Below Media"
+  font: "Font"
+  textAlign: "Text Align"
+  blockStyle: "Block Style"
+
+actions:
+  alert:
+    name: "Show Alert"
+    description: "Display a custom alert on your overlay."
+
+  spawnEmotes:
+    name: "Spawn Emotes"
+    description: "Spawn emotes that bounce around the screen."
+
+  widgetVisibility:
+    name: "Set Widget Visibility"
+    description: "Show or hide specific widgets on your overlay."
+
+widgets:
+  alert:
+    name: "Alert"
+    description: "A classic alert box that can show two lines of text along with gifs, images, and videos"
+    media: "Alert Media"
