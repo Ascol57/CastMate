@@ -1,0 +1,24 @@
+plugin:
+  name: "Philips Hue"
+  description: "Control your Philips Hue lights and scenes."
+
+common:
+  group: "Group"
+  scene: "Scene"
+
+settings:
+  hubIp: "Hue Hub IP"
+  hubKey: "Hue Hub Key"
+
+actions:
+  scene:
+    name: "Set HUE Scene"
+    description: "Activate a predefined scene on your Philips Hue lights."
+
+renderer:
+  hueHubSearch:
+    title: "Philips Hue Bridge"
+    description: "Press the button on the hue hub, then click Pair Hub to automatically connect CastMate to philips hue."
+    searching: "Searching for Hub..."
+    buttonText: "Pair Hub"
+    found: "Hub Paired!"

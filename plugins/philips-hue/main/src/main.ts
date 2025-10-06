@@ -19,11 +19,26 @@ import { setupHueEvents } from "./events"
 import { defineSettingComponent } from "castmate-core"
 import { LightResource } from "castmate-plugin-iot-main"
 import { HUEScene } from "./api"
+import { generatedTranslationsFromFiles, registerPluginTranslations, t } from "castmate-translation"
+
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("philips-hue", generatedTranslationsFromFiles(translationFiles))
 
 export default definePlugin(
 	{
 		id: "philips-hue",
-		name: "Philips HUE",
+		name: t("plugins.philips-hue.plugin.name"),
+		description: t("plugins.philips-hue.plugin.description"),
 		icon: "iot iot-hue-sultan",
 		color: "#7F743F",
 	},
@@ -32,12 +47,12 @@ export default definePlugin(
 
 		const hubIp = defineSetting("hubIp", {
 			type: String,
-			name: "Hue Hub IP",
+			name: t("plugins.philips-hue.settings.hubIp"),
 		})
 
 		const hubKey = defineSecret("hubKey", {
 			type: String,
-			name: "Hue Hub Key",
+			name: t("plugins.philips-hue.settings.hubKey"),
 		})
 
 		setupResources(hubIp, hubKey)
@@ -64,20 +79,21 @@ export default definePlugin(
 
 		defineAction({
 			id: "scene",
-			name: "Set HUE Scene",
+			name: t("plugins.philips-hue.actions.scene.name"),
+			description: t("plugins.philips-hue.actions.scene.description"),
 			icon: "mdi mdi-lightbulb-group-outline",
 			config: {
 				type: Object,
 				properties: {
 					group: {
 						type: LightResource,
-						name: "Group",
+						name: t("plugins.philips-hue.common.group"),
 						filter: { provider: "philips-hue", hueType: "group" },
 						required: true,
 					},
 					scene: {
 						type: String,
-						name: "Scene",
+						name: t("plugins.philips-hue.common.scene"),
 						required: true,
 						async enum(context: { group: PhilipsHUEGroup }) {
 							const scenes = await sceneCache.get()
