@@ -10,12 +10,26 @@ import {
 } from "castmate-core"
 import { setupTimers } from "./timers"
 import { VariableManager } from "castmate-plugin-variables-main"
+import { registerPluginTranslations, generatedTranslationsFromFiles, t } from "castmate-translation"
+
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("time", generatedTranslationsFromFiles(translationFiles))
 
 export default definePlugin(
 	{
 		id: "time",
-		name: "Time",
-		description: "Time Utilities",
+		name: t("plugins.time.plugin.name"),
+		description: t("plugins.time.plugin.description"),
 		icon: "mdi mdi-clock-outline",
 		color: "#8DC1C0",
 	},
@@ -24,7 +38,8 @@ export default definePlugin(
 
 		defineAction({
 			id: "delay",
-			name: "Delay",
+			name: t("plugins.time.actions.delay.name"),
+			description: t("plugins.time.actions.delay.description"),
 			icon: "mdi mdi-timer-sand",
 			duration: {
 				dragType: "length",
@@ -35,7 +50,7 @@ export default definePlugin(
 			config: {
 				type: Object,
 				properties: {
-					duration: { type: Duration, name: "Duration", template: true, required: true, default: 1.0 },
+					duration: { type: Duration, name: t("plugins.time.common.duration"), template: true, required: true, default: 1.0 },
 				},
 			},
 			async invoke(config, contextData, abortSignal) {
@@ -49,8 +64,7 @@ export default definePlugin(
 
 				if (absDelta > 0.01) {
 					logger.error(
-						`Delay Inaccuracy! Waited ${waited}/${config.duration} : ${
-							abortSignal.aborted ? "aborted" : "not aborted"
+						`Delay Inaccuracy! Waited ${waited}/${config.duration} : ${abortSignal.aborted ? "aborted" : "not aborted"
 						}`
 					)
 				}
@@ -59,14 +73,15 @@ export default definePlugin(
 
 		defineAction({
 			id: "toggleTimer",
-			name: "Toggle Timer",
+			name: t("plugins.time.actions.toggleTimer.name"),
+			description: t("plugins.time.actions.toggleTimer.description"),
 			icon: "mdi mdi-timer-outline",
 			config: {
 				type: Object,
 				properties: {
 					timer: {
 						type: String,
-						name: "Timer",
+						name: t("plugins.time.common.timer"),
 						required: true,
 						async enum() {
 							return VariableManager.getInstance()
@@ -76,7 +91,7 @@ export default definePlugin(
 					},
 					on: {
 						type: Toggle,
-						name: "Start/Stop",
+						name: t("plugins.time.toggle"),
 						required: true,
 						default: true,
 						template: true,
@@ -88,7 +103,7 @@ export default definePlugin(
 			result: {
 				type: Object,
 				properties: {
-					timerRunning: { type: Boolean, name: "Timer Running", required: true },
+					timerRunning: { type: Boolean, name: t("plugins.time.common.timerRunning"), required: true },
 				},
 			},
 			async invoke(config, contextData, abortSignal) {
@@ -117,7 +132,8 @@ export default definePlugin(
 
 		defineAction({
 			id: "setTimer",
-			name: "Set Timer",
+			name: t("plugins.time.actions.setTimer.name"),
+			description: t("plugins.time.actions.setTimer.description"),
 			icon: "mdi mdi-timer-outline",
 			config: {
 				type: Object,
@@ -125,14 +141,14 @@ export default definePlugin(
 					timer: {
 						type: String,
 						required: true,
-						name: "Timer",
+						name: t("plugins.time.common.timer"),
 						async enum() {
 							return VariableManager.getInstance()
 								.variableDefinitions.filter((v) => v.schema.type == Timer)
 								.map((v) => v.id)
 						},
 					},
-					duration: { type: Duration, name: "Duration", template: true, required: true, default: 5 },
+					duration: { type: Duration, name: t("plugins.time.common.duration"), template: true, required: true, default: 5 },
 				},
 			},
 			async invoke(config, contextData, abortSignal) {
@@ -148,7 +164,8 @@ export default definePlugin(
 
 		defineAction({
 			id: "offsetTimer",
-			name: "Offset Timer",
+			name: t("plugins.time.actions.offsetTimer.name"),
+			description: t("plugins.time.actions.offsetTimer.description"),
 			icon: "mdi mdi-timer-plus-outline",
 			config: {
 				type: Object,
@@ -156,14 +173,14 @@ export default definePlugin(
 					timer: {
 						type: String,
 						required: true,
-						name: "Timer",
+						name: t("plugins.time.common.timer"),
 						async enum() {
 							return VariableManager.getInstance()
 								.variableDefinitions.filter((v) => v.schema.type == Timer)
 								.map((v) => v.id)
 						},
 					},
-					duration: { type: Duration, name: "Duration", template: true, required: true, default: 5 },
+					duration: { type: Duration, name: t("plugins.time.common.duration"), template: true, required: true, default: 5 },
 				},
 			},
 			async invoke(config, contextData, abortSignal) {

@@ -1,0 +1,12 @@
+plugin:
+  name: "Stream Plans"
+  description: "Stream Plan"
+
+actions:
+  nextSegment:
+    name: "Next Segment"
+    description: "Moves to the next segment in the active stream plan."
+  
+  prevSegment:
+    name: "Previous Segment"
+    description: "Moves to the previous segment in the active stream plan."

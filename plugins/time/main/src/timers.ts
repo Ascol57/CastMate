@@ -11,6 +11,7 @@ import {
 } from "castmate-core"
 import { VariableManager } from "castmate-plugin-variables-main"
 import { Duration, ValueCompareOperator, Timer, getTimeRemaining, isTimer, isTimerStarted } from "castmate-schema"
+import { t } from "castmate-translation"
 
 //Schedules a reactive effect to wake up at a certain duration remaining.
 function scheduleTimerWakeup(timer: Timer, duration: Duration) {
@@ -162,14 +163,14 @@ export function setupTimers() {
 
 	const repeat = defineTrigger({
 		id: "repeat",
-		name: "Repeat",
-		description: "Repeatedly triggers at a set time interval",
+		name: t("plugins.time.triggers.repeat.name"),
+		description: t("plugins.time.triggers.repeat.description"),
 		icon: "mdi mdi-clock",
 		config: {
 			type: Object,
 			properties: {
-				delay: { type: Duration, name: "Delay" },
-				interval: { type: Duration, name: "Interval", required: true, default: 30 },
+				delay: { type: Duration, name: t("plugins.time.common.delay") },
+				interval: { type: Duration, name: t("plugins.time.common.interval"), required: true, default: 30 },
 			},
 		},
 		context: {
@@ -216,14 +217,15 @@ export function setupTimers() {
 
 	const timerTrigger = defineTrigger({
 		id: "timer",
-		name: "Timer",
+		name: t("plugins.time.triggers.timer.name"),
+		description: t("plugins.time.triggers.timer.description"),
 		icon: "mdi mdi-timer",
 		config: {
 			type: Object,
 			properties: {
 				timer: {
 					type: String,
-					name: "Timer",
+					name: t("plugins.time.common.timer"),
 					required: true,
 					async enum() {
 						return VariableManager.getInstance()
@@ -233,7 +235,7 @@ export function setupTimers() {
 				},
 				offset: {
 					type: Duration,
-					name: "Time Remaining",
+					name: t("plugins.time.common.timeRemaining"),
 					required: true,
 					default: 0,
 				},

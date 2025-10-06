@@ -1,0 +1,38 @@
+plugin:
+  name: "Time"
+  description: "Time Utilities"
+
+common:
+  duration: "Duration"
+  timer: "Timer"
+  toggle: "Start/Stop"
+  timerRunning: "Timer Running"
+  delay: "Delay"
+  interval: "Interval"
+  timeRemaining: "Time Remaining"
+
+actions:
+  delay:
+    name: "Delay"
+    description: "Wait for a specified duration before proceeding."
+  
+  toggleTimer:
+    name: "Toggle Timer"
+    description: "Start or stop a named timer."
+  
+  setTimer:
+    name: "Set Timer"
+    description: "Set a named timer to a specific value."
+  
+  offsetTimer:
+    name: "Offset Timer"
+    description: "Add or subtract a duration from a named timer."
+
+triggers:
+  repeat:
+    name: "Repeat"
+    description: "Repeatedly triggers at a set time interval"
+  
+  timer:
+    name: "Timer"
+    description: "Triggers when a named timer reaches zero"

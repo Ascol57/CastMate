@@ -1,19 +1,33 @@
 import { defineAction, defineTrigger, onLoad, onUnload, definePlugin, StreamPlanManager } from "castmate-core"
+import { generatedTranslationsFromFiles, registerPluginTranslations, t } from "castmate-translation"
+
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("stream-plans", generatedTranslationsFromFiles(translationFiles))
 
 export default definePlugin(
 	{
 		id: "stream-plans",
-		name: "Stream Plans",
-		description: "Stream Plan",
+		name: t("plugins.stream-plans.plugin.name"),
+		description: t("plugins.stream-plans.plugin.description"),
 		icon: "mdi mdi-notebook",
 		color: "#67E033",
 	},
 	() => {
 		defineAction({
 			id: "nextSegment",
-			name: "Next Segment",
+			name: t("plugins.stream-plans.actions.nextSegment.name"),
 			icon: "mdi mdi-skip-next",
-			description: "Moves to the next segment in the active stream plan.",
+			description: t("plugins.stream-plans.actions.nextSegment.description"),
 			config: {
 				type: Object,
 				properties: {},
@@ -25,9 +39,9 @@ export default definePlugin(
 
 		defineAction({
 			id: "prevSegment",
-			name: "Previous Segment",
+			name: t("plugins.stream-plans.actions.prevSegment.name"),
 			icon: "mdi mdi-skip-previous",
-			description: "Moves to the prev segment in the active stream plan.",
+			description: t("plugins.stream-plans.actions.prevSegment.description"),
 			config: {
 				type: Object,
 				properties: {},
