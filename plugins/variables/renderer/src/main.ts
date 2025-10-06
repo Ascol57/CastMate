@@ -1,4 +1,4 @@
-import { ProjectGroupItem, useDockingStore, useProjectStore, useViewerDataStore } from "castmate-ui-core"
+import { ProjectGroupItem, tSync, useDockingStore, useProjectStore, useViewerDataStore } from "castmate-ui-core"
 import { computed } from "vue"
 import VariablesPageVue from "./components/VariablesPage.vue"
 import { useVariableStore } from "./variable-store"
@@ -18,10 +18,10 @@ export async function initPlugin() {
 		computed<ProjectGroupItem>(() => {
 			return {
 				id: "variables",
-				title: "Variables",
+				title: tSync("plugins.variables.plugin.name"),
 				icon: "mdi mdi-variable",
 				open() {
-					dockingStore.openPage("variables.variables", "Variables", "mdi mdi-variable", VariablesPageVue)
+					dockingStore.openPage("variables.variables", tSync("plugins.variables.plugin.name"), "mdi mdi-variable", VariablesPageVue)
 				},
 			}
 		})
@@ -30,10 +30,10 @@ export async function initPlugin() {
 	const projectItem = computed<ProjectGroupItem>(() => {
 		return {
 			id: "viewer-variables",
-			title: "Viewer Variables",
+			title: tSync("plugins.variables.common.viewerVariables"),
 			icon: "mdi mdi-table-account",
 			open() {
-				dockingStore.openPage("viewer-data", "Viewer Variables", "mdi mdi-table-account", ViewerVariablePage)
+				dockingStore.openPage("viewer-data", tSync("plugins.variables.common.viewerVariables"), "mdi mdi-table-account", ViewerVariablePage)
 			},
 		}
 	})

@@ -1,0 +1,6 @@
+plugin:
+  name: "TP-Link Kasa"
+  description: "TP-Link Kasa Smart Home Integration"
+
+settings:
+  subnetMask: "TP-Link Kasa Subnet Mask"

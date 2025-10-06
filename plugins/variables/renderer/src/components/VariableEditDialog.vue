@@ -3,40 +3,32 @@
 		<div class="p-inputgroup var-edit">
 			<p-float-label>
 				<variable-name-input v-model="variableDef.id" local-path="id" />
-				<label for="name"> Variable Name </label>
+				<label for="name"> {{ tSync("plugins.variables.common.variableName") }} </label>
 			</p-float-label>
 		</div>
 		<div class="p-inputgroup var-edit">
 			<p-float-label>
-				<p-dropdown
-					v-model="typeName"
-					:options="variableTypeOptions"
-					option-value="code"
-					option-label="name"
-					input-id="type"
-				/>
-				<label for="type"> Type </label>
+				<p-dropdown v-model="typeName" :options="variableTypeOptions" option-value="code" option-label="name"
+					input-id="type" />
+				<label for="type"> {{ tSync("plugins.variables.common.type") }} </label>
 			</p-float-label>
 		</div>
-		<data-input
-			class="var-edit"
-			v-model="variableDef.defaultValue"
-			:schema="{ ...variableDef.schema, name: 'Default Value' }"
-			local-path="defaultValue"
-		/>
+		<data-input class="var-edit" v-model="variableDef.defaultValue"
+			:schema="{ ...variableDef.schema, name: tSync('plugins.variables.common.defaultValue') }"
+			local-path="defaultValue" />
 		<div class="p-inputgroup var-edit">
 			<p-check-box binary input-id="check" v-model="variableDef.serialized" />
-			<label for="check" class="ml-2"> Saved </label>
+			<label for="check" class="ml-2"> {{ tSync("plugins.variables.common.saved") }} </label>
 		</div>
 		<div class="flex justify-content-end mt-1">
-			<p-button :label="isCreate ? 'Create' : 'Save'" @click="submit"></p-button>
+			<p-button :label="isCreate ? tSync('system.create') : tSync('system.save')" @click="submit"></p-button>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { computed, markRaw, onMounted, ref } from "vue"
-import { useDialogRef, DataInput, provideScrollAttachable, VariableNameInput, CDropdown } from "castmate-ui-core"
+import { useDialogRef, DataInput, provideScrollAttachable, VariableNameInput, CDropdown, tSync } from "castmate-ui-core"
 import _cloneDeep from "lodash/cloneDeep"
 
 import PDropdown from "primevue/dropdown"

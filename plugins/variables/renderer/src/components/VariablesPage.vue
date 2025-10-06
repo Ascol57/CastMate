@@ -1,17 +1,11 @@
 <template>
 	<div class="container">
 		<div class="inner-container">
-			<p-data-table
-				class="flex flex-column"
-				:value="variables"
-				data-key="id"
-				:global-filter-fields="['id']"
-				style="width: 100%; max-height: 100%"
-				scrollable
-			>
+			<p-data-table class="flex flex-column" :value="variables" data-key="id" :global-filter-fields="['id']"
+				style="width: 100%; max-height: 100%" scrollable>
 				<template #header>
 					<div class="flex">
-						<p-button @click="createNew">Create Variable</p-button>
+						<p-button @click="createNew">{{ tSync("plugins.variables.common.createVariable") }}</p-button>
 						<div class="flex-grow-1" />
 						<span class="p-input-icon-left">
 							<i class="pi pi-search" />
@@ -45,12 +39,8 @@
 						<div class="flex flex-row">
 							<p-button icon="mdi mdi-refresh" text @click="reset(data)"></p-button>
 							<p-button icon="mdi mdi-pencil" text @click="editDialog(data)"></p-button>
-							<p-button
-								icon="mdi mdi-delete"
-								severity="error"
-								text
-								@click="deleteDialog(data)"
-							></p-button>
+							<p-button icon="mdi mdi-delete" severity="error" text
+								@click="deleteDialog(data)"></p-button>
 						</div>
 					</template>
 				</p-column>
@@ -65,7 +55,7 @@ import PColumn from "primevue/column"
 import PInputText from "primevue/inputtext"
 import PButton from "primevue/button"
 //import { FilterMatchMode } from "primevue/api"
-import { usePluginStore, DataView } from "castmate-ui-core"
+import { usePluginStore, DataView, tSync } from "castmate-ui-core"
 import { ref } from "vue"
 import { useVariableList, RendererVariableDefinition, useVariableStore } from "../variable-store"
 import { getTypeByConstructor } from "castmate-schema"
@@ -83,7 +73,7 @@ const confirm = useConfirm()
 function createNew() {
 	dialog.open(VariableEditDialog, {
 		props: {
-			header: "Create Variable",
+			header: tSync("plugins.variables.common.createVariable"),
 			style: {
 				width: "25vw",
 			},
@@ -106,8 +96,8 @@ function createNew() {
 
 function deleteDialog(def: RendererVariableDefinition) {
 	confirm.require({
-		header: `Delete ${def.id}?`,
-		message: `Are you sure you want to delete ${def.id}`,
+		header: `${tSync("system.delete")} ${def.id}?`,
+		message: `${tSync("system.areYouSure")} ${def.id}`,
 		icon: "mdi mdi-delete",
 		accept() {
 			variableStore.deleteVariable(def.id)
@@ -119,7 +109,7 @@ function editDialog(def: RendererVariableDefinition) {
 	console.log(def)
 	dialog.open(VariableEditDialog, {
 		props: {
-			header: `Edit ${def.id}`,
+			header: `${tSync("system.edit")} ${def.id}`,
 			style: {
 				width: "25vw",
 			},

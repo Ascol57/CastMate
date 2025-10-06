@@ -2,13 +2,15 @@ import { defineAction, usePluginLogger, ViewerData } from "castmate-core"
 import { TwitchViewer } from "castmate-plugin-twitch-shared"
 import { DynamicType } from "castmate-schema"
 import { ViewerCache as TwitchViewerCache } from "castmate-plugin-twitch-main"
+import { t } from "castmate-translation"
 
 export function setupViewerVariables() {
 	const logger = usePluginLogger()
 
 	defineAction({
 		id: "setViewerVar",
-		name: "Set Viewer Variable",
+		name: t("plugins.variables.actions.setViewerVar.name"),
+		description: t("plugins.variables.actions.setViewerVar.description"),
 		icon: "mdi mdi-account-alert",
 		config: {
 			type: Object,
@@ -16,7 +18,7 @@ export function setupViewerVariables() {
 				viewer: { type: TwitchViewer, required: true, name: "Viewer", default: "{{ viewer }}", template: true },
 				variable: {
 					type: String,
-					name: "Variable",
+					name: t("plugins.variables.common.variable"),
 					required: true,
 					async enum() {
 						return ViewerData.getInstance().variables.map((d) => d.name)
@@ -31,14 +33,14 @@ export function setupViewerVariables() {
 						if (!variable) {
 							return {
 								type: String,
-								name: "Value",
+								name: t("plugins.variables.common.value"),
 								required: true,
 							}
 						}
 
 						return {
 							...variable.schema,
-							name: "Value",
+							name: t("plugins.variables.common.value"),
 							template: true,
 						}
 					},
@@ -64,7 +66,8 @@ export function setupViewerVariables() {
 
 	defineAction({
 		id: "offsetViewerVar",
-		name: "Offset Viewer Variable",
+		name: t("plugins.variables.actions.offsetViewerVar.name"),
+		description: t("plugins.variables.actions.offsetViewerVar.description"),
 		icon: "mdi mdi-account-alert",
 		config: {
 			type: Object,
@@ -72,7 +75,7 @@ export function setupViewerVariables() {
 				viewer: { type: TwitchViewer, required: true, name: "Viewer", default: "{{ viewer }}", template: true },
 				variable: {
 					type: String,
-					name: "Variable",
+					name: t("plugins.variables.common.variable"),
 					required: true,
 					async enum() {
 						return ViewerData.getInstance()
@@ -89,14 +92,14 @@ export function setupViewerVariables() {
 						if (!variable) {
 							return {
 								type: String,
-								name: "Value",
+								name: t("plugins.variables.common.value"),
 								required: true,
 							}
 						}
 
 						return {
 							...variable.schema,
-							name: "Value",
+							name: t("plugins.variables.common.value"),
 							template: true,
 						}
 					},

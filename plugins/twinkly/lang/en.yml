@@ -1,0 +1,15 @@
+plugin:
+  name: "Twinkly"
+  description: "Twinkly Smart Light Integration"
+
+common:
+  device: "Twinkly Device"
+  movie: "Movie"
+
+settings:
+  subnetMask: "Twinkly Subnet Mask"
+
+actions:
+  movie:
+    name: "Twinkly Movie"
+    description: ""

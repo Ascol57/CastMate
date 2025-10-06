@@ -1,0 +1,34 @@
+plugin:
+  name: "Variables"
+  description: "Manage and use variables in your automations"
+
+common:
+  variable: "Variable"
+  value: "Value"
+  clamp: "Clamp Range"
+  viewerVariables: "Viewer Variables"
+  variableName: "Variable Name"
+  type: "Type"
+  defaultValue: "Default Value"
+  saved: "Saved"
+  createVariable: "Create Variable"
+  required: "Required Value"
+  createViewerVariable: "Create Viewer Variable"
+  viewer: "Viewer"
+
+actions:
+  set:
+    name: "Set Variable"
+    description: "Set the value of a variable"
+  
+  offset:
+    name: "Offset Variable"
+    description: "Offset the value of a variable by a specified amount"
+  
+  setViewerVar:
+    name: "Set Viewer Variable"
+    description: "Set a variable specific to a viewer"
+  
+  offsetViewerVar:
+    name: "Offset Viewer Variable"
+    description: "Offset a viewer-specific variable by a specified amount"

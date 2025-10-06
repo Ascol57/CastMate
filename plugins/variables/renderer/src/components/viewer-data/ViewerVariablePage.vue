@@ -1,50 +1,35 @@
 <template>
 	<div class="container">
 		<div class="inner-container" ref="container">
-			<p-data-table
-				class="flex flex-column"
-				table-class="variable-table"
-				:value="viewers"
-				data-key="twitch"
-				v-model:sort-field="sortField"
-				v-model:sort-order="sortOrder"
-				scrollable
-				style="width: 100%; height: 100%"
-				:virtual-scroller-options="{
+			<p-data-table class="flex flex-column" table-class="variable-table" :value="viewers" data-key="twitch"
+				v-model:sort-field="sortField" v-model:sort-order="sortOrder" scrollable
+				style="width: 100%; height: 100%" :virtual-scroller-options="{
 					lazy: true,
 					itemSize: 45,
 					onLazyLoad,
 					numToleratedItems: 10,
 					loading,
-				}"
-			>
+				}">
 				<template #header>
 					<div class="flex flex-row">
 						<div class="flex-grow-1"></div>
-						<p-button @click="createNew">Create Viewer Variable</p-button>
+						<p-button @click="createNew">{{ tSync("plugins.variables.common.createViewerVariable")
+							}}</p-button>
 					</div>
 				</template>
 
-				<p-column class="name-column" field="twitch_name" header="Viewer" sortable></p-column>
+				<p-column class="name-column" field="twitch_name" :header="tSync('plugins.variables.common.viewer')"
+					sortable></p-column>
 
-				<p-column
-					v-for="v in viewerDataStore.variables.values()"
-					:key="v.name"
-					class="data-column"
-					sortable
-					:field="v.name"
-				>
+				<p-column v-for="v in viewerDataStore.variables.values()" :key="v.name" class="data-column" sortable
+					:field="v.name">
 					<template #header="{ column }">
 						<viewer-variable-column-header :variable="v" />
 					</template>
 
 					<template #body="{ data }">
-						<value-display-edit
-							v-if="data"
-							:schema="v.schema"
-							:model-value="data[v.name]"
-							@update:modelValue="viewerDataStore.setViewerVariable(data.twitch, v.name, $event)"
-						/>
+						<value-display-edit v-if="data" :schema="v.schema" :model-value="data[v.name]"
+							@update:modelValue="viewerDataStore.setViewerVariable(data.twitch, v.name, $event)" />
 					</template>
 				</p-column>
 
@@ -63,7 +48,7 @@ import {
 import PDataTable from "primevue/datatable"
 import PColumn from "primevue/column"
 import PButton from "primevue/button"
-import { DataView, useIpcCaller, useLazyViewerQuery, useViewerDataStore, CContextMenu } from "castmate-ui-core"
+import { DataView, useIpcCaller, useLazyViewerQuery, useViewerDataStore, CContextMenu, tSync } from "castmate-ui-core"
 import { computed, ref, watch, onMounted, effect } from "vue"
 import { useDialog } from "primevue/usedialog"
 import ViewerVariableEditDialog from "./ViewerVariableEditDialog.vue"
@@ -95,7 +80,7 @@ const { viewers, updateRange, loading } = useLazyViewerQuery(sortField, sortOrde
 function createNew() {
 	dialog.open(ViewerVariableEditDialog, {
 		props: {
-			header: "Create Viewer Variable",
+			header: tSync("plugins.variables.common.createViewerVariable"),
 			style: {
 				width: "25vw",
 			},

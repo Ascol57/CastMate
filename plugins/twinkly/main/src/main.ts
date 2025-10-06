@@ -27,6 +27,20 @@ import {
 	turnTwinklyOff,
 } from "./api"
 import { Toggle } from "castmate-schema"
+import { registerPluginTranslations, generatedTranslationsFromFiles, t } from "castmate-translation"
+
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("twinkly", generatedTranslationsFromFiles(translationFiles))
 
 const logger = usePluginLogger("twinkly")
 
@@ -138,7 +152,8 @@ class TwinklyLight extends PollingLight<TwinklyLightConfig> {
 export default definePlugin(
 	{
 		id: "twinkly",
-		name: "Twinkly",
+		name: t("plugins.twinkly.plugin.name"),
+		description: t("plugins.twinkly.plugin.description"),
 		icon: "iot iot-twinkly",
 		color: "#7F743F",
 	},
@@ -146,7 +161,7 @@ export default definePlugin(
 		const subnetMask = defineSetting("subnetMask", {
 			type: String,
 			required: true,
-			name: "Twinkly Subnet Mask",
+			name: t("plugins.twinkly.settings.subnetMask"),
 			default: "255.255.255.255",
 		})
 
@@ -175,20 +190,21 @@ export default definePlugin(
 
 		defineAction({
 			id: "movie",
-			name: "Twinkly Movie",
+			name: t("plugins.twinkly.actions.movie.name"),
+			description: t("plugins.twinkly.actions.movie.description"),
 			icon: "iot iot-twinkly",
 			config: {
 				type: Object,
 				properties: {
 					twinkly: {
 						type: LightResource,
-						name: "Twinkly Device",
+						name: t("plugins.twinkly.common.device"),
 						filter: { provider: "twinkly" },
 						required: true,
 					},
 					movie: {
 						type: String,
-						name: "Movie",
+						name: t("plugins.twinkly.common.movie"),
 						required: true,
 						async enum(context: { twinkly: TwinklyLight }) {
 							if (!context.twinkly) return []

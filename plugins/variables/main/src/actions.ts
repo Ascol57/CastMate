@@ -1,6 +1,7 @@
 import { defineAction, exposeSchema, onLoad, onUnload, usePluginLogger } from "castmate-core"
 import { VariableManager } from "./variable-manager"
 import { Duration, DynamicType, Range } from "castmate-schema"
+import { t } from "castmate-translation"
 
 export function setupVariableActions() {
 	const logger = usePluginLogger()
@@ -16,14 +17,15 @@ export function setupVariableActions() {
 
 	defineAction({
 		id: "set",
-		name: "Set Variable",
+		name: t("plugins.variables.actions.set.name"),
+		description: t("plugins.variables.actions.set.description"),
 		icon: "mdi mdi-variable",
 		config: {
 			type: Object,
 			properties: {
 				variable: {
 					type: String,
-					name: "Variable",
+					name: t("plugins.variables.common.variable"),
 					required: true,
 					async enum() {
 						return VariableManager.getInstance().variableDefinitions.map((d) => d.id)
@@ -38,14 +40,14 @@ export function setupVariableActions() {
 						if (!variable) {
 							return {
 								type: String,
-								name: "Value",
+								name: t("plugins.variables.common.value"),
 								required: true,
 							}
 						}
 
 						return {
 							...variable.schema,
-							name: "Value",
+							name: t("plugins.variables.common.value"),
 							template: true,
 						}
 					},
@@ -65,14 +67,15 @@ export function setupVariableActions() {
 
 	defineAction({
 		id: "offset",
-		name: "Offset Variable",
+		name: t("plugins.variables.actions.offset.name"),
+		description: t("plugins.variables.actions.offset.description"),
 		icon: "mdi mdi-variable",
 		config: {
 			type: Object,
 			properties: {
 				variable: {
 					type: String,
-					name: "Variable",
+					name: t("plugins.variables.common.variable"),
 					required: true,
 					async enum() {
 						return VariableManager.getInstance()
@@ -89,7 +92,7 @@ export function setupVariableActions() {
 						if (!variable) {
 							return {
 								type: String,
-								name: "Value",
+								name: t("plugins.variables.common.value"),
 								required: true,
 								template: true,
 							}
@@ -97,7 +100,7 @@ export function setupVariableActions() {
 
 						const result = {
 							...variable.schema,
-							name: "Value",
+							name: t("plugins.variables.common.value"),
 							template: true,
 						}
 
@@ -106,7 +109,7 @@ export function setupVariableActions() {
 				},
 				clamp: {
 					type: Range,
-					name: "Clamp Range",
+					name: t("plugins.variables.common.clamp"),
 					template: true,
 				},
 			},
