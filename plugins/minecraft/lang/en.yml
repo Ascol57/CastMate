@@ -1,0 +1,12 @@
+plugin:
+  name: "Minecraft"
+  description: "Communicate with minecraft servers via RCON"
+
+common:
+  server: "Server"
+  command: "RCON Command"
+
+actions:
+  mineCmd:
+    name: "Minecraft Command"
+    description: "Send a command to the Minecraft server."

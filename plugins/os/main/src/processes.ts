@@ -1,5 +1,6 @@
 import { defineAction } from "castmate-core"
 import { Directory, FilePath } from "castmate-schema"
+import { t } from "castmate-translation"
 import { ChildProcess, exec, spawn } from "child_process"
 import * as path from "path"
 
@@ -21,23 +22,23 @@ export function isProcessRunning(application: string) {
 export function setupProcesses() {
 	defineAction({
 		id: "launch",
-		name: "Launch App",
-		description: "Easily Launch an Application. Working directory defaults to application folder",
+		name: t("plugins.os.actions.launch.name"),
+		description: t("plugins.os.actions.launch.description"),
 		icon: "mdi mdi-launch",
 		config: {
 			type: Object,
 			properties: {
-				application: { type: FilePath, name: "Application", required: true, extensions: ["exe"] },
-				dir: { type: Directory, name: "Working Directory" },
+				application: { type: FilePath, name: t("plugins.os.common.application"), required: true, extensions: ["exe"] },
+				dir: { type: Directory, name: t("plugins.os.common.workingDirectory") },
 				args: {
 					type: Array,
 					items: { type: String, required: true, template: true },
-					name: "Arguments",
+					name: t("plugins.os.common.arguments"),
 					required: true,
 				},
 				ignoreIfRunning: {
 					type: Boolean,
-					name: "Ignore If Already Running",
+					name: t("plugins.os.common.ignoreIfRunning"),
 					default: true,
 					required: true,
 				},

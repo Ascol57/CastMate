@@ -1,0 +1,20 @@
+plugin:
+  name: "OS"
+  description: "Operating System"
+
+common:
+  command: "Command"
+  workingDirectory: "Working Directory"
+  processOutput: "Process Output"
+  application: "Application"
+  arguments: "Arguments"
+  ignoreIfRunning: "Ignore If Already Running"
+
+actions:
+  powershell:
+    name: "Powershell"
+    description: "Run a Powershell script"
+  
+  launch:
+    name: "Launch App"
+    description: "Easily Launch an Application. Working directory defaults to application folder"

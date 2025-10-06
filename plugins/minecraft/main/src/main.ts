@@ -11,6 +11,21 @@ import {
 } from "castmate-core"
 import RCon from "ts-rcon"
 import { nanoid } from "nanoid/non-secure"
+import { generatedTranslationsFromFiles, registerPluginTranslations, t } from "castmate-translation"
+
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("minecraft", generatedTranslationsFromFiles(translationFiles))
+
 export class RCONConnection extends FileResource<RCONConnectionConfig, RCONConnectionState> {
 	static resourceDirectory = "./minecraft/connections"
 	static storage = new ResourceStorage<RCONConnection>("RCONConnection")
@@ -36,7 +51,7 @@ export class RCONConnection extends FileResource<RCONConnectionConfig, RCONConne
 		this.retryTimer = new RetryTimer(() => {
 			this.client = new RCon(this.config.host, this.config.port, this.config.password)
 
-			this.client.on("error", () => {})
+			this.client.on("error", () => { })
 
 			this.client.on("end", () => {
 				this.state.connected = false
@@ -67,8 +82,8 @@ export class RCONConnection extends FileResource<RCONConnectionConfig, RCONConne
 export default definePlugin(
 	{
 		id: "minecraft",
-		name: "Minecraft",
-		description: "Communicate with minecraft servers via RCON",
+		name: t("plugins.minecraft.plugin.name"),
+		description: t("plugins.minecraft.plugin.description"),
 		icon: "mdi mdi-minecraft",
 		color: "#66A87B",
 	},
@@ -79,13 +94,14 @@ export default definePlugin(
 
 		defineAction({
 			id: "mineCmd",
-			name: "Minecraft Command",
+			name: t("plugins.minecraft.actions.mineCmd.name"),
+			description: t("plugins.minecraft.actions.mineCmd.description"),
 			icon: "mdi mdi-minecraft",
 			config: {
 				type: Object,
 				properties: {
-					server: { type: RCONConnection, name: "Server", required: true },
-					command: { type: String, name: "RCON Command", required: true, default: "", template: true },
+					server: { type: RCONConnection, name: t("plugins.minecraft.common.server"), required: true },
+					command: { type: String, name: t("plugins.minecraft.common.command"), required: true, default: "", template: true },
 				},
 			},
 			async invoke(config, contextData, abortSignal) {

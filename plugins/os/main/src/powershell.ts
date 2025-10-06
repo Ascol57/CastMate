@@ -3,6 +3,7 @@ import { defineAction, evaluateTemplate, globalLogger, registerSchemaTemplate, u
 import { abortablePromise } from "castmate-core/src/util/abort-utils"
 import { getTemplateRegionString, parseTemplateString, trimTemplateJS, Directory } from "castmate-schema"
 import { ChildProcess, exec, spawn } from "child_process"
+import { t } from "castmate-translation"
 
 //Templating
 
@@ -179,19 +180,20 @@ export function setupPowershell() {
 
 	defineAction({
 		id: "powershell",
-		name: "Powershell",
+		name: t("plugins.os.actions.powershell.name"),
+		description: t("plugins.os.actions.powershell.description"),
 		icon: "mdi mdi-application-cog-outline",
 		config: {
 			type: Object,
 			properties: {
-				command: { type: PowerShellCommand, name: "Command", template: true, required: true, default: "" },
-				cwd: { type: Directory, name: "Working Directory", template: true },
+				command: { type: PowerShellCommand, name: t("plugins.os.common.command"), template: true, required: true, default: "" },
+				cwd: { type: Directory, name: t("plugins.os.common.workingDirectory"), template: true },
 			},
 		},
 		result: {
 			type: Object,
 			properties: {
-				processOutput: { type: String, name: "Process Output", required: true },
+				processOutput: { type: String, name: t("plugins.os.common.processOutput"), required: true },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {
