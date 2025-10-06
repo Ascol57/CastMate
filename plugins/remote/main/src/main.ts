@@ -12,12 +12,26 @@ import {
 } from "castmate-core"
 import { handleDashboardWidgetRPC } from "castmate-plugin-dashboards-main/src/dashboard-access"
 import { isString } from "castmate-schema"
+import { generatedTranslationsFromFiles, registerPluginTranslations, t } from "castmate-translation"
+
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("remote", generatedTranslationsFromFiles(translationFiles))
 
 export default definePlugin(
 	{
 		id: "remote",
-		name: "Remote",
-		description: "Allows various programs to remotely trigger CastMate",
+		name: t("plugins.remote.plugin.name"),
+		description: t("plugins.remote.plugin.description"),
 		icon: "mdi mdi-remote",
 		color: "#D554FF",
 	},
@@ -27,19 +41,19 @@ export default definePlugin(
 
 		const remoteButton = defineTrigger({
 			id: "button",
-			name: "Remote Button",
+			name: t("plugins.remote.triggers.button.name"),
 			icon: "mdi mdi-remote",
-			description: "Allows things like StreamDeck or Deckboard to trigger with a button press.",
+			description: t("plugins.remote.triggers.button.description"),
 			config: {
 				type: Object,
 				properties: {
-					name: { type: String, name: "Button Name", required: true },
+					name: { type: String, name: t("plugins.remote.common.button"), required: true },
 				},
 			},
 			context: {
 				type: Object,
 				properties: {
-					name: { type: String, name: "Button Name", required: true, view: false },
+					name: { type: String, name: t("plugins.remote.common.button"), required: true, view: false },
 				},
 			},
 			async handle(config, context, mapping) {

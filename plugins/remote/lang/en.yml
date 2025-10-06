@@ -1,0 +1,11 @@
+plugin:
+  name: "Remote"
+  description: "Allows various programs to remotely trigger CastMate"
+
+common:
+  button: "Button Name"
+
+triggers:
+  button:
+    name: "Remote Button"
+    description: "Triggers when a remote button is pressed"

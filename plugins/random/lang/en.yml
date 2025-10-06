@@ -1,0 +1,23 @@
+plugin:
+  name: "Random"
+  description: "Randomness"
+
+common:
+  weight: "Weight"
+  wheel: "Wheel"
+  strength: "Strength"
+  item: "Item Name"
+
+actions:
+  random:
+    name: "Random"
+    description: ""
+
+  spinWheel:
+    name: "Spin Wheel"
+    description: "Spin a wheel in an overlay"
+
+triggers:
+  wheelLanded:
+    name: "Wheel Stopped"
+    description: "Triggers when an overlay wheel has stopped!"
