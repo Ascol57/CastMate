@@ -1,21 +1,18 @@
 <template>
 	<div class="container">
 		<div class="inner-container">
-			<p-data-table
-				class="flex flex-column"
-				scrollable
-				style="width: 100%; max-height: 100%"
-				data-key="id"
-				:value="spells"
-			>
+			<p-data-table class="flex flex-column" scrollable style="width: 100%; max-height: 100%" data-key="id"
+				:value="spells">
 				<template #header>
 					<div class="flex flex-row">
-						<p-button @click="createDialog()"> Create Spell</p-button>
+						<p-button @click="createDialog()">
+							{{ tSync("plugins.spellcast.renderer.createSpell") }}</p-button>
 						<div class="flex-grow-1" />
-						<p-button size="small" @click="openExtensionPopout"> View Extension </p-button>
+						<p-button size="small" @click="openExtensionPopout">
+							{{ tSync("plugins.spellcast.renderer.viewExtension") }} </p-button>
 					</div>
 				</template>
-				<p-column class="column-fit-width" header="Enabled">
+				<p-column class="column-fit-width" :header="tSync('plugins.spellcast.renderer.enabled')">
 					<template #body="{ data }: { data: SpellHookResource }">
 						<spell-enable-switch :spell-id="data.id" />
 					</template>
@@ -31,12 +28,8 @@
 					<template #body="{ data }: { data: SpellHookResource }">
 						<div class="flex flex-row">
 							<p-button icon="mdi mdi-pencil" text @click="editDialog(data.id)"></p-button>
-							<p-button
-								icon="mdi mdi-delete"
-								severity="error"
-								text
-								@click="deleteDialog(data.id)"
-							></p-button>
+							<p-button icon="mdi mdi-delete" severity="error" text
+								@click="deleteDialog(data.id)"></p-button>
 						</div>
 					</template>
 				</p-column>
@@ -61,6 +54,7 @@ import {
 	useResourceDeleteDialog,
 	useResourceStore,
 	useResource,
+	tSync
 } from "castmate-ui-core"
 import { SpellConfig, SpellResourceConfig } from "castmate-plugin-spellcast-shared"
 

@@ -36,11 +36,12 @@ import { SpellCastSpell, SpellCastSpellData, createSpell, deleteSpell, getSpells
 import fs from "fs/promises"
 import path from "path"
 import { TwitchViewer } from "castmate-plugin-twitch-shared"
+import { t } from "castmate-translation"
 
 const logger = usePluginLogger("spellcast")
 
 interface SpellHookConstructor {
-	new (...args: any): SpellHook
+	new(...args: any): SpellHook
 	resourceDirectory: string
 }
 
@@ -338,13 +339,13 @@ export function setupSpells() {
 
 	const spellHook = defineTrigger({
 		id: "spellHook",
-		name: "SpellCast Spell",
-		description: "Triggers when a viewer uses a spell through the SpellCast extension",
+		name: t("plugins.spellcast.triggers.spellHook.name"),
+		description: t("plugins.spellcast.triggers.spellHook.description"),
 		icon: "sci sci-spellcast",
 		config: {
 			type: Object,
 			properties: {
-				spell: { type: SpellHook, required: true, name: "Spell" },
+				spell: { type: SpellHook, required: true, name: t("plugins.spellcast.common.spell") },
 			},
 		},
 		context: {

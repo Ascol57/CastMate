@@ -5,6 +5,7 @@ import {
 	ProjectGroup,
 	ProjectItem,
 	useDockingStore,
+	tSync,
 } from "castmate-ui-core"
 import "./css/icons.css"
 import { computed, App } from "vue"
@@ -18,14 +19,14 @@ export function initPlugin(app: App<Element>) {
 	resourceStore.registerConfigSchema("SpellHook", {
 		type: Object,
 		properties: {
-			name: { type: String, name: "Title", required: true, template: true },
+			name: { type: String, name: tSync("plugins.spellcast.SpellHook.name"), required: true, template: true },
 			spellData: {
 				type: Object,
 				properties: {
-					enabled: { type: Boolean, name: "Enabled", required: true, default: true },
-					description: { type: String, name: "Description", template: true },
+					enabled: { type: Boolean, name: tSync("plugins.spellcast.SpellHook.enabled"), required: true, default: true },
+					description: { type: String, name: tSync("plugins.spellcast.SpellHook.description"), template: true },
 					bits: {
-						name: "Bits",
+						name: tSync("plugins.spellcast.SpellHook.bits"),
 						required: true,
 						default: 10,
 						type: Number,
@@ -38,7 +39,7 @@ export function initPlugin(app: App<Element>) {
 					},
 					color: {
 						type: Color,
-						name: "Color",
+						name: tSync("plugins.spellcast.SpellHook.color"),
 						required: true,
 						template: true,
 						default: "#719ece",
@@ -65,10 +66,10 @@ export function initPlugin(app: App<Element>) {
 		computed<ProjectItem>(() => {
 			return {
 				id: "spellcast",
-				title: "SpellCast",
+				title: tSync("plugins.spellcast.plugin.name"),
 				icon: "sci sci-spellcast",
 				open() {
-					dockingStore.openPage("spellcast.spells", "SpellCast", "sci sci-spellcast", SpellCastPage)
+					dockingStore.openPage("spellcast.spells", tSync("plugins.spellcast.plugin.name"), "sci sci-spellcast", SpellCastPage)
 				},
 			}
 		})

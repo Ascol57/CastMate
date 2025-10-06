@@ -1,0 +1,22 @@
+plugin:
+  name: "SpellCast"
+  description: ""
+
+common:
+  spell: "Spell"
+
+triggers:
+  spellHook:
+    name: "SpellCast Spell"
+    description: "Triggers when a viewer uses a spell through the SpellCast extension"
+
+SpellHook:
+  name: "Title"
+  enabled: "Enabled"
+  description: "Description"
+  bits: "Bits"
+  color: "Color"
+
+renderer:
+  createSpell: "Create Spell"
+  viewExtension: "View Extension"
