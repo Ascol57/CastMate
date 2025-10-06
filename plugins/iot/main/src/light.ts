@@ -14,6 +14,7 @@ import {
 } from "castmate-core"
 import { Duration, Toggle } from "castmate-schema"
 import { SatelliteResourceSymbol } from "castmate-core"
+import { t } from "castmate-translation"
 
 export class LightResource<
 	Config extends LightConfig = LightConfig,
@@ -21,7 +22,7 @@ export class LightResource<
 > extends Resource<Config, State> {
 	static storage = new ResourceStorage<LightResource>("Light")
 
-	async setLightState(color: LightColor | undefined, on: Toggle, transition: Duration) {}
+	async setLightState(color: LightColor | undefined, on: Toggle, transition: Duration) { }
 }
 
 export class PollingLight<
@@ -35,7 +36,7 @@ export class PollingLight<
 		this.poller = setInterval(async () => {
 			try {
 				this.poll()
-			} catch (err) {}
+			} catch (err) { }
 		}, interval * 1000)
 	}
 
@@ -45,7 +46,7 @@ export class PollingLight<
 		this.poller = undefined
 	}
 
-	async poll() {}
+	async poll() { }
 }
 
 registerSchemaTemplate(LightColor, async (value, context, schema) => {
@@ -103,7 +104,8 @@ export function setupLights() {
 	//TODO: Make satellite ignore this!
 	defineAction({
 		id: "light",
-		name: "Change Light",
+		name: t("plugins.iot.actions.light.name"),
+		description: t("plugins.iot.actions.light.description"),
 		icon: "mdi mdi-lightbulb-on-outline",
 		duration: {
 			dragType: "length",
@@ -114,10 +116,10 @@ export function setupLights() {
 		config: {
 			type: Object,
 			properties: {
-				light: { type: LightResource, name: "Light", required: true },
+				light: { type: LightResource, name: t("plugins.iot.common.light"), required: true },
 				on: {
 					type: Toggle,
-					name: "Light Switch",
+					name: t("plugins.iot.common.switch"),
 					required: true,
 					default: true,
 					template: true,
@@ -126,17 +128,17 @@ export function setupLights() {
 				},
 				lightColor: {
 					type: LightColor,
-					name: "Color",
+					name: t("plugins.iot.common.color"),
 					resource: "light",
 					template: true,
 				},
-				transition: { type: Duration, name: "Transition Time", required: true, default: 0.5 },
+				transition: { type: Duration, name: t("plugins.iot.common.transition"), required: true, default: 0.5 },
 			},
 		},
 		result: {
 			type: Object,
 			properties: {
-				lightOn: { type: Boolean, name: "Light Switch", required: true },
+				lightOn: { type: Boolean, name: t("plugins.iot.common.switch"), required: true },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {

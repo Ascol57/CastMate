@@ -1,0 +1,23 @@
+plugin:
+  name: "Input"
+  description: "Input Plugin"
+
+common:
+  button: "Button"
+  duration: "Duration"
+  key: "Key"
+  combo: "Combo"
+
+actions:
+  mouseButton:
+    name: "Mouse Button"
+    description: "Simulate a mouse button press"
+  
+  pressKey:
+    name: "Press Key"
+    description: "Simulate a key press"
+
+triggers:
+  keyboardShortcut:
+    name: "Keyboard Shortcut"
+    description: "Trigger when a specific keyboard shortcut is pressed"

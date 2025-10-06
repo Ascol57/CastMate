@@ -1,23 +1,25 @@
 import { abortableSleep, defineAction } from "castmate-core"
 import { InputInterface, MouseButton } from "castmate-plugin-input-native"
 import { Duration } from "castmate-schema"
+import { t } from "castmate-translation"
 
 export function setupMouse(inputInterface: InputInterface) {
 	defineAction({
 		id: "mouseButton",
-		name: "Simulate Mouse",
+		name: t("plugins.input.actions.mouseButton.name"),
+		description: t("plugins.input.actions.mouseButton.description"),
 		icon: "mdi mdi-mouse",
 		config: {
 			type: Object,
 			properties: {
 				button: {
 					type: String,
-					name: "Button",
+					name: t("plugins.input.common.button"),
 					default: "left",
 					enum: ["left", "right", "middle", "mouse4", "mouse5"],
 					required: true,
 				},
-				duration: { type: Duration, name: "Duration", required: true, default: 0.1 },
+				duration: { type: Duration, name: t("plugins.input.common.duration"), required: true, default: 0.1 },
 			},
 		},
 		duration: {

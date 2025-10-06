@@ -1,0 +1,20 @@
+plugin:
+  name: "Lights & IoT"
+  description: "Control and monitor smart lights and IoT devices seamlessly."
+
+common:
+  light: "Light"
+  switch: "Light Switch"
+  color: "Color"
+  transition: "Transition Time"
+  plug: "Plug"
+  plugOn: "Plug On"
+
+actions:
+  light:
+    name: "Change Light"
+    description: "Adjust the brightness and color of your smart lights."
+  
+  plug:
+    name: "Switch Plug"
+    description: "Turn your smart plugs on or off remotely."

@@ -11,6 +11,7 @@ import {
 	usePluginLogger,
 } from "castmate-core"
 import { Toggle } from "castmate-schema"
+import { t } from "castmate-translation"
 
 export class PlugResource<Config extends PlugConfig = PlugConfig, State extends PlugState = PlugState> extends Resource<
 	Config,
@@ -18,7 +19,7 @@ export class PlugResource<Config extends PlugConfig = PlugConfig, State extends 
 > {
 	static storage = new ResourceStorage<PlugResource>("Plug")
 
-	async setPlugState(on: Toggle) {}
+	async setPlugState(on: Toggle) { }
 }
 
 export class SatellitePlug extends PlugResource {
@@ -51,7 +52,7 @@ export class PollingPlug<
 		this.poller = setInterval(async () => {
 			try {
 				this.poll()
-			} catch (err) {}
+			} catch (err) { }
 		}, interval * 1000)
 	}
 
@@ -61,7 +62,7 @@ export class PollingPlug<
 		this.poller = undefined
 	}
 
-	async poll() {}
+	async poll() { }
 }
 
 export function setupPlugs() {
@@ -83,15 +84,15 @@ export function setupPlugs() {
 
 	defineAction({
 		id: "plug",
-		name: "Switch Plug",
+		name: t("plugins.iot.action.plug.name"),
 		icon: "mdi mdi-power-plug-outline",
 		config: {
 			type: Object,
 			properties: {
-				plug: { type: PlugResource, name: "Plug", required: true },
+				plug: { type: PlugResource, name: t("plugins.iot.common.plug"), required: true },
 				switch: {
 					type: Toggle,
-					name: "Switch",
+					name: t("plugins.iot.common.switch"),
 					required: true,
 					default: true,
 					template: true,
@@ -103,7 +104,7 @@ export function setupPlugs() {
 		result: {
 			type: Object,
 			properties: {
-				plugOn: { type: Boolean, name: "Plug On", required: true },
+				plugOn: { type: Boolean, name: t("plugins.iot.common.plugOn"), required: true },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {

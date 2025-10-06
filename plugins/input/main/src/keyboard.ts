@@ -2,6 +2,7 @@ import { KeyCombo, KeyboardKey, Keys, MirrorKey, UnmirrorKey, VKToKey } from "ca
 import { abortableSleep, defineAction, defineTrigger, onLoad, onProfilesChanged } from "castmate-core"
 import { Duration } from "castmate-schema"
 import { InputInterface } from "castmate-plugin-input-native"
+import { t } from "castmate-translation"
 
 function isComboPressed(inputInterface: InputInterface, combo: KeyCombo) {
 	for (const keyName of combo) {
@@ -27,11 +28,12 @@ function isComboPressed(inputInterface: InputInterface, combo: KeyCombo) {
 }
 
 export function setupKeyboard(inputInterface: InputInterface) {
-	onLoad(() => {})
+	onLoad(() => { })
 
 	defineAction({
 		id: "pressKey",
-		name: "Simulate Keyboard",
+		name: t("plugins.input.actions.pressKey.name"),
+		description: t("plugins.input.actions.pressKey.description"),
 		icon: "mdi mdi-keyboard",
 		duration: {
 			dragType: "length",
@@ -42,8 +44,8 @@ export function setupKeyboard(inputInterface: InputInterface) {
 		config: {
 			type: Object,
 			properties: {
-				key: { type: KeyboardKey, name: "Key", required: true },
-				duration: { type: Duration, name: "Press Time", required: true, default: 0.1, template: true },
+				key: { type: KeyboardKey, name: t("plugins.input.common.key"), required: true },
+				duration: { type: Duration, name: t("plugins.input.common.duration"), required: true, default: 0.1, template: true },
 			},
 		},
 		async invoke(config, contextData, abortSignal) {
@@ -58,18 +60,19 @@ export function setupKeyboard(inputInterface: InputInterface) {
 
 	const keyboardShortcut = defineTrigger({
 		id: "keyboardShortcut",
-		name: "Keyboard Shortcut",
+		name: t("plugins.input.triggers.keyboardShortcut.name"),
+		description: t("plugins.input.triggers.keyboardShortcut.description"),
 		icon: "mdi mdi-keyboard",
 		context: {
 			type: Object,
 			properties: {
-				combo: { type: KeyCombo, name: "Combo", required: true, view: false },
+				combo: { type: KeyCombo, name: t("plugins.input.common.combo"), required: true, view: false },
 			},
 		},
 		config: {
 			type: Object,
 			properties: {
-				combo: { type: KeyCombo, name: "Combo", required: true },
+				combo: { type: KeyCombo, name: t("plugins.input.common.combo"), required: true },
 			},
 		},
 		async handle(config, context) {
