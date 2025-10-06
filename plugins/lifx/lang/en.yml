@@ -1,0 +1,6 @@
+plugin:
+  name: "LIFX"
+  description: "Control and monitor LIFX smart lights."
+
+settings:
+  subnetMask: "LIFX Subnet Mask"

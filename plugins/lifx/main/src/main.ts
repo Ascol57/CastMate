@@ -12,8 +12,22 @@ import {
 import { LightResource, PollingLight } from "castmate-plugin-iot-main/src/light"
 import { LightColor } from "castmate-plugin-iot-shared"
 import { Toggle } from "castmate-schema"
+import { generatedTranslationsFromFiles, registerPluginTranslations, t } from "castmate-translation"
 import EventEmitter from "events"
 import { Client, Light } from "lifx-lan-client"
+
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("lifx", generatedTranslationsFromFiles(translationFiles))
 
 const logger = usePluginLogger("lifx")
 
@@ -176,7 +190,8 @@ class LIFXLight extends PollingLight {
 export default definePlugin(
 	{
 		id: "lifx",
-		name: "LIFX",
+		name: t("plugins.lifx.plugin.name"),
+		description: t("plugins.lifx.plugin.description"),
 		icon: "iot iot-lifx",
 		color: "#7F743F",
 	},
@@ -184,7 +199,7 @@ export default definePlugin(
 		const subnetMask = defineSetting("subnetMask", {
 			type: String,
 			required: true,
-			name: "LIFX Subnet Mask",
+			name: t("plugins.lifx.settings.subnetMask"),
 			default: "255.255.255.255",
 		})
 

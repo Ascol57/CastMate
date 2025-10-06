@@ -33,7 +33,20 @@ interface GoveeBulbConfig extends LightConfig {
 }
 
 import * as goveeLan from "@j3lte/govee-lan-controller"
-import { t } from "castmate-translation"
+import { generatedTranslationsFromFiles, registerPluginTranslations, t } from "castmate-translation"
+
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("govee", generatedTranslationsFromFiles(translationFiles))
 
 const logger = usePluginLogger("govee")
 
