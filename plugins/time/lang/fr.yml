@@ -1,50 +1,38 @@
 plugin:
   name: "Time"
   description: "Utilitaires de temps"
-+
+
 common:
   duration: "Durée"
-+
   timer: "Minuteur"
-+
   toggle: "Démarrer/Arrêter"
-+
   timerRunning: "Minuteur en cours"
-+
   delay: "Délai"
-+
   interval: "Intervalle"
-+
   timeRemaining: "Temps restant"
-+
+
 actions:
   delay:
     name: "Délai"
-+
     description: "Attendre une durée spécifiée avant de continuer."
-+
+
   toggleTimer:
     name: "Basculer minuterie"
-+
     description: "Démarrer ou arrêter une minuterie nommée."
-+
+
   setTimer:
     name: "Définir minuterie"
-+
     description: "Définir une minuterie nommée à une valeur spécifique."
-+
+
   offsetTimer:
     name: "Décaler minuterie"
-+
     description: "Ajouter ou soustraire une durée à une minuterie nommée."
-+
+
 triggers:
   repeat:
     name: "Répéter"
-+
     description: "Se déclenche à intervalle régulier"
-+
+
   timer:
     name: "Minuteur"
-+
     description: "Se déclenche lorsqu'une minuterie nommée atteint zéro"

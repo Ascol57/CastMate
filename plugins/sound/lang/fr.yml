@@ -1,52 +1,37 @@
 plugin:
   name: "Sound"
   description: "Contrôle de la lecture audio et des paramètres sonores."
-+
+
 common:
   output: "Sortie"
-+
   sound: "Son"
-+
   volume: "Volume"
-+
   startTimestamp: "Horodatage de début"
-+
   endTimestamp: "Horodatage de fin"
-+
   voice: "Voix"
-+
   text: "Texte"
-+
 
 settings:
   globalVolume: "Volume global"
-+
   defaultOutput: "Sortie audio par défaut"
-+
+
 actions:
   sound:
     name: "Son"
-+
     description: "Jouer un fichier son"
-+
   tts:
     name: "Texte en parole"
-+
     description: "Convertit du texte en parole et le joue"
-+
 
 renderer:
   main:
     createAudioSplitter: "Créer un répartiteur audio"
-+
     ttsVoices: "Voix TTS"
-+
     audio: "Audio"
-+
+
   voiceEditPage:
     testMessage: "Ceci est un test de la synthèse vocale."
-+
+
   audioSplitterEditPage:
     title: "Les répartiteurs audio permettent de jouer des sons sur plusieurs sorties."
-+
     addOutput: "Ajouter une sortie audio"

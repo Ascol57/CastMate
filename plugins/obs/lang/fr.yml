@@ -2,7 +2,7 @@
 plugin:
   name: "OBS"
   description: "Contrôle OBS via OBS Websocket 5"
-+
+
 common:
   scene: "Scène"
   source: "Source"
@@ -14,38 +14,38 @@ common:
   action: "Action"
   chapterName: "Nom du chapitre"
   sourceVisibility: "Visibilité de la source"
-+
+
 states:
   scene: "Scène"
   streaming: "Streaming"
   recording: "Enregistrement"
-+
+
 actions:
   scene:
     name: "Changer de scène"
     description: "Change la scène courante dans OBS"
-+
+
   set_browser_url:
     name: "Définir l'URL du navigateur"
-+
+
   set_image:
     name: "Définir la source image"
-+
+
   play_media:
     name: "Jouer une source média"
-+
+
   save_replay:
     name: "Sauvegarder le replay"
-+
+
 connection:
   name: "Nom de connexion"
-+
+
 results:
   audio_muted: "Audio coupé"
-+
+
 renderer:
   dashboard_card:
     refresh_all_browsers: "Rafraîchir tous les navigateurs"
-+
+
   main_page:
     no_connections: "CastMate peut contrôler OBS, mais vous n'avez pas encore configuré de connexion."

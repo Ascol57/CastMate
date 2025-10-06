@@ -84,7 +84,8 @@ export function setupPlugs() {
 
 	defineAction({
 		id: "plug",
-		name: t("plugins.iot.action.plug.name"),
+		name: t("plugins.iot.actions.plug.name"),
+		description: t("plugins.iot.actions.plug.description"),
 		icon: "mdi mdi-power-plug-outline",
 		config: {
 			type: Object,

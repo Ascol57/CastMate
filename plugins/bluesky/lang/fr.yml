@@ -1,24 +1,19 @@
 plugin:
   name: "BlueSky"
-+
   description: "Blue Sky"
-+
 
 settings:
   BlueSkyAccounts: "Comptes BlueSky"
-+
+
 common:
   account: "Compte"
-+
   text: "Texte"
-+
+
 actions:
   post:
     name: "Publication BlueSky"
-+
-+    description: "Créer une nouvelle publication BlueSky"
-+
+    description: "Créer une nouvelle publication BlueSky"
+
 accounts:
   default_name: "Compte BlueSky"
-+
-+  login_title: "Connexion Blue Sky"
+  login_title: "Connexion Blue Sky"

@@ -1,14 +1,12 @@
 plugin:
   name: "Minecraft"
   description: "Communiquer avec des serveurs Minecraft via RCON"
-+
+
 common:
   server: "Serveur"
-+
-+  command: "Commande RCON"
-+
+  command: "Commande RCON"
+
 actions:
   mineCmd:
     name: "Commande Minecraft"
-+
-+    description: "Envoyer une commande au serveur Minecraft."
+    description: "Envoyer une commande au serveur Minecraft."

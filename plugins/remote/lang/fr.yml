@@ -1,12 +1,11 @@
 plugin:
   name: "Remote"
   description: "Permet à divers programmes de déclencher CastMate à distance"
-+
+
 common:
   button: "Nom du bouton"
-+
+
 triggers:
   button:
     name: "Bouton distant"
-+
     description: "Se déclenche lorsqu'un bouton distant est pressé"

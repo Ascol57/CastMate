@@ -1,33 +1,23 @@
 plugin:
   name: "Dashboards"
-+
   description: "DASHBOARDS"
-+
 
 renderer:
   editor:
     add_page: "Ajouter une page"
-+
     add_section: "Ajouter une section"
-+
     add_widget: "Ajouter un widget"
-+
     properties: "Propriétés"
-+
     permissions: "Permissions"
-+
     edit_share: "Modifier le partage"
-+
+
   pages:
     no_items: "Pas encore de pages"
-+
+
   sections:
-+
     no_items: "Pas encore de sections"
-+
+    
   widgets:
     no_items: "Pas encore de widgets"
-+
     size: "Taille"
-+
     config: "Configuration"

@@ -1,62 +1,35 @@
 plugin:
   name: "Discord"
-+
   description: "Envoyer des messages et fichiers aux canaux Discord via webhooks"
-+
+
 settings:
-+
-+  discord_webhooks:
-+
-+    name: "Webhooks Discord"
-+
-+    description: "Gérer les connexions webhook Discord"
-+
-+
-+actions:
-+
-+  discord_message:
-+
-+    name: "Message Discord"
-+
-+    description: "Envoyer un message à un canal Discord"
-+
-+    config:
-+
-+      webhook: "Webhook du canal"
-+
-+      message: "Message"
-+
-+      files: "Fichiers"
-+
-+      file: "Fichier"
-+
-+
-+renderer:
-+
-+  connection:
-+
-+    name: "Nom de connexion"
-+
-+    webhook_url: "URL du webhook"
-+
-+    webhook_url_description: "URL du webhook Discord pour l'envoi de messages"
-+
-+
-+  validation:
-+
-+    name_required: "Le nom de la connexion est requis"
-+
-+    webhook_url_required: "L'URL du webhook est requise"
-+
-+    invalid_webhook_url: "Format d'URL de webhook invalide"
-+
-+
-+  messages:
-+
-+    connection_added: "Connexion webhook Discord ajoutée avec succès"
-+
-+    connection_updated: "Connexion webhook Discord mise à jour avec succès"
-+
-+    connection_deleted: "Connexion webhook Discord supprimée avec succès"
-+
-+    test_message_sent: "Message de test envoyé avec succès"
+  discord_webhooks:
+    name: "Webhooks Discord"
+    description: "Gérer les connexions webhook Discord"
+
+actions:
+  discord_message:
+    name: "Message Discord"
+    description: "Envoyer un message à un canal Discord"
+    config:
+      webhook: "Webhook du canal"
+      message: "Message"
+      files: "Fichiers"
+      file: "Fichier"
+
+renderer:
+  connection:
+    name: "Nom de connexion"
+    webhook_url: "URL du webhook"
+    webhook_url_description: "URL du webhook Discord pour l'envoi de messages"
+
+  validation:
+    name_required: "Le nom de la connexion est requis"
+    webhook_url_required: "L'URL du webhook est requise"
+    invalid_webhook_url: "Format d'URL de webhook invalide"
+
+  messages:
+    connection_added: "Connexion webhook Discord ajoutée avec succès"
+    connection_updated: "Connexion webhook Discord mise à jour avec succès"
+    connection_deleted: "Connexion webhook Discord supprimée avec succès"
+    test_message_sent: "Message de test envoyé avec succès"

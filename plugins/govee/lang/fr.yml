@@ -1,9 +1,6 @@
 plugin:
   name: "Govee"
-+
-+  description: "Contrôler les lumières et prises Govee"
-+
+  description: "Contrôler les lumières et prises Govee"
+
 settings:
-+
-+  apiKey: "Clé API Govee"
-+
+  apiKey: "Clé API Govee"

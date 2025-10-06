@@ -15,22 +15,20 @@ common:
   required: "Valeur requise"
   createViewerVariable: "Créer une variable spectateur"
   viewer: "Spectateur"
-+
+
 actions:
   set:
     name: "Définir variable"
     description: "Définit la valeur d'une variable"
-+
+
   offset:
     name: "Décaler variable"
     description: "Décale la valeur d'une variable d'une quantité spécifiée"
-+
+
   setViewerVar:
     name: "Définir variable spectateur"
-+
     description: "Définit une variable spécifique à un spectateur"
-+
+
   offsetViewerVar:
     name: "Décaler variable spectateur"
-+
     description: "Décale une variable spécifique à un spectateur"
