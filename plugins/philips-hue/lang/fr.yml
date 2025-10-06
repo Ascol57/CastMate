@@ -1,0 +1,19 @@
+plugin:
+  name: "Philips Hue"
+  description: "Contrôlez vos lumières et scènes Philips Hue."
++
+common:
+  group: "Groupe"
++
++  scene: "Scène"
++
+settings:
+  hubIp: "IP du pont Hue"
++
++  hubKey: "Clé du pont Hue"
++
+actions:
+  scene:
+    name: "Définir scène HUE"
++
++    description: "Active une scène prédéfinie sur vos lumières Philips Hue."

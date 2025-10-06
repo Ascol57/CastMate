@@ -26,6 +26,20 @@ import { Color, Toggle } from "castmate-schema"
 import { LightColor, LightConfig, PlugConfig } from "castmate-plugin-iot-shared"
 import * as chromatism from "chromatism2"
 import _clamp from "lodash/clamp"
+import { registerPluginTranslations, generatedTranslationsFromFiles, t } from "castmate-translation"
+
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("wyze", generatedTranslationsFromFiles(translationFiles))
 
 const WYZE_AUTH_URL = "https://auth-prod.api.wyze.com/api/user/login"
 const WYZE_API_URL = "https://api.wyzecam.com"
@@ -264,13 +278,13 @@ class WyzeAccount extends Account<WyzeAccountSecrets, WyzeAccountConfig> {
 			action_key: actionKey,
 			action_params: props
 				? {
-						list: [
-							{
-								mac,
-								plist: propsToWyzeList(props),
-							},
-						],
-				  }
+					list: [
+						{
+							mac,
+							plist: propsToWyzeList(props),
+						},
+					],
+				}
 				: {},
 			custom_string: "",
 		}
@@ -462,19 +476,19 @@ class WyzePlug extends PlugResource<WyzePlugConfig> {
 export default definePlugin(
 	{
 		id: "wyze",
-		name: "Wyze",
+		name: t("plugins.wyze.plugin.name"),
 		icon: "iot iot-wyze",
 		color: "#7F743F",
 	},
 	() => {
 		const keyId = defineSecret("keyId", {
 			type: String,
-			name: "Wyze Key ID",
+			name: t("plugins.wyze.settings.keyId"),
 		})
 
 		const apiKey = defineSecret("apiKey", {
 			type: String,
-			name: "Wyze API Key",
+			name: t("plugins.wyze.settings.apiKey"),
 		})
 
 		definePluginResource(WyzeAccount)

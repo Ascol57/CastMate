@@ -1,0 +1,11 @@
+plugin:
+  name: "Wyze"
+  description: "Intégration des éclairages Wyze"
+
+common:
+  account: "Compte Wyze"
++
+settings:
+  keyId: "ID de clé Wyze"
++  
+  apiKey: "Clé API Wyze"

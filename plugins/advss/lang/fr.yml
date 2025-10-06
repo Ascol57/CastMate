@@ -1,22 +1,27 @@
-# Traductions du Plugin Advanced Scene Switcher - Français
 plugin:
   name: "Advanced Scene Switcher"
++
   description: "Intégration pour Advanced Scene Switcher par WarmUpTill"
++
+
+common:
+  obs: "Connexion OBS"
++
+  message: "Message"
++
+  defaultMessage: "Merci d'utiliser CastMate !"
++
 
 actions:
   AdvSSMessage:
     name: "Message Advanced Scene Switcher"
++
     description: "Envoyer un message à Advanced Scene Switcher"
-    config:
-      obs: "Connexion OBS"
-      message: "Message"
++
 
 triggers:
   advssEvent:
     name: "Événement Advanced Scene Switcher"
-    description: "Déclenché quand Advanced Scene Switcher envoie un événement"
-    config:
-      obs: "Connexion OBS"
-      message: "Message"
-    context:
-      message: "Message"
++
+    description: "Déclenché lorsque Advanced Scene Switcher envoie un événement"
++

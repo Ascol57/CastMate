@@ -8,12 +8,26 @@ import {
 	usePluginLogger,
 } from "castmate-core"
 import { VoiceModClient } from "./client"
+import { registerPluginTranslations, generatedTranslationsFromFiles, t } from "castmate-translation"
+
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("voicemod", generatedTranslationsFromFiles(translationFiles))
 
 export default definePlugin(
 	{
 		id: "voicemod",
-		name: "Voicemod",
-		description: "Control VoiceMod with CastMate",
+		name: t("plugins.voicemod.plugin.name"),
+		description: t("plugins.voicemod.plugin.description"),
 		icon: "mdi mdi-star",
 		color: "#3F918D",
 	},
@@ -23,7 +37,7 @@ export default definePlugin(
 
 		const voiceModHost = defineSetting("host", {
 			type: String,
-			name: "VoiceMod Hostname",
+			name: t("plugins.voicemod.settings.host"),
 			default: "127.0.0.1",
 			required: true,
 		})
@@ -31,7 +45,7 @@ export default definePlugin(
 		async function tryConnect() {
 			try {
 				await voiceMod.connect(voiceModHost.value)
-			} catch (err) {}
+			} catch (err) { }
 		}
 
 		function retryConnection() {
@@ -47,14 +61,15 @@ export default definePlugin(
 
 		defineAction({
 			id: "selectVoice",
-			name: "Change Voice",
+			name: t("plugins.voicemod.actions.selectVoice.name"),
+			description: t("plugins.voicemod.actions.selectVoice.description"),
 			icon: "mdi mdi-account-voice",
 			config: {
 				type: Object,
 				properties: {
 					voice: {
 						type: String,
-						name: "Voice",
+						name: t("plugins.voicemod.common.voice"),
 						required: true,
 						default: "nofx",
 						async enum() {

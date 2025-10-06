@@ -1,0 +1,14 @@
+plugin:
+  name: "Voicemod"
+  description: "Contrôler Voicemod avec CastMate"
+
+common:
+  voice: "Voix"
+
+settings:
+  host: "Nom d'hôte Voicemod"
+
+actions:
+  selectVoice:
+    name: "Sélectionner une voix"
+    description: "Sélectionner une voix par son nom"

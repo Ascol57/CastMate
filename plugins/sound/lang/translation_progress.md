@@ -1,0 +1,6 @@
+# Progression de la traduction — Sound
+
+- en.yml : original
+- fr.yml : traduit
+
+Statut: fr.yml créé.

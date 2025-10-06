@@ -1,0 +1,15 @@
+plugin:
+  name: "Twinkly"
+  description: "Intégration des éclairages Twinkly"
+
+common:
+  device: "Appareil Twinkly"
+  movie: "Animation"
+
+settings:
+  subnetMask: "Masque de sous-réseau Twinkly"
+
+actions:
+  movie:
+    name: "Animation Twinkly"
+    description: ""

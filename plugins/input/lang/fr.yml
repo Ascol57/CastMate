@@ -1,0 +1,31 @@
+plugin:
+  name: "Input"
+  description: "Plugin d'entrée"
++
+common:
+  button: "Bouton"
++
++  duration: "Durée"
++
++  key: "Touche"
++
++  combo: "Combinaison"
++
+actions:
+  mouseButton:
+    name: "Bouton souris"
++
++    description: "Simuler l'appui d'un bouton de la souris"
++
++  pressKey:
++
++    name: "Appuyer sur une touche"
++
++    description: "Simuler l'appui d'une touche"
++
+triggers:
+  keyboardShortcut:
++
++    name: "Raccourci clavier"
++
++    description: "Se déclenche lorsqu'un raccourci clavier spécifique est pressé"

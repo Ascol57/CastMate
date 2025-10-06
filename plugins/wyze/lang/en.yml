@@ -1,0 +1,10 @@
+plugin:
+  name: "Wyze"
+  description: "Wyze Smart Light Integration"
+
+common:
+  account: "Wyze Account"
+
+settings:
+  keyId: "Wyze Key ID"
+  apiKey: "Wyze API Key"

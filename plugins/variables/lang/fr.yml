@@ -1,0 +1,36 @@
+plugin:
+  name: "Variables"
+  description: "Gérer et utiliser des variables dans vos automatisations"
+
+common:
+  variable: "Variable"
+  value: "Valeur"
+  clamp: "Plage de clamp"
+  viewerVariables: "Variables spectateur"
+  variableName: "Nom de la variable"
+  type: "Type"
+  defaultValue: "Valeur par défaut"
+  saved: "Enregistré"
+  createVariable: "Créer une variable"
+  required: "Valeur requise"
+  createViewerVariable: "Créer une variable spectateur"
+  viewer: "Spectateur"
++
+actions:
+  set:
+    name: "Définir variable"
+    description: "Définit la valeur d'une variable"
++
+  offset:
+    name: "Décaler variable"
+    description: "Décale la valeur d'une variable d'une quantité spécifiée"
++
+  setViewerVar:
+    name: "Définir variable spectateur"
++
+    description: "Définit une variable spécifique à un spectateur"
++
+  offsetViewerVar:
+    name: "Décaler variable spectateur"
++
+    description: "Décale une variable spécifique à un spectateur"

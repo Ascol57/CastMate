@@ -1,0 +1,36 @@
+plugin:
+  name: "HTTP"
+  description: "Envoyer des requêtes HTTP pour contrôler des appareils ou déclencher des webhooks."
++
++
++common:
++
++  method: "Méthode"
++
++  url: "URL"
++
++  route: "Route"
++
++  params: "Params URL"
++
++  query: "Query Params"
++
++  body: "Corps de la requête"
++
++
++actions:
++
++  request:
++
++    name: "Requête HTTP"
++
++    description: "Envoyer une requête HTTP vers une URL spécifiée."
++
++
++triggers:
++
++  endpoint:
++
++    name: "Endpoint HTTP"
++
++    description: "Répond aux requêtes entrantes HTTP à /plugins/endpoints/..."

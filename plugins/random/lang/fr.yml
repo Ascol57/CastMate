@@ -1,0 +1,23 @@
+plugin:
+  name: "Random"
+  description: "Aléatoire"
+
+common:
+  weight: "Poids"
+  wheel: "Roue"
+  strength: "Force"
+  item: "Nom de l'élément"
+
+actions:
+  random:
+    name: "Aléatoire"
+    description: ""
+
+  spinWheel:
+    name: "Faire tourner la roue"
+    description: "Faire tourner une roue dans une overlay"
+
+triggers:
+  wheelLanded:
+    name: "Roue arrêtée"
+    description: "Se déclenche quand une roue d'overlay s'arrête !"

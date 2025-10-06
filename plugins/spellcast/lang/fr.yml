@@ -1,0 +1,23 @@
+plugin:
+  name: "SpellCast"
+  description: ""
++
+common:
+  spell: "Sort"
++
+triggers:
+  spellHook:
+    name: "Sort SpellCast"
++
+    description: "Se déclenche lorsqu'un spectateur utilise un sort via l'extension SpellCast"
++
+SpellHook:
+  name: "Titre"
+  enabled: "Activé"
+  description: "Description"
+  bits: "Bits"
+  color: "Couleur"
++
+renderer:
+  createSpell: "Créer un sort"
+  viewExtension: "Voir l'extension"

@@ -1,0 +1,28 @@
+plugin:
+  name: "OS"
+  description: "Système d'exploitation"
++
+common:
+  command: "Commande"
++
++  workingDirectory: "Dossier de travail"
++
++  processOutput: "Sortie du processus"
++
++  application: "Application"
++
++  arguments: "Arguments"
++
++  ignoreIfRunning: "Ignorer si déjà en cours"
++
+actions:
+  powershell:
+    name: "Powershell"
++
++    description: "Exécuter un script Powershell"
++
++  launch:
++
++    name: "Lancer une application"
++
++    description: "Lancer facilement une application. Le dossier de travail par défaut est le dossier de l'application"

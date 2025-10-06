@@ -1,256 +1,51 @@
-# Traductions du Plugin OBS - Français
+# Plugin OBS - Traductions françaises
 plugin:
   name: "OBS"
-  description: "Fournit le contrôle d'OBS via OBS WebSocket 5"
-
+  description: "Contrôle OBS via OBS Websocket 5"
++
 common:
   scene: "Scène"
   source: "Source"
-
-settings:
-  default_connection:
-    name: "Connexion OBS par défaut"
-  obs_connections: "Connexions OBS"
-
+  obsConnections: "Connexions OBS"
+  muted: "Muet"
+  volume: "Volume"
+  defaultConnection: "Connexion OBS par défaut"
+  hotkey: "Raccourci"
+  action: "Action"
+  chapterName: "Nom du chapitre"
+  sourceVisibility: "Visibilité de la source"
++
 states:
-  scene:
-    name: "Scène"
-  streaming:
-    name: "Diffusion"
-  recording:
-    name: "Enregistrement"
-  replay_buffer:
-    name: "Tampon de relecture"
-  virtual_cam:
-    name: "Caméra virtuelle active"
-  connected:
-    name: "Connecté"
-
+  scene: "Scène"
+  streaming: "Streaming"
+  recording: "Enregistrement"
++
 actions:
   scene:
     name: "Changer de scène"
-    description: "Change la scène actuelle dans OBS"
-    config:
-      scene: "Scène"
+    description: "Change la scène courante dans OBS"
++
   set_browser_url:
-    name: "Définir l'URL de la source navigateur"
-    description: "Définir l'URL d'une source navigateur"
-    config:
-      source_name: "Source"
-      url: "URL"
+    name: "Définir l'URL du navigateur"
++
   set_image:
-    name: "Définir la source d'image"
-    description: "Définir le chemin de fichier d'une source d'image"
-    config:
-      source_name: "Source"
-      image: "Chemin de l'image"
+    name: "Définir la source image"
++
   play_media:
-    name: "Lire la source média"
-    description: "Lire une source média"
-    config:
-      scene: "Scène"
-      source: "Source"
+    name: "Jouer une source média"
++
   save_replay:
-    name: "Sauvegarder la relecture"
-    description: "Sauvegarder le tampon de relecture actuel"
-  toggle_studio_mode:
-    name: "Basculer le mode studio"
-    description: "Activer ou désactiver le mode studio"
-    config:
-      studio_mode: "Mode studio"
-  trigger_studio_mode_transition:
-    name: "Déclencher la transition du mode studio"
-    description: "Déclencher une transition en mode studio"
-  
-  prev_scene:
-    name: "Scène précédente"
-    description: "Revenir à la scène précédente"
-  
-  hotkey:
-    name: "Raccourci clavier"
-    description: "Déclencher un raccourci clavier OBS"
-    config:
-      hotkey: "Raccourci clavier"
-
-  source_visibility:
-    name: "Visibilité de la source"
-    description: "Afficher ou masquer une source"
-    config:
-      scene: "Scène"
-      source: "Source"
-      enabled: "Visibilité de la source"
-
-  mute:
-    name: "Couper le son de la source"
-    description: "Couper ou réactiver le son d'une source audio"
-    config:
-      source: "Source"
-      muted: "Coupé"
-
-  volume:
-    name: "Changer le volume"
-    description: "Changer le volume d'une source audio"
-    config:
-      source: "Source"
-      volume: "Volume"
-
-  filter_visibility:
-    name: "Visibilité du filtre"
-    description: "Afficher ou masquer un filtre de source"
-    config:
-      source: "Source"
-      filter: "Filtre"
-      enabled: "Visibilité du filtre"
-
-  screenshot:
-    name: "Capture d'écran"
-    description: "Prendre une capture d'écran"
-    config:
-      scene: "Scène"
-      source: "Source"
-      format: "Format"
-      path: "Chemin"
-
-  text:
-    name: "Texte de la source"
-    description: "Changer le contenu d'une source de texte"
-    config:
-      source: "Source"
-      text: "Texte"
-
-  refresh_browser:
-    name: "Actualiser la source navigateur"
-    description: "Actualiser une source navigateur"
-    config:
-      source: "Source"
-
-  transform:
-    name: "Transformer la source"
-    description: "Appliquer des transformations à une source"
-    config:
-      scene: "Scène"
-      source: "Source"
-      transform: "Transformation"
-
-  media_action:
-    name: "Action média"
-    description: "Contrôler la lecture des médias"
-    config:
-      source: "Source"
-      action: "Action"
-
-  chapter_marker:
-    name: "Marqueur de chapitre"
-    description: "Ajouter un marqueur de chapitre pendant l'enregistrement"
-
-  toggle_streaming:
-    name: "Basculer la diffusion"
-    description: "Démarrer ou arrêter la diffusion"
-    config:
-      streaming: "Diffusion"
-
-  toggle_recording:
-    name: "Basculer l'enregistrement"
-    description: "Démarrer ou arrêter l'enregistrement"
-    config:
-      recording: "Enregistrement"
-
-  toggle_replay_buffer:
-    name: "Basculer le tampon de relecture"
-    description: "Démarrer ou arrêter le tampon de relecture"
-    config:
-      replay_buffer: "Tampon de relecture"
-
-  toggle_virtual_cam:
-    name: "Basculer la caméra virtuelle"
-    description: "Démarrer ou arrêter la caméra virtuelle"
-    config:
-      virtual_cam: "Caméra virtuelle"
-
+    name: "Sauvegarder le replay"
++
 connection:
-  name: "Nom de la connexion"
-  host: "Nom d'hôte"
-  port: "Port"
-  password: "Mot de passe"
-  setup_title: "CastMate ne peut pas contrôler OBS. Vous devez d'abord activer le serveur websocket dans OBS pour que CastMate puisse s'y connecter."
-  setup_step_1: "Ouvrir les paramètres du serveur WebSocket dans OBS."
-  setup_step_2: "Assurez-vous que la case Activer le serveur WebSocket est cochée ET que vous avez cliqué sur appliquer."
-  setup_step_3: "Cliquez sur le bouton Afficher les informations de connexion pour ouvrir le code QR."
-  setup_step_4: "Avec la fenêtre du code QR encore ouverte, cliquez sur le bouton ci-dessous. (Peu importe si elle est cachée derrière d'autres fenêtres)."
-  scan_qr_tooltip: "Scanner le code QR des informations de connexion"
-
+  name: "Nom de connexion"
++
 results:
   audio_muted: "Audio coupé"
-  source_enabled: "Source activée"
-
++
 renderer:
   dashboard_card:
-    refresh_all_browsers: "Actualiser tous les navigateurs"
-    disconnected: "Déconnecté"
-    open: "Ouvrir"
-    remote_obs_tooltip: "Ceci est une connexion OBS distante"
-    remote_obs: "OBS distant"
-    streaming: "Diffusion"
-    recording: "Enregistrement"
-  
+    refresh_all_browsers: "Rafraîchir tous les navigateurs"
++
   main_page:
-    no_connections: "CastMate ne peut pas contrôler OBS, vous n'avez pas encore configuré la connexion."
-    setup_obs: "Configurer OBS"
-    not_connected: "(Non connecté)"
-    open_obs: "Ouvrir OBS"
-    cant_open_remote: "Impossible d'ouvrir l'OBS distant"
-    edit: "Modifier"
-    obs_running_not_connected: "OBS est en cours d'exécution, mais CastMate n'est pas connecté."
-    edit_connection: "Modifier la connexion"
-    connection: "Connexion OBS"
-  
-  connection_edit:
-    setup_description: "CastMate peut contrôler OBS via le serveur WebSocket d'OBS. Vous devez d'abord activer le serveur websocket dans OBS pour que CastMate puisse s'y connecter."
-    step_1: "Ouvrir les paramètres du serveur WebSocket dans OBS."
-    step_2: "Assurez-vous que la case Activer le serveur WebSocket est cochée ET que vous avez cliqué sur appliquer."
-    step_3: "Cliquez sur le bouton Afficher les informations de connexion pour ouvrir le code QR."
-    step_4: "Avec la fenêtre du code QR encore ouverte, cliquez sur le bouton ci-dessous. (Peu importe si elle est cachée derrière d'autres fenêtres)."
-    connection_name: "Nom de connexion CastMate"
-    ip_address: "Adresse IP d'OBS"
-    port: "Port"
-    websocket_password: "Mot de passe WebSocket"
-    test: "Tester"
-    scan_qr_tooltip: "Scanner le code QR des informations de connexion"
-  
-  transform:
-    position: "Position"
-    rotation: "Rotation"
-    alignment: "Alignement"
-    size: "Taille"
-    size_note: "Ce n'est pas en pixels. C'est un multiplicateur pour la taille par défaut. (1.0 sera la taille par défaut)"
-    crop: "Recadrer"
-    top: "Haut"
-    left: "Gauche"
-    right: "Droite"
-    bottom: "Bas"
-    bounds: "Limites"
-    bounds_type: "Type de limites"
-    width: "Largeur"
-    height: "Hauteur"
-    x: "X"
-    y: "Y"
-    
-    alignment_values:
-      center: "Centre"
-      left: "Gauche"
-      right: "Droite"
-      top: "Haut"
-      bottom: "Bas"
-      top_left: "Haut gauche"
-      top_right: "Haut droite"
-      bottom_left: "Bas gauche"
-      bottom_right: "Bas droite"
-    
-    bounds_type_values:
-      none: "Aucun"
-      stretch: "Étirer"
-      scale_inner: "Mise à l'échelle intérieure"
-      scale_outer: "Mise à l'échelle extérieure"
-      scale_to_width: "Mise à l'échelle à la largeur"
-      scale_to_height: "Mise à l'échelle à la hauteur"
-      max_only: "Maximum seulement"
+    no_connections: "CastMate peut contrôler OBS, mais vous n'avez pas encore configuré de connexion."
