@@ -7,6 +7,7 @@ import {
 	getResourceAsProjectGroup,
 	handleIpcMessage,
 	handleIpcRpc,
+	tSync,
 	useDockingStore,
 	useDocumentStore,
 	useIpcCaller,
@@ -83,29 +84,29 @@ function createSplitterGroup(app: App<Element>) {
 
 			items = resourceItems.map(
 				(r) =>
-					({
-						id: r.id,
-						title: r.config.name ?? r.id,
-						open() {
-							//TODO how do we get the view data?
-							dockingStore.openDocument(
-								r.id,
-								r.config,
-								createView(r) ?? {},
-								"audio-splitter",
-								"mdi mdi-tune"
-							)
-						},
-						rename(name: string) {
-							resourceStore.applyResourceConfig("SoundOutput", r.id, { name })
-						},
-						delete() {
-							resourceStore.deleteResource("SoundOutput", r.id)
+				({
+					id: r.id,
+					title: r.config.name ?? r.id,
+					open() {
+						//TODO how do we get the view data?
+						dockingStore.openDocument(
+							r.id,
+							r.config,
+							createView(r) ?? {},
+							"audio-splitter",
+							"mdi mdi-tune"
+						)
+					},
+					rename(name: string) {
+						resourceStore.applyResourceConfig("SoundOutput", r.id, { name })
+					},
+					delete() {
+						resourceStore.deleteResource("SoundOutput", r.id)
 
-							//TODO: dockingStore.closeDocument(r.id)
-							//TODO: unsaved data?
-						},
-					} as ProjectItem)
+						//TODO: dockingStore.closeDocument(r.id)
+						//TODO: unsaved data?
+					},
+				} as ProjectItem)
 			)
 		}
 
@@ -119,7 +120,7 @@ function createSplitterGroup(app: App<Element>) {
 			create() {
 				app.config.globalProperties.$dialog.open(NameDialog, {
 					props: {
-						header: `Create Audio Splitter`,
+						header: tSync("plugins.sound.renderer.main.createSplitter"),
 						modal: true,
 					},
 					async onClose(options) {
@@ -172,7 +173,7 @@ export async function initPlugin(app: App<Element>) {
 
 	const voices = getResourceAsProjectGroup(app, {
 		resourceType: "TTSVoice",
-		resourceName: "TTS Voices",
+		resourceName: tSync("plugins.sound.renderer.main.ttsVoices"),
 		groupIcon: "mdi mdi-account-voice",
 		documentType: "ttsvoice",
 	})
@@ -193,7 +194,7 @@ export async function initPlugin(app: App<Element>) {
 		computed<ProjectGroup>(() => {
 			return {
 				id: "sound",
-				title: "Audio",
+				title: tSync("plugins.sound.renderer.main.audio"),
 				icon: "mdi mdi-volume-high",
 				items: [voices.value, redirects.value],
 			}

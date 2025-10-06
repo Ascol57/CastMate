@@ -1,16 +1,13 @@
 <template>
 	<scrolling-tab-body inner-class="px-1 py-1">
-		<div style="height: 2rem">Audio Splitters allow sounds to be played on multiple outputs.</div>
-		<document-data-collection
-			v-model="model.redirects"
-			v-model:view="view.redirects"
-			local-path="redirects"
-			:data-component="AudioSplitEdit"
-		>
+		<div style="height: 2rem">{{ tSync("plugins.sound.renderer.audioSplitterEditPage.title") }}</div>
+		<document-data-collection v-model="model.redirects" v-model:view="view.redirects" local-path="redirects"
+			:data-component="AudioSplitEdit">
 			<template #header>
 				<div class="flex flex-column p-1">
 					<div>
-						<p-button @click="addNewSplitStart">Add Audio Output</p-button>
+						<p-button @click="addNewSplitStart">{{
+							tSync("plugins.sound.renderer.audioSplitterEditPage.addOutput") }}</p-button>
 					</div>
 				</div>
 			</template>
@@ -22,7 +19,7 @@
 
 <script setup lang="ts">
 import { AudioSplitterConfig, AudioSplit } from "castmate-plugin-sound-shared"
-import { ScrollingTabBody, DocumentDataCollection, useCommitUndo } from "castmate-ui-core"
+import { ScrollingTabBody, DocumentDataCollection, useCommitUndo, tSync } from "castmate-ui-core"
 import { AudioSplitterView, AudioSplitView } from "./splitter-types"
 import AudioSplitEdit from "./AudioSplitEdit.vue"
 import { nanoid } from "nanoid"

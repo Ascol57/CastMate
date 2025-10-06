@@ -1,0 +1,36 @@
+plugin:
+  name: "Sound"
+  description: "Controls sound playback and audio settings."
+
+common:
+  output: "Output"
+  sound: "Sound"
+  volume: "Volume"
+  startTimestamp: "Start Timestamp"
+  endTimestamp: "End Timestamp"
+  voice: "Voice"
+  text: "Text"
+
+settings:
+  globalVolume: "Global Volume"
+  defaultOutput: "Default Sound Output"
+
+actions:
+  sound:
+    name: "Sound"
+    description: "Play a sound file"
+  
+  tts:
+    name: "Text to Speech"
+    description: "Convert text to speech and play it"
+
+renderer:
+  main:
+    createAudioSplitter: "Create Audio Splitter"
+    ttsVoices: "TTS Voices"
+    audio: "Audio"
+  voiceEditPage:
+    testMessage: "This is a test of text to speech."
+  audioSplitterEditPage:
+    title: "Audio Splitters allow sounds to be played on multiple outputs."
+    addOutput: "Add Audio Output"

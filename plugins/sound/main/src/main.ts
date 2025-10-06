@@ -14,19 +14,33 @@ import { AudioDeviceInterface } from "castmate-plugin-sound-native"
 import { SoundOutput, setupOutput } from "./output"
 import { TTSVoice, setupTTS } from "./tts"
 import { setupSplitters } from "./splitter"
+import { generatedTranslationsFromFiles, registerPluginTranslations, t } from "castmate-translation"
+
+const translationFiles = {
+	en: (import.meta.glob('../../lang/en.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/en.yml"] as any)?.default,
+	fr: (import.meta.glob('../../lang/fr.yml', {
+		query: '?raw',
+		eager: true
+	})["../../lang/fr.yml"] as any)?.default
+}
+
+registerPluginTranslations("sound", generatedTranslationsFromFiles(translationFiles))
 
 export default definePlugin(
 	{
 		id: "sound",
-		name: "Sound",
+		name: t("plugins.sound.plugin.name"),
 		color: "#62894F",
-		description: "SOUND!",
+		description: t("plugins.sound.plugin.description"),
 		icon: "mdi mdi-volume-high",
 	},
 	() => {
 		const globalVolume = defineSetting("globalVolume", {
 			type: Number,
-			name: "Global Volume",
+			name: t("plugins.sound.settings.globalVolume"),
 			slider: true,
 			min: 0,
 			max: 100,
@@ -40,9 +54,9 @@ export default definePlugin(
 
 		defineAction({
 			id: "sound",
-			name: "Sound",
+			name: t("plugins.sound.actions.sound.name"),
 			icon: "mdi mdi-volume-high",
-			description: "Play Sound",
+			description: t("plugins.sound.actions.sound.description"),
 			duration: {
 				propDependencies: ["sound"],
 				async callback(config) {
@@ -68,11 +82,11 @@ export default definePlugin(
 			config: {
 				type: Object,
 				properties: {
-					output: { type: SoundOutput, name: "Output", default: () => defaultOutput.value, required: true },
-					sound: { type: MediaFile, name: "Sound", required: true, default: "", sound: true },
+					output: { type: SoundOutput, name: t("plugins.sound.common.output"), default: () => defaultOutput.value, required: true },
+					sound: { type: MediaFile, name: t("plugins.sound.common.sound"), required: true, default: "", sound: true },
 					volume: {
 						type: Number,
-						name: "Volume",
+						name: t("plugins.sound.common.volume"),
 						required: true,
 						default: 100,
 						slider: true,
@@ -80,8 +94,8 @@ export default definePlugin(
 						max: 100,
 						step: 1,
 					},
-					startTime: { type: Duration, name: "Start Timestamp", required: true, default: 0 },
-					endTime: { type: Duration, name: "End Timestamp" },
+					startTime: { type: Duration, name: t("plugins.sound.common.startTimestamp"), required: true, default: 0 },
+					endTime: { type: Duration, name: t("plugins.sound.common.endTimestamp"), required: true, default: 0 },
 				},
 			},
 			async invoke(config, contextData, abortSignal) {
@@ -100,17 +114,18 @@ export default definePlugin(
 
 		defineAction({
 			id: "tts",
-			name: "Text to Speech",
+			name: t("plugins.sound.actions.tts.name"),
+			description: t("plugins.sound.actions.tts.description"),
 			icon: "mdi mdi-account-voice",
 			config: {
 				type: Object,
 				properties: {
-					output: { type: SoundOutput, name: "Output", default: () => defaultOutput.value, required: true },
-					voice: { type: TTSVoice, name: "Voice", required: true, template: true },
-					text: { type: String, name: "Text", required: true, template: true },
+					output: { type: SoundOutput, name: t("plugins.sound.common.output"), default: () => defaultOutput.value, required: true },
+					voice: { type: TTSVoice, name: t("plugins.sound.common.voice"), required: true, template: true },
+					text: { type: String, name: t("plugins.sound.common.text"), required: true, template: true },
 					volume: {
 						type: Number,
-						name: "Volume",
+						name: t("plugins.sound.common.volume"),
 						required: true,
 						default: 100,
 						slider: true,
@@ -146,7 +161,7 @@ export default definePlugin(
 
 		const defaultOutput = defineSetting("defaultOutput", {
 			type: SoundOutput,
-			name: "Default Sound Output",
+			name: t("plugins.sound.settings.defaultOutput"),
 			required: true,
 			default: () => SoundOutput.storage.getById("system.default"),
 		})
