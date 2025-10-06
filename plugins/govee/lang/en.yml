@@ -1,0 +1,6 @@
+plugin:
+  name: "Govee"
+  description: "Control Govee lights and plugs"
+
+settings:
+  apiKey: "Govee API Key"

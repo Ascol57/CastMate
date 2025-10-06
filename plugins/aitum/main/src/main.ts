@@ -77,19 +77,20 @@ export default definePlugin(
 		defineAction({
 			id: "verticalScene",
 			name: t("plugins.aitum.actions.verticalScene.name"),
+			description: t("plugins.aitum.actions.verticalScene.description"),
 			icon: "mdi mdi-swap-horizontal-bold",
 			config: {
 				type: Object,
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: t("plugins.aitum.actions.verticalScene.config.obs"),
+						name: t("plugins.aitum.common.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
 					scene: {
 						type: String,
-						name: t("plugins.aitum.actions.verticalScene.config.scene"),
+						name: t("plugins.aitum.common.scene"),
 						required: true,
 						//template: true,
 						async enum(context: { obs: OBSConnection }) {
@@ -112,19 +113,20 @@ export default definePlugin(
 		defineAction({
 			id: "verticalStreamStartStop",
 			name: t("plugins.aitum.actions.verticalStreamStartStop.name"),
+			description: t("plugins.aitum.actions.verticalStreamStartStop.description"),
 			icon: "mdi mdi-broadcast",
 			config: {
 				type: Object,
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: t("plugins.aitum.actions.verticalStreamStartStop.config.obs"),
+						name: t("plugins.aitum.common.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
 					streaming: {
 						type: Toggle,
-						name: t("plugins.aitum.actions.verticalStreamStartStop.config.streaming"),
+						name: t("plugins.aitum.common.streaming"),
 						required: true,
 						default: true,
 						template: true,
@@ -156,19 +158,20 @@ export default definePlugin(
 		defineAction({
 			id: "verticalRecordingStartStop",
 			name: t("plugins.aitum.actions.verticalRecordingStartStop.name"),
+			description: t("plugins.aitum.actions.verticalRecordingStartStop.description"),
 			icon: "mdi mdi-record",
 			config: {
 				type: Object,
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: t("plugins.aitum.actions.verticalRecordingStartStop.config.obs"),
+						name: t("plugins.aitum.common.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
 					streaming: {
 						type: Toggle,
-						name: t("plugins.aitum.actions.verticalRecordingStartStop.config.streaming"),
+						name: t("plugins.aitum.common.streaming"),
 						required: true,
 						default: true,
 						template: true,
@@ -200,19 +203,20 @@ export default definePlugin(
 		defineAction({
 			id: "verticalBacktrackStartStop",
 			name: t("plugins.aitum.actions.verticalBacktrackStartStop.name"),
+			description: t("plugins.aitum.actions.verticalBacktrackStartStop.description"),
 			icon: "atmi atmi-aitum",
 			config: {
 				type: Object,
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: t("plugins.aitum.actions.verticalBacktrackStartStop.config.obs"),
+						name: t("plugins.aitum.common.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
 					streaming: {
 						type: Toggle,
-						name: t("plugins.aitum.actions.verticalBacktrackStartStop.config.streaming"),
+						name: t("plugins.aitum.common.streaming"),
 						required: true,
 						default: true,
 						template: true,
@@ -255,7 +259,7 @@ export default definePlugin(
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: t("plugins.aitum.actions.saveBacktrack.config.obs"),
+						name: t("plugins.aitum.common.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
@@ -279,13 +283,13 @@ export default definePlugin(
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: t("plugins.aitum.actions.verticalChapterMarker.config.obs"),
+						name: t("plugins.aitum.common.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
 					chapterName: {
 						type: String,
-						name: t("plugins.aitum.actions.verticalChapterMarker.config.chapterName"),
+						name: t("plugins.aitum.common.chapterName"),
 						template: true,
 					},
 				},

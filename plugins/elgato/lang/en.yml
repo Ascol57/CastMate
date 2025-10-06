@@ -1,0 +1,4 @@
+plugin:
+  name: "Elgato"
+  description: "Control Elgato Key Lights and other Elgato lights"
+

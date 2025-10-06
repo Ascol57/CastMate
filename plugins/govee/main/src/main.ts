@@ -33,6 +33,7 @@ interface GoveeBulbConfig extends LightConfig {
 }
 
 import * as goveeLan from "@j3lte/govee-lan-controller"
+import { t } from "castmate-translation"
 
 const logger = usePluginLogger("govee")
 
@@ -305,14 +306,15 @@ class GoveePlug extends PollingPlug<GoveePlugConfig> {
 export default definePlugin(
 	{
 		id: "govee",
-		name: "Govee",
+		name: t("plugins.govee.plugin.name"),
+		description: t("plugins.govee.plugin.description"),
 		icon: "iot iot-govee",
 		color: "#7F743F",
 	},
 	() => {
 		const apiKey = defineSecret("apiKey", {
 			type: String,
-			name: "Govee API Key",
+			name: t("plugins.govee.settings.apiKey"),
 		})
 
 		let lan: goveeLan.Govee

@@ -10,12 +10,13 @@ import {
 	coreAxios,
 } from "castmate-core"
 import axios from "axios"
+import { t } from "castmate-translation"
 
 export default definePlugin(
 	{
 		id: "http",
-		name: "HTTP",
-		description: "UI Description",
+		name: t("plugins.http.plugin.name"),
+		description: t("plugins.http.plugin.description"),
 		icon: "mdi mdi-web",
 		color: "#9E436E",
 	},
@@ -24,14 +25,15 @@ export default definePlugin(
 
 		defineAction({
 			id: "request",
-			name: "HTTP Request",
+			name: t("plugins.http.actions.request.name"),
+			description: t("plugins.http.actions.request.description"),
 			icon: "mdi mdi-web",
 			config: {
 				type: Object,
 				properties: {
 					method: {
 						type: String,
-						name: "Method",
+						name: t("plugins.http.common.method"),
 						enum: ["GET", "POST", "DELETE", "PUT", "PATCH"],
 						required: true,
 						default: "GET",
@@ -39,7 +41,7 @@ export default definePlugin(
 					url: {
 						type: String,
 						template: true,
-						name: "URL",
+						name: t("plugins.http.common.url"),
 						required: true,
 					},
 					//TODO: Query
@@ -64,22 +66,22 @@ export default definePlugin(
 
 		const endpointTrigger = defineTrigger({
 			id: "endpoint",
-			name: "HTTP Endpoint",
+			name: t("plugins.http.triggers.endpoint.name"),
 			icon: "mdi mdi-server-network",
-			description: "Responds to incoming HTTP requests at /plugins/endpoints/...",
+			description: t("plugins.http.triggers.endpoint.description"),
 			config: {
 				type: Object,
 				properties: {
 					method: {
 						type: String,
-						name: "Method",
+						name: t("plugins.http.common.method"),
 						enum: ["GET", "POST", "DELETE", "PUT", "PATCH"],
 						default: "POST",
 						required: true,
 					},
 					route: {
 						type: String,
-						name: "Route",
+						name: t("plugins.http.common.route"),
 						required: true,
 					},
 				},
@@ -87,11 +89,11 @@ export default definePlugin(
 			context: {
 				type: Object,
 				properties: {
-					method: { type: String, name: "Method", required: true, view: false },
-					route: { type: String, name: "Route", required: true, view: false },
-					params: { type: Object, name: "URL Params", required: true, properties: {} },
-					query: { type: Object, name: "Query Params", required: true, properties: {} },
-					body: { type: Object, name: "Request Body", required: true, properties: {} },
+					method: { type: String, name: t("plugins.http.common.method"), required: true, view: false },
+					route: { type: String, name: t("plugins.http.common.route"), required: true, view: false },
+					params: { type: Object, name: t("plugins.http.common.params"), required: true, properties: {} },
+					query: { type: Object, name: t("plugins.http.common.query"), required: true, properties: {} },
+					body: { type: Object, name: t("plugins.http.common.body"), required: true, properties: {} },
 				},
 			},
 			async handle(config, context, mapping) {

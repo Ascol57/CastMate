@@ -6,12 +6,14 @@ plugin:
 settings:
   BlueSkyAccounts: "BlueSky Accounts"
 
+common:
+  account: "Account"
+  text: "Text"
+
 actions:
   post:
     name: "BlueSky Post"
-    config:
-      account: "Account"
-      text: "Text"
+    description: "Create a new BlueSky post"
 
 accounts:
   default_name: "BlueSky Account"

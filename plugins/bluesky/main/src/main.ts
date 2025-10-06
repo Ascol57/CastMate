@@ -40,12 +40,13 @@ export default definePlugin(
 		defineAction({
 			id: "post",
 			name: t("plugins.bluesky.actions.post.name"),
+			description: t("plugins.bluesky.actions.post.description"),
 			icon: "bsi bsi-logo",
 			config: {
 				type: Object,
 				properties: {
-					account: { type: BlueSkyAccount, name: t("plugins.bluesky.actions.post.config.account"), required: true },
-					text: { type: String, name: t("plugins.bluesky.actions.post.config.text"), required: true, template: true, multiLine: true },
+					account: { type: BlueSkyAccount, name: t("plugins.bluesky.common.account"), required: true },
+					text: { type: String, name: t("plugins.bluesky.common.text"), required: true, template: true, multiLine: true },
 				},
 			},
 			async invoke(config, contextData, abortSignal) {

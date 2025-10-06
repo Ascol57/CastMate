@@ -1,0 +1,21 @@
+plugin:
+  name: "HTTP"
+  description: "Send HTTP requests to control devices or trigger webhooks."
+
+common:
+  method: "Method"
+  url: "URL"
+  route: "Route"
+  params: "URL Params"
+  query: "Query Params"
+  body: "Request Body"
+
+actions:
+  request:
+    name: "HTTP Request"
+    description: "Send an HTTP request to a specified URL."
+
+triggers:
+  endpoint:
+    name: "HTTP Endpoint"
+    description: "Responds to incoming HTTP requests at /plugins/endpoints/..."

@@ -6,6 +6,7 @@ import { PollingLight } from "castmate-plugin-iot-main"
 import axios from "axios"
 import { LightColor, LightConfig } from "castmate-plugin-iot-shared"
 import { Toggle } from "castmate-schema"
+import { t } from "castmate-translation"
 
 function elgatoToKelvin(value: number) {
 	return Math.round((-4100 * value) / 201 + 1993300 / 201)
@@ -207,8 +208,8 @@ class ElgatoLightStrip extends PollingLight<ElgatoLightStripConfig> {
 export default definePlugin(
 	{
 		id: "elgato",
-		name: "UI Name",
-		description: "UI Description",
+		name: t("plugins.elgato.plugin.name"),
+		description: t("plugins.elgato.plugin.description"),
 		icon: "mdi-pencil",
 	},
 	() => {

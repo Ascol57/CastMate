@@ -38,17 +38,18 @@ export default definePlugin(
 		defineAction({
 			id: "AdvSSMessage",
 			name: t("plugins.advss.actions.AdvSSMessage.name"),
+			description: t("plugins.advss.actions.AdvSSMessage.description"),
 			icon: "advi advi-advss",
 			config: {
 				type: Object,
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: t("plugins.advss.actions.AdvSSMessage.config.obs"),
+						name: t("plugins.advss.common.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
-					message: { type: String, required: true, name: t("plugins.advss.actions.AdvSSMessage.config.message"), template: true },
+					message: { type: String, required: true, name: t("plugins.advss.common.message"), template: true },
 				},
 			},
 			async invoke(config, contextData, abortSignal) {
@@ -65,17 +66,18 @@ export default definePlugin(
 		const advssEvent = defineTransformTrigger({
 			id: "advssEvent",
 			name: t("plugins.advss.triggers.advssEvent.name"),
+			description: t("plugins.advss.triggers.advssEvent.description"),
 			icon: "advi advi-advss",
 			config: {
 				type: Object,
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: t("plugins.advss.triggers.advssEvent.config.obs"),
+						name: t("plugins.advss.common.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
-					message: { type: Command, required: true, name: t("plugins.advss.triggers.advssEvent.config.message") },
+					message: { type: Command, required: true, name: t("plugins.advss.common.message") },
 				},
 			},
 			invokeContext: {
@@ -83,18 +85,18 @@ export default definePlugin(
 				properties: {
 					obs: {
 						type: OBSConnection,
-						name: t("plugins.advss.triggers.advssEvent.config.obs"),
+						name: t("plugins.advss.common.obs"),
 						required: true,
 						default: () => getSettingValue<OBSConnection>("obs", "obsDefault"),
 					},
-					message: { type: String, required: true, name: t("plugins.advss.triggers.advssEvent.context.message") },
+					message: { type: String, required: true, name: t("plugins.advss.common.message") },
 				},
 			},
 			async context(config) {
 				return {
 					type: Object,
 					properties: {
-						message: { type: String, required: true, default: "Thanks for using CastMate!" },
+						message: { type: String, required: true, default: t("plugins.advss.common.defaultMessage") },
 						...getCommandDataSchema(config.message).properties,
 					},
 				}
