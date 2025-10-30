@@ -23,6 +23,7 @@ common:
   replayBuffer: "Replay Buffer"
   studioMode: "Studio Mode"
   transform: "Transform"
+  filterSettings: "Filter Settings"
 
 states:
   scene: "Scene"
@@ -134,6 +135,14 @@ actions:
   toggle_virtual_cam:
     name: "Toggle Virtual Camera"
     description: "Start or stop virtual camera"
+  
+  set_filter_settings:
+    name: "Set Filter Settings"
+    description: "Set the settings of a source filter"
+
+  smooth_filter_settings:
+    name: "Set Filter Settings (Smooth)"
+    description: "Smoothly transition to new filter settings over time"
 
 connection:
   name: "Connection Name"

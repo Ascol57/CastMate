@@ -1,7 +1,7 @@
 import { MediaManager, ReactiveRef, WebService, defineAction, ensureDirectory } from "castmate-core"
 import { t } from "castmate-translation"
 import { OBSConnection } from "./connection"
-import { Directory, MediaFile, Toggle } from "castmate-schema"
+import { Directory, MediaFile, Toggle, Duration } from "castmate-schema"
 import path from "path"
 
 export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
@@ -171,6 +171,293 @@ export function setupSources(obsDefault: ReactiveRef<OBSConnection>) {
 			return {
 				filterEnabled: enabled,
 			}
+		},
+	})
+
+	defineAction({
+		id: "smooth_filter_settings",
+		name: t("plugins.obs.actions.smooth_filter_settings.name"),
+		description: t("plugins.obs.actions.smooth_filter_settings.description"),
+		icon: "mdi mdi-eye",
+		duration: {
+			dragType: "length",
+			rightSlider: {
+				sliderProp: "duration",
+			},
+		},
+		config: {
+			type: Object,
+			properties: {
+				obs: {
+					type: OBSConnection,
+					name: t("plugins.obs.common.obsConnections"),
+					required: true,
+					default: () => obsDefault.value,
+				},
+				sourceName: {
+					type: String,
+					//template: true,
+					name: t("plugins.obs.common.source"),
+					required: true,
+					template: true,
+					async enum(context: { obs: OBSConnection }) {
+						const obs = context?.obs?.connection
+						if (!obs) return []
+
+						const { inputs } = await obs.call("GetInputList")
+						const { scenes } = await obs.call("GetSceneList")
+						return [
+							...inputs.map((i) => i.inputName as string),
+							...scenes.map((s) => s.sceneName as string),
+						]
+					},
+				},
+				filterName: {
+					type: String,
+					name: t("plugins.obs.common.filterVisibility"),
+					//template: true,
+					required: true,
+					template: true,
+					async enum(context: { obs: OBSConnection; sourceName: string }) {
+						const obs = context.obs?.connection
+						if (!obs) return []
+
+						const { filters } = await obs.call("GetSourceFilterList", {
+							sourceName: context.sourceName,
+						})
+
+						return filters.map((f) => f.filterName as string)
+					},
+				},
+				settingsName: {
+					type: String,
+					name: t("plugins.obs.common.filterSettings"),
+					//template: true,
+					required: true,
+					template: true,
+					async enum(context: { obs: OBSConnection; sourceName: string; filterName: string }) {
+						const obs = context.obs?.connection
+						if (!obs) return []
+
+						// Use the typed request that's defined in OBSRequestTypes
+						const { filters } = await obs.call("GetSourceFilterList", {
+							sourceName: context.sourceName,
+						})
+
+						for (const filter of filters) {
+							// compare against the selected filterName, not sourceNamec
+							if (filter.filterName === context.filterName) {
+								const settings = filter.filterSettings as Record<string, any> | undefined
+								// If settings is missing or not an object, return an empty array so the enum
+								// resolver doesn't throw (Object.keys on undefined).
+								if (!settings || typeof settings !== "object") return []
+								// Return a map-like array of objects so UI can use id/name pairs
+								return Object.keys(settings)
+							}
+						}
+
+						// Always return an array to satisfy the expected enum type
+						return []
+					},
+				},
+				settings: {
+					type: Number,
+					name: t("plugins.obs.common.settingContent"),
+					template: true,
+					required: true,
+					default: 0,
+				},
+				duration: { type: Duration, name: t("plugins.time.common.duration"), template: true, required: true, default: 1.0 },
+				smooth_function: {
+					type: String,
+					name: t("plugins.obs.common.smoothFunction"),
+					required: true,
+					async enum() {
+						return ["linear", "easeIn", "easeOut", "easeInOut"]
+					}
+				}
+			},
+		},
+		result: {
+			type: Object,
+			properties: {},
+		},
+		async invoke(config, contextData, abortSignal) {
+			const sourceName = config.sourceName
+			const filterName = config.filterName
+			const settingsName = config.settingsName
+			const settingsValue = config.settings
+			const duration = config.duration
+			const smoothFunction = config.smooth_function
+
+			if (!config.obs) return {}
+
+			// Get current filter settings
+			const { filterSettings } = await config.obs.connection.call("GetSourceFilter", {
+				sourceName,
+				filterName,
+			})
+
+			const initialValue = (filterSettings as Record<string, any>)[settingsName]
+			const startTime = Date.now()
+			const endTime = startTime + duration * 1000
+
+			while (true) {
+				const now = Date.now()
+				if (now >= endTime) {
+					break
+				}
+				const t = (now - startTime) / (endTime - startTime)
+				let smoothT = t
+				switch (smoothFunction) {
+					case "easeIn":
+						smoothT = t * t
+						break
+					case "easeOut":
+						smoothT = t * (2 - t)
+						break
+					case "easeInOut":
+						smoothT = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+						break
+				}
+				const currentValue = initialValue + (settingsValue - initialValue) * smoothT
+					; (filterSettings as Record<string, any>)[settingsName] = currentValue
+				await config.obs.connection.call("SetSourceFilterSettings", {
+					sourceName,
+					filterName,
+					filterSettings,
+				})
+				await new Promise((resolve) => setTimeout(resolve, 16)) // ~60fps
+			}
+
+			; (filterSettings as Record<string, any>)[settingsName] = settingsValue
+			await config.obs.connection.call("SetSourceFilterSettings", {
+				sourceName,
+				filterName,
+				filterSettings,
+			})
+
+			return {}
+		},
+	})
+
+	defineAction({
+		id: "filter_settings",
+		name: t("plugins.obs.actions.set_filter_settings.name"),
+		description: t("plugins.obs.actions.set_filter_settings.description"),
+		icon: "mdi mdi-eye",
+		config: {
+			type: Object,
+			properties: {
+				obs: {
+					type: OBSConnection,
+					name: t("plugins.obs.common.obsConnections"),
+					required: true,
+					default: () => obsDefault.value,
+				},
+				sourceName: {
+					type: String,
+					//template: true,
+					name: t("plugins.obs.common.source"),
+					required: true,
+					template: true,
+					async enum(context: { obs: OBSConnection }) {
+						const obs = context?.obs?.connection
+						if (!obs) return []
+
+						const { inputs } = await obs.call("GetInputList")
+						const { scenes } = await obs.call("GetSceneList")
+						return [
+							...inputs.map((i) => i.inputName as string),
+							...scenes.map((s) => s.sceneName as string),
+						]
+					},
+				},
+				filterName: {
+					type: String,
+					name: t("plugins.obs.common.filterVisibility"),
+					//template: true,
+					required: true,
+					template: true,
+					async enum(context: { obs: OBSConnection; sourceName: string }) {
+						const obs = context.obs?.connection
+						if (!obs) return []
+
+						const { filters } = await obs.call("GetSourceFilterList", {
+							sourceName: context.sourceName,
+						})
+
+						return filters.map((f) => f.filterName as string)
+					},
+				},
+				settingsName: {
+					type: String,
+					name: t("plugins.obs.common.filterSettings"),
+					//template: true,
+					required: true,
+					template: true,
+					async enum(context: { obs: OBSConnection; sourceName: string; filterName: string }) {
+						const obs = context.obs?.connection
+						if (!obs) return []
+
+						// Use the typed request that's defined in OBSRequestTypes
+						const { filters } = await obs.call("GetSourceFilterList", {
+							sourceName: context.sourceName,
+						})
+
+						for (const filter of filters) {
+							// compare against the selected filterName, not sourceNamec
+							if (filter.filterName === context.filterName) {
+								const settings = filter.filterSettings as Record<string, any> | undefined
+								// If settings is missing or not an object, return an empty array so the enum
+								// resolver doesn't throw (Object.keys on undefined).
+								if (!settings || typeof settings !== "object") return []
+								// Return a map-like array of objects so UI can use id/name pairs
+								return Object.keys(settings)
+							}
+						}
+
+						// Always return an array to satisfy the expected enum type
+						return []
+					},
+				},
+				settings: {
+					type: Number,
+					name: t("plugins.obs.common.settingContent"),
+					template: true,
+					required: true,
+					default: 0,
+				}
+			},
+		},
+		result: {
+			type: Object,
+			properties: {},
+		},
+		async invoke(config, contextData, abortSignal) {
+			const sourceName = config.sourceName
+			const filterName = config.filterName
+			const settingsName = config.settingsName
+			const settingsValue = config.settings
+
+			if (!config.obs) return {}
+
+			// Get current filter settings
+			const { filterSettings } = await config.obs.connection.call("GetSourceFilter", {
+				sourceName,
+				filterName,
+			})
+
+				// Update the specific setting
+				; (filterSettings as Record<string, any>)[settingsName] = settingsValue
+			// Send the updated settings back to OBS
+			await config.obs.connection.call("SetSourceFilterSettings", {
+				sourceName,
+				filterName,
+				filterSettings,
+			})
+
+			return {}
 		},
 	})
 

@@ -48,9 +48,9 @@ export default definePlugin(
 				},
 			},
 			config: {
-				type: Object,
+				duration: { type: Duration, name: t("plugins.time.common.duration"), template: true, required: true, default: 1.0 }, type: Object,
 				properties: {
-					duration: { type: Duration, name: t("plugins.time.common.duration"), template: true, required: true, default: 1.0 },
+
 				},
 			},
 			async invoke(config, contextData, abortSignal) {
