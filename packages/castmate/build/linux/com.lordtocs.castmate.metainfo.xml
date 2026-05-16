@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.lordtocs.castmate</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>AGPL-3.0-only</project_license>
+
+  <name>CastMate</name>
+  <summary>Streamer automation: Twitch, OBS, lights, sounds, TTS...</summary>
+
+  <description>
+    <p>
+      CastMate is an open-source automation app for live streamers. It links
+      services and devices — Twitch chat and channel-points, OBS Studio, Philips
+      Hue / LIFX / Govee / Twinkly lights, Discord, Minecraft, sounds, text-to-
+      speech, overlays and more — into a single point-and-click editor.
+    </p>
+    <p>
+      Build profiles that react to viewer rewards, raids, subs, follows, chat
+      commands, timers, or external HTTP triggers; switch OBS scenes, play
+      sound effects, change lights, post to Discord, drive a Minecraft server,
+      or anything else you can wire up.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">castmate.desktop</launchable>
+
+  <url type="homepage">https://www.castmate.io/</url>
+  <url type="bugtracker">https://github.com/LordTocs/CastMate/issues</url>
+  <url type="vcs-browser">https://github.com/LordTocs/CastMate</url>
+
+  <developer id="io.castmate">
+    <name>Scott Resnick</name>
+  </developer>
+
+  <categories>
+    <category>AudioVideo</category>
+    <category>Audio</category>
+    <category>Video</category>
+  </categories>
+
+  <provides>
+    <binary>castmate</binary>
+  </provides>
+
+  <content_rating type="oars-1.1"/>
+</component>

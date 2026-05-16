@@ -7,6 +7,7 @@
 set -e
 
 UDEV_DST=/etc/udev/rules.d/99-castmate-uinput.rules
+APPSTREAM_DST=/usr/share/metainfo/com.lordtocs.castmate.metainfo.xml
 
 if [ -f "$UDEV_DST" ]; then
     rm -f "$UDEV_DST"
@@ -14,6 +15,10 @@ if [ -f "$UDEV_DST" ]; then
         udevadm control --reload >/dev/null 2>&1 || true
         udevadm trigger >/dev/null 2>&1 || true
     fi
+fi
+
+if [ -f "$APPSTREAM_DST" ]; then
+    rm -f "$APPSTREAM_DST"
 fi
 
 exit 0

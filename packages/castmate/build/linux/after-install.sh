@@ -8,7 +8,10 @@
 set -e
 
 INSTALL_DIR=/opt/CastMate
-UDEV_SRC="$INSTALL_DIR/resources/linux/99-castmate-uinput.rules"
+RES_DIR="$INSTALL_DIR/resources/linux"
+
+# --- 1. udev rule for /dev/uinput (M9 input simulation on Wayland) ----------
+UDEV_SRC="$RES_DIR/99-castmate-uinput.rules"
 UDEV_DST=/etc/udev/rules.d/99-castmate-uinput.rules
 
 if [ -f "$UDEV_SRC" ]; then
@@ -29,6 +32,16 @@ if [ -f "$UDEV_SRC" ]; then
     echo "  to do."
     echo "  On systems without logind ACLs, add yourself to the 'input' group:"
     echo "    sudo usermod -aG input <your-username>     (then log out and back in)"
+fi
+
+# --- 2. AppStream metainfo (so Discover/GNOME Software show rich info) ------
+APPSTREAM_SRC="$RES_DIR/com.lordtocs.castmate.metainfo.xml"
+APPSTREAM_DST=/usr/share/metainfo/com.lordtocs.castmate.metainfo.xml
+
+if [ -f "$APPSTREAM_SRC" ]; then
+    install -D -m 0644 "$APPSTREAM_SRC" "$APPSTREAM_DST"
+    # Some distros watch /usr/share/metainfo and refresh their cache
+    # automatically; the ones that don't will pick it up at next reboot.
 fi
 
 exit 0

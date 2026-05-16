@@ -74,9 +74,14 @@ module.exports = {
 				filter: ["ffprobe"],
 			},
 			{
-				// Shipped inside the .deb so the afterInstall script (run as root by dpkg) 
+				// Shipped inside the .deb so the afterInstall script (run as root by dpkg)
 				from: "build/linux/99-castmate-uinput.rules",
 				to: "linux/99-castmate-uinput.rules",
+			},
+			{
+				// AppStream metainfo
+				from: "build/linux/com.lordtocs.castmate.metainfo.xml",
+				to: "linux/com.lordtocs.castmate.metainfo.xml",
 			},
 		],
 	},
