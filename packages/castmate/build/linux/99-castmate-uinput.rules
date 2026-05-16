@@ -1,0 +1,14 @@
+# Grant the `input` group rw access to /dev/uinput so CastMate's Wayland-native
+# input simulation (plugins/input/native, uinput backend) works without root.
+#
+# On modern desktop sessions (GNOME/KDE/etc. with systemd-logind), the active
+# user already has an ACL entry on /dev/uinput automatically — this rule is
+# only needed for headless setups or distributions without logind seat ACLs.
+#
+# Install:
+#   sudo cp 99-castmate-uinput.rules /etc/udev/rules.d/
+#   sudo udevadm control --reload
+#   sudo udevadm trigger
+#   sudo usermod -aG input "$USER"      # then log out and back in
+
+KERNEL=="uinput", MODE="0660", GROUP="input", TAG+="uaccess"

@@ -72,6 +72,11 @@ module.exports = {
 				to: "ffmpeg/bin",
 				filter: ["ffprobe"],
 			},
+			{
+				// Shipped inside the .deb so the afterInstall script (run as root by dpkg) 
+				from: "build/linux/99-castmate-uinput.rules",
+				to: "linux/99-castmate-uinput.rules",
+			},
 		],
 	},
 	deb: {
@@ -81,6 +86,9 @@ module.exports = {
 			"pulseaudio-utils | pipewire-pulse",
 		],
 		recommends: ["espeak-ng"],
+		// Scripts dpkg runs as root after install / before remove.
+		afterInstall: "build/linux/after-install.sh",
+		afterRemove: "build/linux/after-remove.sh",
 	},
 	nsis: {
 		oneClick: false,

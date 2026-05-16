@@ -491,11 +491,126 @@ unchanged.
 
 ---
 
+## M9 — Wayland-native input simulation via uinput
+
+The Linux input native module now ships two interchangeable simulation
+backends, selected automatically at runtime. The XTest path stays the
+default whenever `XOpenDisplay` succeeds (Xorg sessions and any Wayland
+session running XWayland — which is the GNOME/KDE default on Debian,
+Ubuntu, and Fedora). When XTest is unavailable — typically a pure
+Wayland session without XWayland, or a headless context — the module
+falls back to a kernel-level `/dev/uinput` virtual device and keeps
+working. Global key-event capture remains X11-only because uinput is
+an output-only API.
+
+### Files changed
+
+- `plugins/input/native/src/linux/native-index-linux.cc` — restructured
+  around an `IInputBackend` interface with two implementations:
+  - `X11Backend` — the previous XTest implementation, unchanged in
+    behaviour. Opens a `Display*`, queries `XTestQueryExtension`, calls
+    `XTestFakeKeyEvent` / `XTestFakeButtonEvent`. Hands its raw
+    `Display*` to the polling thread so global event capture
+    (`startEvents`) continues to work.
+  - `UInputBackend` *(new)* — opens `/dev/uinput`, enables `EV_KEY` and
+    `EV_SYN`, pre-arms every `KEY_*` code our `mapVkToLinuxKey` table
+    knows about plus `BTN_LEFT/RIGHT/MIDDLE/SIDE/EXTRA`, then issues
+    `UI_DEV_SETUP` + `UI_DEV_CREATE` to register a virtual device named
+    *"CastMate Virtual Input"*. `Finalize` runs `UI_DEV_DESTROY` + close
+    so the device disappears cleanly when the JS interface is GC'd.
+  - `mapVkToLinuxKey(vk)` *(new)* — Windows VK → Linux kernel `KEY_*`
+    code translation table, since the kernel input layout differs from
+    both Windows VKs and X11 keysyms. Covers the same range as the X11
+    table (letters, digits, F1–F24, navigation, modifiers, numpad,
+    common OEM punctuation under the US-layout assumption).
+  - `input_interface` constructor now calls `X11Backend::try_open()`
+    first, then `UInputBackend::try_open()`, then falls back to no-op
+    with a one-line stderr warning. The active backend is stored as a
+    `unique_ptr<IInputBackend>` and `simulateKey*` / `simulateMouse*`
+    just dispatch through it.
+  - `startEvents` is gated on the X11 backend being active — uinput
+    cannot capture keypresses (it's an output API), and reading
+    `/dev/input/event*` directly would require root, so Wayland-native
+    global hotkey capture is explicitly out of scope here.
+  - When `/dev/uinput` exists but isn't writable (no logind ACL and no
+    group access), the open-time `EACCES` triggers a structured warning
+    that prints the exact `udev` rule + `usermod -aG input` commands
+    needed to fix it.
+
+- `packages/castmate/build/linux/99-castmate-uinput.rules` *(new)* — a
+  udev rule that grants the `input` group read/write on `/dev/uinput`
+  and tags it with `uaccess` so logind also grants the active user.
+- `packages/castmate/build/linux/after-install.sh` *(new, executable)*
+  — dpkg post-install hook (`deb.afterInstall`). Runs as root, copies
+  the bundled udev rule from `/opt/CastMate/resources/linux/` into
+  `/etc/udev/rules.d/99-castmate-uinput.rules`, then runs
+  `udevadm control --reload` + `udevadm trigger` so the new permission
+  takes effect immediately without a reboot. Prints a one-line note
+  reminding the user that if their session lacks a logind ACL they
+  should `usermod -aG input` themselves.
+- `packages/castmate/build/linux/after-remove.sh` *(new, executable)*
+  — dpkg post-remove hook (`deb.afterRemove`). Deletes the udev rule
+  and reloads udev. Does **not** touch the `input` group membership,
+  which is shared with other apps.
+- `packages/castmate/electron-builder-config.cjs`:
+  - `linux.extraResources` now bundles
+    `build/linux/99-castmate-uinput.rules` into the package at
+    `linux/99-castmate-uinput.rules` (resolves to
+    `/opt/CastMate/resources/linux/99-castmate-uinput.rules` once
+    installed) so the post-install script can find it.
+  - `deb.afterInstall` / `deb.afterRemove` point at the two shell
+    scripts above so they run automatically on `apt install` /
+    `apt remove`.
+
+### Verification
+
+On this Linux host (Debian + GNOME + PipeWire 1.4.2, DISPLAY=:0):
+
+- With DISPLAY set, the X11 backend is selected, `startEvents` still
+  spawns the polling thread, the polling thread joins cleanly on
+  `stopEvents`, and `simulateKey*(VK_F13)` still drives X11. Existing
+  M6 behaviour is preserved bit-for-bit.
+
+- With DISPLAY unset (`env -i HOME=$HOME PATH=$PATH node …`), the X11
+  backend declines, the uinput backend opens `/dev/uinput`
+  successfully (the active user has a logind ACL entry on this host),
+  and `/proc/bus/input/devices` reports a *"CastMate Virtual Input"*
+  device for the lifetime of the process. After the test process
+  exits, that device is no longer listed — `UI_DEV_DESTROY` ran.
+
+### Permission setup
+
+For users installing the `.deb`: nothing to do. The post-install hook
+copies the udev rule and reloads udev automatically, and the rule's
+`TAG+="uaccess"` makes logind hand the running desktop user an ACL on
+`/dev/uinput`. On uninstall the rule is removed.
+
+For users running CastMate from source (`yarn dev`) or from an
+AppImage, the udev rule must be installed manually since neither path
+runs the dpkg hooks:
+
+```bash
+sudo cp packages/castmate/build/linux/99-castmate-uinput.rules \
+        /etc/udev/rules.d/
+sudo udevadm control --reload && sudo udevadm trigger
+```
+
+If the active session has no logind ACL on `/dev/uinput` (servers,
+minimal WMs, non-systemd distros), add the user to the `input` group
+and re-login:
+
+```bash
+sudo usermod -aG input "$USER"
+```
+
+If neither the rule nor an explicit `input` group membership exists,
+the uinput backend declines and CastMate logs the exact commands above
+on first attempt at input simulation, rather than failing silently.
+
+---
+
 ## Next Step
 
-- M9 : Wayland-native input simulation via uinput when no X server is
-  reachable (currently the X11 backend becomes a no-op on pure
-  Wayland sessions).
 - M10 : Specific options in the settings to choose Backend in Linux (PipeWire or PulseAudio for example...)
 - M11 : Locale-aware OEM key remapping so AZERTY users get the punctuation
   they expect (currently a US-layout assumption).
@@ -507,3 +622,5 @@ unchanged.
 - plugins/sound/native/src/stub/native-index-stub.cc (partially)
 - plugins/input/native/src/linux/native-index-linux.cc (entirely)
 - plugins/input/native/src/stub/native-index-stub.cc (entirely)
+- packages/castmate/build/linux/after-install.sh
+- packages/castmate/build/linux/after-remove.sh

@@ -1,17 +1,24 @@
 // Linux backend for castmate-plugin-input-native.
 //
-// Provides the same JS surface as the Windows implementation (NativeInputInterface
-// with simulateKey*, simulateMouse*, startEvents, stopEvents, isKeyDown) using:
+// Exposes the same JS surface as the Windows implementation (NativeInputInterface
+// with simulateKey*, simulateMouse*, startEvents, stopEvents, isKeyDown) using
+// two interchangeable backends selected automatically at construction time:
 //
-//   - libXtst (XTest)  for keyboard/mouse simulation
-//   - XQueryKeymap     polled on a worker thread for key-pressed/key-released events
+//   1. X11 + XTest (libX11 / libXtst)
+//      Preferred when a DISPLAY is reachable (Xorg sessions and any Wayland
+//      session with XWayland enabled, which is the default on Ubuntu/Fedora/
+//      Debian GNOME). Also enables global key-event capture via XQueryKeymap
+//      polling.
 //
-// Wayland-native sessions without XWayland have no XTest backend; on those, XOpenDisplay
-// returns NULL and the interface becomes a structured no-op (logs a one-time warning).
+//   2. /dev/uinput (Linux kernel virtual-device API)
+//      Fallback when XOpenDisplay fails — typically pure Wayland sessions
+//      without XWayland. Works on every Wayland compositor because uinput
+//      operates below the display protocol. Limited to *simulation*: global
+//      event capture on Wayland would require reading /dev/input/event*
+//      directly (root-only) and is not part of this backend.
 //
-// The JS layer speaks Windows virtual-key codes. mapVkToKeysym() / mapKeysymToVk() do
-// the round-trip; only keysyms we know about are forwarded — unknown VKs are silently
-// dropped instead of guessing.
+// If neither backend is usable (no DISPLAY and `/dev/uinput` not writable), the
+// interface becomes a no-op and logs a one-time explanation to stderr.
 
 #include <napi.h>
 
@@ -20,18 +27,27 @@
 #include <X11/keysym.h>
 #include <X11/extensions/XTest.h>
 
+#include <fcntl.h>
+#include <linux/input.h>
+#include <linux/uinput.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+
 #include <atomic>
 #include <chrono>
 #include <cstring>
 #include <iostream>
+#include <memory>
 #include <mutex>
+#include <string>
 #include <thread>
 #include <unordered_map>
 
 namespace {
 
-// --- Windows VK → X11 KeySym ----------------------------------------------------------
-// Microsoft virtual-key reference: https://learn.microsoft.com/windows/win32/inputdev/virtual-key-codes
+// =====================================================================================
+// Windows VK ↔ X11 KeySym table (used by the X11 backend for both directions)
+// =====================================================================================
 struct VkKeysym { uint32_t vk; KeySym ks; };
 
 const VkKeysym VK_KEYSYM_TABLE[] = {
@@ -43,11 +59,9 @@ const VkKeysym VK_KEYSYM_TABLE[] = {
     {0x26, XK_Up},        {0x27, XK_Right},      {0x28, XK_Down},
     {0x2C, XK_Print},     {0x2D, XK_Insert},     {0x2E, XK_Delete},
 
-    // 0-9 share top-row keysyms with ASCII '0'..'9'
     {0x30, XK_0}, {0x31, XK_1}, {0x32, XK_2}, {0x33, XK_3}, {0x34, XK_4},
     {0x35, XK_5}, {0x36, XK_6}, {0x37, XK_7}, {0x38, XK_8}, {0x39, XK_9},
 
-    // A-Z map to lowercase keysyms (XTest presses the physical key, modifiers separate)
     {0x41, XK_a}, {0x42, XK_b}, {0x43, XK_c}, {0x44, XK_d}, {0x45, XK_e},
     {0x46, XK_f}, {0x47, XK_g}, {0x48, XK_h}, {0x49, XK_i}, {0x4A, XK_j},
     {0x4B, XK_k}, {0x4C, XK_l}, {0x4D, XK_m}, {0x4E, XK_n}, {0x4F, XK_o},
@@ -57,13 +71,11 @@ const VkKeysym VK_KEYSYM_TABLE[] = {
 
     {0x5B, XK_Super_L}, {0x5C, XK_Super_R}, {0x5D, XK_Menu},
 
-    // Numpad
     {0x60, XK_KP_0}, {0x61, XK_KP_1}, {0x62, XK_KP_2}, {0x63, XK_KP_3}, {0x64, XK_KP_4},
     {0x65, XK_KP_5}, {0x66, XK_KP_6}, {0x67, XK_KP_7}, {0x68, XK_KP_8}, {0x69, XK_KP_9},
     {0x6A, XK_KP_Multiply}, {0x6B, XK_KP_Add},      {0x6C, XK_KP_Separator},
     {0x6D, XK_KP_Subtract}, {0x6E, XK_KP_Decimal},  {0x6F, XK_KP_Divide},
 
-    // Function keys F1-F24
     {0x70, XK_F1},  {0x71, XK_F2},  {0x72, XK_F3},  {0x73, XK_F4},
     {0x74, XK_F5},  {0x75, XK_F6},  {0x76, XK_F7},  {0x77, XK_F8},
     {0x78, XK_F9},  {0x79, XK_F10}, {0x7A, XK_F11}, {0x7B, XK_F12},
@@ -76,7 +88,6 @@ const VkKeysym VK_KEYSYM_TABLE[] = {
     {0xA2, XK_Control_L}, {0xA3, XK_Control_R},
     {0xA4, XK_Alt_L},     {0xA5, XK_Alt_R},
 
-    // OEM punctuation (US layout assumed; users on other layouts may see remapping)
     {0xBA, XK_semicolon},  {0xBB, XK_equal},    {0xBC, XK_comma},
     {0xBD, XK_minus},      {0xBE, XK_period},   {0xBF, XK_slash},
     {0xC0, XK_grave},      {0xDB, XK_bracketleft},
@@ -85,31 +96,292 @@ const VkKeysym VK_KEYSYM_TABLE[] = {
 };
 
 KeySym mapVkToKeysym(uint32_t vk) {
-    for (const auto& e : VK_KEYSYM_TABLE) {
-        if (e.vk == vk) return e.ks;
-    }
+    for (const auto& e : VK_KEYSYM_TABLE) if (e.vk == vk) return e.ks;
     return NoSymbol;
 }
 
-// Reverse lookup, built lazily on first call.
-std::unordered_map<KeySym, uint32_t>& keysymToVkMap() {
-    static std::unordered_map<KeySym, uint32_t> map = [] {
+uint32_t mapKeysymToVk(KeySym ks) {
+    static const std::unordered_map<KeySym, uint32_t> map = [] {
         std::unordered_map<KeySym, uint32_t> m;
-        for (const auto& e : VK_KEYSYM_TABLE) {
-            m.emplace(e.ks, e.vk);
-        }
+        for (const auto& e : VK_KEYSYM_TABLE) m.emplace(e.ks, e.vk);
         return m;
     }();
-    return map;
+    auto it = map.find(ks);
+    return it == map.end() ? 0 : it->second;
 }
 
-uint32_t mapKeysymToVk(KeySym ks) {
-    const auto& m = keysymToVkMap();
-    auto it = m.find(ks);
-    return it == m.end() ? 0 : it->second;
+// =====================================================================================
+// Windows VK → Linux KEY_* code table (used by the uinput backend)
+// =====================================================================================
+// linux/input-event-codes.h defines KEY_* differently from X11 keycodes — these are
+// the raw kernel input codes that uinput consumes when writing struct input_event.
+uint32_t mapVkToLinuxKey(uint32_t vk) {
+    switch (vk) {
+        // Basic editing
+        case 0x08: return KEY_BACKSPACE;
+        case 0x09: return KEY_TAB;
+        case 0x0D: return KEY_ENTER;
+        case 0x13: return KEY_PAUSE;
+        case 0x14: return KEY_CAPSLOCK;
+        case 0x1B: return KEY_ESC;
+        case 0x20: return KEY_SPACE;
+
+        // Navigation
+        case 0x21: return KEY_PAGEUP;
+        case 0x22: return KEY_PAGEDOWN;
+        case 0x23: return KEY_END;
+        case 0x24: return KEY_HOME;
+        case 0x25: return KEY_LEFT;
+        case 0x26: return KEY_UP;
+        case 0x27: return KEY_RIGHT;
+        case 0x28: return KEY_DOWN;
+        case 0x2C: return KEY_SYSRQ;       // Print Screen
+        case 0x2D: return KEY_INSERT;
+        case 0x2E: return KEY_DELETE;
+
+        // Modifiers — left variants by default, separate VKs for L/R
+        case 0x10: case 0xA0: return KEY_LEFTSHIFT;
+        case 0xA1: return KEY_RIGHTSHIFT;
+        case 0x11: case 0xA2: return KEY_LEFTCTRL;
+        case 0xA3: return KEY_RIGHTCTRL;
+        case 0x12: case 0xA4: return KEY_LEFTALT;
+        case 0xA5: return KEY_RIGHTALT;
+        case 0x5B: return KEY_LEFTMETA;    // Super_L
+        case 0x5C: return KEY_RIGHTMETA;
+        case 0x5D: return KEY_MENU;
+        case 0x90: return KEY_NUMLOCK;
+        case 0x91: return KEY_SCROLLLOCK;
+
+        // Digits 0..9 — VK ordering ('0'=0x30) does not match kernel layout
+        // (KEY_1=2, KEY_2=3, ..., KEY_0=11), so map explicitly.
+        case 0x30: return KEY_0;
+        case 0x31: return KEY_1;
+        case 0x32: return KEY_2;
+        case 0x33: return KEY_3;
+        case 0x34: return KEY_4;
+        case 0x35: return KEY_5;
+        case 0x36: return KEY_6;
+        case 0x37: return KEY_7;
+        case 0x38: return KEY_8;
+        case 0x39: return KEY_9;
+
+        // Letters A..Z — VK ordering ('A'=0x41) does not match kernel layout
+        // (which orders by physical position: Q=16, W=17, A=30, …), so map
+        // each one explicitly.
+        case 0x41: return KEY_A; case 0x42: return KEY_B; case 0x43: return KEY_C;
+        case 0x44: return KEY_D; case 0x45: return KEY_E; case 0x46: return KEY_F;
+        case 0x47: return KEY_G; case 0x48: return KEY_H; case 0x49: return KEY_I;
+        case 0x4A: return KEY_J; case 0x4B: return KEY_K; case 0x4C: return KEY_L;
+        case 0x4D: return KEY_M; case 0x4E: return KEY_N; case 0x4F: return KEY_O;
+        case 0x50: return KEY_P; case 0x51: return KEY_Q; case 0x52: return KEY_R;
+        case 0x53: return KEY_S; case 0x54: return KEY_T; case 0x55: return KEY_U;
+        case 0x56: return KEY_V; case 0x57: return KEY_W; case 0x58: return KEY_X;
+        case 0x59: return KEY_Y; case 0x5A: return KEY_Z;
+
+        // Numpad
+        case 0x60: return KEY_KP0; case 0x61: return KEY_KP1; case 0x62: return KEY_KP2;
+        case 0x63: return KEY_KP3; case 0x64: return KEY_KP4; case 0x65: return KEY_KP5;
+        case 0x66: return KEY_KP6; case 0x67: return KEY_KP7; case 0x68: return KEY_KP8;
+        case 0x69: return KEY_KP9;
+        case 0x6A: return KEY_KPASTERISK;
+        case 0x6B: return KEY_KPPLUS;
+        case 0x6D: return KEY_KPMINUS;
+        case 0x6E: return KEY_KPDOT;
+        case 0x6F: return KEY_KPSLASH;
+
+        // Function keys
+        case 0x70: return KEY_F1;  case 0x71: return KEY_F2;  case 0x72: return KEY_F3;
+        case 0x73: return KEY_F4;  case 0x74: return KEY_F5;  case 0x75: return KEY_F6;
+        case 0x76: return KEY_F7;  case 0x77: return KEY_F8;  case 0x78: return KEY_F9;
+        case 0x79: return KEY_F10; case 0x7A: return KEY_F11; case 0x7B: return KEY_F12;
+        case 0x7C: return KEY_F13; case 0x7D: return KEY_F14; case 0x7E: return KEY_F15;
+        case 0x7F: return KEY_F16; case 0x80: return KEY_F17; case 0x81: return KEY_F18;
+        case 0x82: return KEY_F19; case 0x83: return KEY_F20; case 0x84: return KEY_F21;
+        case 0x85: return KEY_F22; case 0x86: return KEY_F23; case 0x87: return KEY_F24;
+
+        // OEM punctuation (US layout assumption — same caveat as the XTest path)
+        case 0xBA: return KEY_SEMICOLON;
+        case 0xBB: return KEY_EQUAL;
+        case 0xBC: return KEY_COMMA;
+        case 0xBD: return KEY_MINUS;
+        case 0xBE: return KEY_DOT;
+        case 0xBF: return KEY_SLASH;
+        case 0xC0: return KEY_GRAVE;
+        case 0xDB: return KEY_LEFTBRACE;
+        case 0xDC: return KEY_BACKSLASH;
+        case 0xDD: return KEY_RIGHTBRACE;
+        case 0xDE: return KEY_APOSTROPHE;
+
+        default: return 0;
+    }
 }
 
-// --- input_interface class ------------------------------------------------------------
+// =====================================================================================
+// Backend interface
+// =====================================================================================
+class IInputBackend {
+public:
+    virtual ~IInputBackend() = default;
+    virtual const char* name() const = 0;
+    virtual void key(uint32_t vk, bool press) = 0;
+    virtual void mouse(const std::string& button, bool press) = 0;
+};
+
+// =====================================================================================
+// XTest backend (X11)
+// =====================================================================================
+class X11Backend final : public IInputBackend {
+public:
+    static std::unique_ptr<X11Backend> try_open() {
+        Display* d = XOpenDisplay(nullptr);
+        if (!d) return nullptr;
+        int eb, errb, maj, min;
+        if (!XTestQueryExtension(d, &eb, &errb, &maj, &min)) {
+            XCloseDisplay(d);
+            return nullptr;
+        }
+        return std::unique_ptr<X11Backend>(new X11Backend(d));
+    }
+
+    ~X11Backend() override {
+        if (display_) XCloseDisplay(display_);
+    }
+
+    const char* name() const override { return "X11/XTest"; }
+
+    void key(uint32_t vk, bool press) override {
+        KeySym ks = mapVkToKeysym(vk);
+        if (ks == NoSymbol) return;
+        KeyCode kc = XKeysymToKeycode(display_, ks);
+        if (kc == 0) return;
+        XTestFakeKeyEvent(display_, kc, press ? True : False, 0);
+        XFlush(display_);
+    }
+
+    void mouse(const std::string& button, bool press) override {
+        unsigned int b = 0;
+        if      (button == "left")   b = 1;
+        else if (button == "middle") b = 2;
+        else if (button == "right")  b = 3;
+        else if (button == "mouse4") b = 8;
+        else if (button == "mouse5") b = 9;
+        else return;
+        XTestFakeButtonEvent(display_, b, press ? True : False, 0);
+        XFlush(display_);
+    }
+
+    Display* raw_display() { return display_; }
+
+private:
+    explicit X11Backend(Display* d) : display_(d) {}
+    Display* display_;
+};
+
+// =====================================================================================
+// uinput backend (Wayland-native / X11-without-DISPLAY)
+// =====================================================================================
+class UInputBackend final : public IInputBackend {
+public:
+    static std::unique_ptr<UInputBackend> try_open() {
+        int fd = ::open("/dev/uinput", O_WRONLY | O_NONBLOCK);
+        if (fd < 0) {
+            const int saved_errno = errno;
+            if (saved_errno == EACCES) {
+                std::cerr << "[castmate-input] Cannot open /dev/uinput (permission denied). "
+                             "To enable Wayland-native input simulation, either install the "
+                             "CastMate .deb (which ships a udev rule) or run:\n"
+                             "  echo 'KERNEL==\"uinput\", MODE=\"0660\", GROUP=\"input\"' "
+                             "| sudo tee /etc/udev/rules.d/99-castmate-uinput.rules\n"
+                             "  sudo udevadm control --reload && sudo udevadm trigger\n"
+                             "  sudo usermod -aG input $USER  (then log out and back in)"
+                          << std::endl;
+            } else if (saved_errno == ENOENT) {
+                std::cerr << "[castmate-input] /dev/uinput is missing — the uinput kernel "
+                             "module isn't available. Try: sudo modprobe uinput" << std::endl;
+            }
+            return nullptr;
+        }
+
+        // Tell the kernel which event types and codes this virtual device emits.
+        // We never read its state back, only write, so no EV_REL/EV_ABS axes here.
+        ::ioctl(fd, UI_SET_EVBIT, EV_KEY);
+        ::ioctl(fd, UI_SET_EVBIT, EV_SYN);
+
+        // Enable every Linux KEY_* code we know how to map from a Windows VK. Done
+        // up front so the kernel allocates the keymap once at create-time.
+        for (uint32_t vk = 0; vk <= 0xFF; ++vk) {
+            uint32_t code = mapVkToLinuxKey(vk);
+            if (code != 0) ::ioctl(fd, UI_SET_KEYBIT, code);
+        }
+        for (int btn : {BTN_LEFT, BTN_RIGHT, BTN_MIDDLE, BTN_SIDE, BTN_EXTRA}) {
+            ::ioctl(fd, UI_SET_KEYBIT, btn);
+        }
+
+        struct uinput_setup usetup;
+        std::memset(&usetup, 0, sizeof(usetup));
+        usetup.id.bustype = BUS_VIRTUAL;
+        usetup.id.vendor = 0x1234;
+        usetup.id.product = 0xCA51;  // "CASt" + Mate
+        std::strncpy(usetup.name, "CastMate Virtual Input", UINPUT_MAX_NAME_SIZE - 1);
+
+        if (::ioctl(fd, UI_DEV_SETUP, &usetup) < 0 ||
+            ::ioctl(fd, UI_DEV_CREATE) < 0) {
+            std::cerr << "[castmate-input] uinput device setup failed." << std::endl;
+            ::close(fd);
+            return nullptr;
+        }
+
+        return std::unique_ptr<UInputBackend>(new UInputBackend(fd));
+    }
+
+    ~UInputBackend() override {
+        if (fd_ >= 0) {
+            ::ioctl(fd_, UI_DEV_DESTROY);
+            ::close(fd_);
+        }
+    }
+
+    const char* name() const override { return "uinput"; }
+
+    void key(uint32_t vk, bool press) override {
+        uint32_t code = mapVkToLinuxKey(vk);
+        if (code == 0) return;
+        write_event(EV_KEY, code, press ? 1 : 0);
+        write_event(EV_SYN, SYN_REPORT, 0);
+    }
+
+    void mouse(const std::string& button, bool press) override {
+        int code = 0;
+        if      (button == "left")   code = BTN_LEFT;
+        else if (button == "middle") code = BTN_MIDDLE;
+        else if (button == "right")  code = BTN_RIGHT;
+        else if (button == "mouse4") code = BTN_SIDE;
+        else if (button == "mouse5") code = BTN_EXTRA;
+        else return;
+        write_event(EV_KEY, code, press ? 1 : 0);
+        write_event(EV_SYN, SYN_REPORT, 0);
+    }
+
+private:
+    explicit UInputBackend(int fd) : fd_(fd) {}
+
+    void write_event(uint16_t type, uint16_t code, int32_t value) {
+        struct input_event ev;
+        std::memset(&ev, 0, sizeof(ev));
+        ev.type = type;
+        ev.code = code;
+        ev.value = value;
+        // Best-effort: a partial write or transient EAGAIN is silently dropped — losing
+        // one event in 10000 is better than blocking the JS thread on a stuck pipe.
+        (void)::write(fd_, &ev, sizeof(ev));
+    }
+
+    int fd_;
+};
+
+// =====================================================================================
+// input_interface — exposes the JS class, dispatches to whichever backend opened
+// =====================================================================================
 class input_interface : public Napi::ObjectWrap<input_interface> {
 public:
     static Napi::Object init(Napi::Env env, Napi::Object exports) {
@@ -131,23 +403,18 @@ public:
     {
         std::memset(key_states_, 0, sizeof(key_states_));
 
-        // One display for the JS thread (key/mouse simulation). The poller thread, if
-        // started, opens its own connection.
-        display_ = XOpenDisplay(nullptr);
-        if (!display_) {
-            std::cerr << "[castmate-input] XOpenDisplay failed — no X11 / XWayland session detected, "
-                         "input simulation will be a no-op." << std::endl;
+        // Prefer X11 — when DISPLAY works, we also get global event capture via
+        // XQueryKeymap polling on a worker thread (uinput cannot capture, only emit).
+        if (auto x11 = X11Backend::try_open()) {
+            x11_raw_display_ = x11->raw_display();
+            backend_ = std::move(x11);
+        } else if (auto ui = UInputBackend::try_open()) {
+            backend_ = std::move(ui);
         } else {
-            int event_base, error_base, major, minor;
-            if (!XTestQueryExtension(display_, &event_base, &error_base, &major, &minor)) {
-                std::cerr << "[castmate-input] XTest extension not available — "
-                             "input simulation will be a no-op." << std::endl;
-                XCloseDisplay(display_);
-                display_ = nullptr;
-            }
+            std::cerr << "[castmate-input] No X11 display and no /dev/uinput access — "
+                         "input simulation is a no-op on this host." << std::endl;
         }
 
-        // Bound JS emit function gets handed in by the JS wrapper.
         if (info.Length() > 0 && info[0].IsFunction()) {
             emit_tsfn_ = Napi::ThreadSafeFunction::New(
                 info.Env(), info[0].As<Napi::Function>(), "InputInterfaceEmit",
@@ -157,29 +424,29 @@ public:
 
     void Finalize(Napi::Env /*env*/) override {
         stop_polling_locked();
-        if (display_) {
-            XCloseDisplay(display_);
-            display_ = nullptr;
-        }
+        backend_.reset();
+        x11_raw_display_ = nullptr;
         if (emit_tsfn_) {
             emit_tsfn_.Release();
             emit_tsfn_ = nullptr;
         }
     }
 
-    // ---- Simulation -----------------------------------------------------------------
     Napi::Value simulate_key_down(const Napi::CallbackInfo& info) {
-        return simulate_key(info, true);
+        if (backend_) backend_->key(info[0].As<Napi::Number>().Uint32Value(), true);
+        return info.Env().Undefined();
     }
     Napi::Value simulate_key_up(const Napi::CallbackInfo& info) {
-        return simulate_key(info, false);
+        if (backend_) backend_->key(info[0].As<Napi::Number>().Uint32Value(), false);
+        return info.Env().Undefined();
     }
-
     Napi::Value simulate_mouse_down(const Napi::CallbackInfo& info) {
-        return simulate_mouse(info, true);
+        if (backend_) backend_->mouse(info[0].As<Napi::String>().Utf8Value(), true);
+        return info.Env().Undefined();
     }
     Napi::Value simulate_mouse_up(const Napi::CallbackInfo& info) {
-        return simulate_mouse(info, false);
+        if (backend_) backend_->mouse(info[0].As<Napi::String>().Utf8Value(), false);
+        return info.Env().Undefined();
     }
 
     Napi::Value is_key_down(const Napi::CallbackInfo& info) {
@@ -188,12 +455,10 @@ public:
         return Napi::Boolean::New(info.Env(), key_states_[vk]);
     }
 
-    // ---- Event capture --------------------------------------------------------------
     Napi::Value start_events(const Napi::CallbackInfo& info) {
         std::lock_guard<std::mutex> lk(poll_mutex_);
         if (poll_running_.load()) return info.Env().Undefined();
-        if (!display_) return info.Env().Undefined();
-
+        if (!x11_raw_display_) return info.Env().Undefined();  // capture is X11-only
         poll_running_.store(true);
         poll_thread_ = std::thread([this] { run_polling_loop(); });
         return info.Env().Undefined();
@@ -206,34 +471,6 @@ public:
     }
 
 private:
-    Napi::Value simulate_key(const Napi::CallbackInfo& info, bool is_press) {
-        if (!display_) return info.Env().Undefined();
-        uint32_t vk = info[0].As<Napi::Number>().Uint32Value();
-        KeySym ks = mapVkToKeysym(vk);
-        if (ks == NoSymbol) return info.Env().Undefined();
-        KeyCode kc = XKeysymToKeycode(display_, ks);
-        if (kc == 0) return info.Env().Undefined();
-        XTestFakeKeyEvent(display_, kc, is_press ? True : False, 0);
-        XFlush(display_);
-        return info.Env().Undefined();
-    }
-
-    Napi::Value simulate_mouse(const Napi::CallbackInfo& info, bool is_press) {
-        if (!display_) return info.Env().Undefined();
-        std::string button = info[0].As<Napi::String>().Utf8Value();
-        unsigned int x_button = 0;
-        if      (button == "left")   x_button = 1;
-        else if (button == "middle") x_button = 2;
-        else if (button == "right")  x_button = 3;
-        else if (button == "mouse4") x_button = 8;  // X11 convention: back
-        else if (button == "mouse5") x_button = 9;  // X11 convention: forward
-        else return info.Env().Undefined();
-        XTestFakeButtonEvent(display_, x_button, is_press ? True : False, 0);
-        XFlush(display_);
-        return info.Env().Undefined();
-    }
-
-    // ---- Polling thread -------------------------------------------------------------
     void run_polling_loop() {
         Display* poll_display = XOpenDisplay(nullptr);
         if (!poll_display) {
@@ -244,8 +481,6 @@ private:
         char prev_keymap[32] = {0};
         char cur_keymap[32];
 
-        // Build a keycode→keysym snapshot once; X server rebuilds it on layout changes
-        // but for hotkey reporting the initial mapping is good enough.
         int min_kc = 0, max_kc = 0;
         XDisplayKeycodes(poll_display, &min_kc, &max_kc);
         int keysyms_per_kc = 0;
@@ -263,14 +498,14 @@ private:
 
                 KeySym ks = keysyms_table[(kc - min_kc) * keysyms_per_kc];
                 uint32_t vk = mapKeysymToVk(ks);
-                if (vk == 0) continue;  // unmapped key, skip
+                if (vk == 0) continue;
 
                 if (vk < 256) key_states_[vk] = now;
                 emit_key_event(vk, now);
             }
 
             std::memcpy(prev_keymap, cur_keymap, sizeof(prev_keymap));
-            std::this_thread::sleep_for(std::chrono::milliseconds(33));  // ~30 Hz
+            std::this_thread::sleep_for(std::chrono::milliseconds(33));
         }
 
         if (keysyms_table) XFree(keysyms_table);
@@ -286,16 +521,19 @@ private:
         });
     }
 
-    // Caller must hold poll_mutex_.
     void stop_polling_locked() {
         if (!poll_running_.load()) return;
         poll_running_.store(false);
         if (poll_thread_.joinable()) poll_thread_.join();
     }
 
-    Display* display_ = nullptr;
-    Napi::ThreadSafeFunction emit_tsfn_;
+    std::unique_ptr<IInputBackend> backend_;
+    // Non-owning pointer to the X11 backend's display, set only when the X11 backend is
+    // active. Used to gate `startEvents()` — uinput can emit but cannot capture, so
+    // event polling is X11-only.
+    Display* x11_raw_display_ = nullptr;
 
+    Napi::ThreadSafeFunction emit_tsfn_;
     std::thread poll_thread_;
     std::mutex poll_mutex_;
     std::atomic<bool> poll_running_{false};
