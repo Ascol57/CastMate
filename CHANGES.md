@@ -242,3 +242,4 @@ Not yet implemented; tracked here for visibility.
 - CHANGES.md
 - plugins/sound/native/src/linux/native-index-linux.cc
 - plugins/input/native/src/linux/native-index-linux.cc
+- plugins/input/native/src/stub/native-index-linux.cc
