@@ -4,10 +4,7 @@ This document records every change made while adding Linux support to CastMate.
 All existing Windows code paths are preserved — every modification is additive or
 behind a runtime/OS condition.
 
-The work is split into milestones (M1–M8). All eight are implemented;
-M1–M7 are also runtime-verified on this Linux host. M8 is config-only and
-will be verified end-to-end the first time the GitHub Actions workflow
-runs on its new `ubuntu-latest` matrix entry.
+The work is split into milestones (M1–M12).
 
 ## Linux runtime requirements
 
@@ -669,10 +666,89 @@ On this Linux host (DISPLAY=:0):
 
 ---
 
+## M11 — Universal layout-agnostic input capture
+
+CastMate's global hotkey capture now works on every keyboard layout the user
+might have configured — AZERTY, QWERTZ, Dvorak, Colemak, Cyrillic, anything
+that the user's xkb keymap supports — without shipping a per-layout table
+and without asking the user to configure a layout name.
+
+### What changed and why
+
+The previous code's polling thread (M6/M9) reverse-mapped the X server's
+keysym for each captured keycode to a Windows VK code. That works for any
+key the user's layout produces with a keysym in our `VK_KEYSYM_TABLE`
+(letters, digits, function keys, US-named punctuation), but **silently
+drops** events for layout-specific keysyms — French `é`, German `ü`,
+Spanish `ñ`, Cyrillic letters, dead keys, anything outside the US-named
+set. AZERTY users couldn't bind a hotkey to their `é`/`à`/`ù` keys.
+
+The fix is a **two-tier lookup**, not a per-layout table:
+
+1. **Tier 1 (unchanged)**: look up the active layout's keysym at the
+   captured keycode and try `mapKeysymToVk(ks)`. Hits for everything our
+   existing table already knows, so the hotkey UI shows the same VK names
+   it does on Windows.
+
+2. **Tier 2 (new)**: if Tier 1 returns 0 (unknown keysym), fall back to
+   the **physical position** of the captured key. The X11 keycode minus 8
+   is the Linux kernel scancode (`KEY_*`); reverse-mapping that scancode
+   through `mapVkToLinuxKey` (which we already have for the uinput
+   simulation path) yields the Windows VK that names the same physical
+   position on a US keyboard.
+
+The result: every physical key reports *some* VK on every layout, so the
+user can always bind a hotkey to whatever key they pressed. The reported
+VK matches the symbol when CastMate already knows it (letters, digits,
+F-keys, common punctuation), and falls back to the physical-position VK
+otherwise.
+
+Simulation behaviour is unchanged:
+- X11 backend keeps using `XKeysymToKeycode` so VK_A still types whatever
+  letter the user's layout has at the `a` keysym (i.e. on AZERTY, the
+  AZERTY `A` key is pressed and `a` is produced).
+- uinput backend keeps using `mapVkToLinuxKey` to emit a kernel scancode,
+  which the active xkb layout then interprets — the universal positional
+  model.
+
+### Files changed
+
+- `plugins/input/native/src/linux/native-index-linux.cc`:
+  - New `mapLinuxKeyToVk(scancode)` — inverse of `mapVkToLinuxKey`, built
+    lazily by walking the full VK range and collapsing collisions in
+    favor of the simpler VK (so a left-shift press surfaces as
+    VK_SHIFT 0x10, not VK_LSHIFT 0xA0).
+  - Polling thread's keymap diff loop now does Tier 1 (keysym → VK) and,
+    on miss, Tier 2 (`keycode − 8` → scancode → VK) before dropping the
+    event.
+  - Forward declaration of `mapVkToLinuxKey` added so the inverse-map
+    lambda can reference it at first call.
+
+### Verification
+
+- `node-gyp rebuild` + `yarn ebuild` both succeed.
+- Roundtrip smoke test on this Xorg host (DISPLAY=:0): simulating
+  `VK_F1` (`0x70`) emits `+70` then `-70` from the polling thread,
+  proving the keysym path still works.
+- Tier 2 path can't be exercised end-to-end here without a non-US xkb
+  layout, but its construction is the inverse of `mapVkToLinuxKey`,
+  which is already verified via the simulation paths in M6/M9.
+
+### Known limitation
+
+For the simulation side, the X11 backend still calls
+`XTestFakeKeyEvent` with the single keycode returned by
+`XKeysymToKeycode`. When the keysym lives at a non-level-0 shift level
+(e.g. AZERTY's `;` is Shift+`,`), the simulator presses the bare
+keycode and gets the level-0 keysym instead. Fixing this would mean
+also asserting and releasing the right modifier keys around the press —
+deferred to a future milestone since it's mostly relevant for "type
+arbitrary text" use cases CastMate doesn't currently expose.
+
+---
+
 ## Next Step
 
-- M11 : Locale-aware OEM key remapping so AZERTY users get the punctuation
-  they expect (currently a US-layout assumption).
 - M12: For TTS, the file were generated and the volume normalized to the same number of decibels across all operating systems. This would make the volume slider actually useful.
 
 ## File write by AI :

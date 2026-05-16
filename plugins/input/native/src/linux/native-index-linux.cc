@@ -88,6 +88,10 @@ const VkKeysym VK_KEYSYM_TABLE[] = {
     {0xA2, XK_Control_L}, {0xA3, XK_Control_R},
     {0xA4, XK_Alt_L},     {0xA5, XK_Alt_R},
 
+    // OEM punctuation, US canonical. The XTest backend translates these via
+    // XKeysymToKeycode → that lookup is dynamic against the active xkb layout,
+    // so on any layout the user's actual `;` key (whatever its physical position)
+    // is pressed when CastMate asks for VK_OEM_1. See M11 notes in CHANGES.md.
     {0xBA, XK_semicolon},  {0xBB, XK_equal},    {0xBC, XK_comma},
     {0xBD, XK_minus},      {0xBE, XK_period},   {0xBF, XK_slash},
     {0xC0, XK_grave},      {0xDB, XK_bracketleft},
@@ -110,11 +114,40 @@ uint32_t mapKeysymToVk(KeySym ks) {
     return it == map.end() ? 0 : it->second;
 }
 
+uint32_t mapVkToLinuxKey(uint32_t vk);  // forward decl — body defined below.
+
+// Inverse of mapVkToLinuxKey — given a kernel scancode (KEY_*), return the Windows
+// VK that names that physical position. Built lazily by walking the full VK range.
+// Used as a fallback in the X11 polling thread: when the active xkb layout produces
+// a keysym we don't recognize (e.g. AZERTY's `é`, German `ä`, Cyrillic letters), we
+// still report the physical-position VK so hotkey bindings work on any keyboard.
+uint32_t mapLinuxKeyToVk(uint32_t scancode) {
+    static const std::unordered_map<uint32_t, uint32_t> map = [] {
+        std::unordered_map<uint32_t, uint32_t> m;
+        for (uint32_t vk = 0; vk <= 0xFF; ++vk) {
+            uint32_t k = mapVkToLinuxKey(vk);
+            // First write wins. mapVkToLinuxKey collapses 0x10/0xA0 and 0x11/0xA2 to the
+            // same kernel code; we want the simpler VK to take precedence in the inverse
+            // direction so a left-shift keypress reports VK_SHIFT (0x10) rather than
+            // VK_LSHIFT (0xA0).
+            if (k != 0 && m.find(k) == m.end()) m.emplace(k, vk);
+        }
+        return m;
+    }();
+    auto it = map.find(scancode);
+    return it == map.end() ? 0 : it->second;
+}
+
 // =====================================================================================
-// Windows VK → Linux KEY_* code table (used by the uinput backend)
+// Windows VK → Linux KEY_* code table (used by the uinput backend AND the X11
+// backend's fast path — see X11Backend::key)
 // =====================================================================================
-// linux/input-event-codes.h defines KEY_* differently from X11 keycodes — these are
-// the raw kernel input codes that uinput consumes when writing struct input_event.
+// Kernel scancodes are layout-INDEPENDENT: KEY_A always names the same physical
+// hardware position regardless of which xkb layout the user has loaded. The
+// character produced when that scancode is interpreted by Xorg / a Wayland
+// compositor depends on the active layout — which is exactly the right behavior
+// for input simulation. CastMate sends "press this physical position" and the
+// running session decides what character that is on this user's keyboard.
 uint32_t mapVkToLinuxKey(uint32_t vk) {
     switch (vk) {
         // Basic editing
@@ -520,8 +553,26 @@ private:
                 bool now = (cur_keymap[kc / 8]  >> (kc % 8)) & 1;
                 if (was == now) continue;
 
+                // Two-tier lookup so global hotkey capture works on every keyboard
+                // layout, not just US:
+                //   1) Try mapping the active layout's keysym at this keycode to a
+                //      Windows VK. Hits for letters/digits/F-keys + US-named
+                //      punctuation — anything CastMate's hotkey UI already knows
+                //      about. On AZERTY/QWERTZ/Dvorak/etc. the keysyms for the
+                //      letter keys still resolve here, so most hotkeys "just work".
+                //   2) If the keysym is unknown (typical for layout-specific
+                //      diacritics like `é`/`à`/`ü`/`ñ` or non-Latin scripts),
+                //      fall back to the physical position via the kernel scancode
+                //      (`kc - min_kc` on Xorg ≈ `keycode - 8`). That way a key
+                //      *always* reports SOME VK, and the user can bind it.
                 KeySym ks = keysyms_table[(kc - min_kc) * keysyms_per_kc];
                 uint32_t vk = mapKeysymToVk(ks);
+                if (vk == 0) {
+                    // X11 keycode = kernel scancode + 8 on Linux/evdev. Use that
+                    // explicit offset rather than (kc - min_kc), which is just an
+                    // index into our keysyms_table array.
+                    vk = mapLinuxKeyToVk(static_cast<uint32_t>(kc - 8));
+                }
                 if (vk == 0) continue;
 
                 if (vk < 256) key_states_[vk] = now;
