@@ -609,17 +609,78 @@ on first attempt at input simulation, rather than failing silently.
 
 ---
 
+## M10 — User-facing Linux backend settings
+
+Both Linux native modules now expose their backend choice as a normal CastMate
+setting, so a user (or a support session) can override the runtime auto-pick
+from the UI without touching code.
+
+### Files changed
+
+- `plugins/input/native/src/linux/native-index-linux.cc` — the `input_interface`
+  constructor now accepts an optional second argument
+  `{ backend: "auto" | "x11" | "uinput" }`:
+  - `"auto"` (default, identical to M9): try X11/XTest first, fall back to
+    `/dev/uinput`.
+  - `"x11"`: only attempt X11/XTest. If it fails, log a structured warning
+    explaining the override and stay no-op (no silent fallback to uinput,
+    which would defeat the override).
+  - `"uinput"`: only attempt `/dev/uinput`. Same dead-letter behaviour if
+    uinput can't open.
+- `plugins/input/native/src/index.js` — JS wrapper now takes an optional
+  `options` object and forwards it as the second arg of `NativeInputInterface`.
+  Windows and macOS native ctors already read only `info[0]` and silently
+  ignore extra args, so the change is transparent on those platforms.
+- `plugins/input/native/src/index.d.ts` — new `LinuxInputBackend` type and
+  `InputInterfaceOptions` shape; `InputInterface` constructor now typed as
+  `constructor(options?: InputInterfaceOptions)`.
+- `plugins/input/main/src/main.ts`:
+  - The `defineSetting("linuxInputBackend", …)` call (with
+    `enum: ["auto","x11","uinput"]`, default `"auto"`) is wrapped in
+    `process.platform === "linux" ? defineSetting(...) : undefined` so the
+    entry is **only registered when CastMate is running on Linux**. On
+    Windows and macOS the settings UI doesn't show a "Linux Input Backend"
+    item — it has no effect there.
+  - `InputInterface` is constructed with `{ backend: linuxInputBackend.value }`
+    on Linux; the old zero-arg form is kept on Windows / macOS.
+- `plugins/sound/main/src/main.ts`:
+  - The `defineSetting("linuxAudioBackend", …)` call (with
+    `enum: ["auto","pulseaudio","pipewire"]`, default `"auto"`) is gated the
+    same way — registered only on Linux. **Currently informational.** Both
+    PulseAudio and PipeWire are accessed by the M7 backend through `pactl`,
+    which speaks the PulseAudio protocol to either daemon (the
+    `pipewire-pulse` compat layer on a PipeWire box), so the three values
+    are functionally identical today. The setting is the entry point for a
+    future native PipeWire path (libpipewire / `wpctl`) without forcing a
+    new setting-key migration on users at that time.
+
+### Verification
+
+On this Linux host (DISPLAY=:0):
+- `new InputInterface()` and `new InputInterface({ backend: "auto" })` both
+  pick the X11 backend (existing M6/M9 behaviour preserved).
+- `new InputInterface({ backend: "x11" })` picks X11.
+- `new InputInterface({ backend: "uinput" })` picks uinput even though X11
+  is available, confirmed by *"CastMate Virtual Input"* showing up in
+  `/proc/bus/input/devices` during the run.
+- TypeScript compiles cleanly for both `plugins/input/main` and
+  `plugins/sound/main` (only the three pre-existing `trigger.ts` errors
+  surface).
+
+---
+
 ## Next Step
 
-- M10 : Specific options in the settings to choose Backend in Linux (PipeWire or PulseAudio for example...)
 - M11 : Locale-aware OEM key remapping so AZERTY users get the punctuation
   they expect (currently a US-layout assumption).
+- M12: For TTS, the file were generated and the volume normalized to the same number of decibels across all operating systems. This would make the volume slider actually useful.
 
 ## File write by AI :
 - CHANGES.md
 - .github/workflows/build.yaml
 - plugins/sound/native/src/linux/native-index-linux.cc (partially)
 - plugins/sound/native/src/stub/native-index-stub.cc (partially)
+- plugins/input/main/src/main.ts (for the settingss)
 - plugins/input/native/src/linux/native-index-linux.cc (entirely)
 - plugins/input/native/src/stub/native-index-stub.cc (entirely)
 - packages/castmate/build/linux/after-install.sh

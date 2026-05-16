@@ -34,6 +34,24 @@ export default definePlugin(
 			default: 100,
 		})
 
+		// Only register the Linux-audio-backend setting on Linux so it doesn't
+		// clutter the settings UI on Windows / macOS (where it has no effect).
+		const linuxAudioBackend =
+			process.platform === "linux"
+				? defineSetting("linuxAudioBackend", {
+						type: String,
+						name: "Linux Audio Backend",
+						description:
+							"Which audio server CastMate should talk to on Linux. \"auto\" detects the " +
+							"running server. Currently all three values route through `pactl`, which " +
+							"speaks the PulseAudio protocol on both real PulseAudio and PipeWire's " +
+							"pipewire-pulse compat layer.",
+						enum: ["auto", "pulseaudio", "pipewire"],
+						default: "auto",
+						required: true,
+				  })
+				: undefined
+
 		setupOutput()
 		setupSplitters()
 		setupTTS()

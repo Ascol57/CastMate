@@ -403,16 +403,40 @@ public:
     {
         std::memset(key_states_, 0, sizeof(key_states_));
 
-        // Prefer X11 — when DISPLAY works, we also get global event capture via
-        // XQueryKeymap polling on a worker thread (uinput cannot capture, only emit).
-        if (auto x11 = X11Backend::try_open()) {
-            x11_raw_display_ = x11->raw_display();
-            backend_ = std::move(x11);
-        } else if (auto ui = UInputBackend::try_open()) {
-            backend_ = std::move(ui);
-        } else {
-            std::cerr << "[castmate-input] No X11 display and no /dev/uinput access — "
-                         "input simulation is a no-op on this host." << std::endl;
+        std::string requested = "auto";
+        if (info.Length() > 1 && info[1].IsObject()) {
+            Napi::Object opts = info[1].As<Napi::Object>();
+            if (opts.Has("backend") && opts.Get("backend").IsString()) {
+                requested = opts.Get("backend").As<Napi::String>().Utf8Value();
+            }
+        }
+
+        const bool try_x11    = (requested == "auto" || requested == "x11");
+        const bool try_uinput = (requested == "auto" || requested == "uinput");
+
+        if (try_x11) {
+            if (auto x11 = X11Backend::try_open()) {
+                x11_raw_display_ = x11->raw_display();
+                backend_ = std::move(x11);
+            }
+        }
+        if (!backend_ && try_uinput) {
+            if (auto ui = UInputBackend::try_open()) {
+                backend_ = std::move(ui);
+            }
+        }
+        if (!backend_) {
+            if (requested == "x11") {
+                std::cerr << "[castmate-input] Input backend forced to X11 but no display "
+                             "was reachable — input simulation will be a no-op." << std::endl;
+            } else if (requested == "uinput") {
+                std::cerr << "[castmate-input] Input backend forced to uinput but "
+                             "/dev/uinput is not accessible — input simulation will be a no-op."
+                          << std::endl;
+            } else {
+                std::cerr << "[castmate-input] No X11 display and no /dev/uinput access — "
+                             "input simulation is a no-op on this host." << std::endl;
+            }
         }
 
         if (info.Length() > 0 && info[0].IsFunction()) {

@@ -6,10 +6,14 @@ const { NativeInputInterface } = bindings({
 })
 
 class InputInterface extends EventEmitter {
-	constructor() {
+	/**
+	 * @param {{ backend?: "auto" | "x11" | "uinput" }} [options]
+	 *   Only honored by the Linux backend. On Windows/macOS the option is ignored
+	 */
+	constructor(options) {
 		super()
 		const boundEmit = this.emit.bind(this)
-		this._native = new NativeInputInterface(boundEmit)
+		this._native = new NativeInputInterface(boundEmit, options || {})
 	}
 
 	simulateKeyDown(...args) {

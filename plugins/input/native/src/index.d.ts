@@ -8,7 +8,14 @@ declare namespace CastmatePluginInputNative {
 		"key-released": (vkCode: number) => void | Promise<void>
 	}
 
+	type LinuxInputBackend = "auto" | "x11" | "uinput"
+
+	interface InputInterfaceOptions {
+		backend?: LinuxInputBackend
+	}
+
 	class InputInterface extends Events.EventEmitter {
+		constructor(options?: InputInterfaceOptions)
 		simulateKeyDown(vkCode: number): void
 		simulateKeyUp(vkCode: number): void
 		simulateMouseDown(button: MouseButton): void
