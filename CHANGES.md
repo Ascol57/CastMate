@@ -4,8 +4,8 @@ This document records every change made while adding Linux support to CastMate.
 All existing Windows code paths are preserved — every modification is additive or
 behind a runtime/OS condition.
 
-The work is split into milestones (M1–M8). M1, M2 and M3 are implemented and
-verified on this Linux host. M4–M8 are scoped and queued.
+The work is split into milestones (M1–M8). M1 through M4 are implemented and
+verified on this Linux host. M5–M8 are scoped and queued.
 
 ---
 
@@ -120,14 +120,63 @@ and reaches the renderer/Vite hot-reload loop.
 
 ---
 
+## M4 — OBS plugin Linux support
+
+The OBS plugin can now locate, launch, and detect a running OBS install on
+Linux. The Windows code paths (registry lookup, PowerShell `Start-Process`
+with elevation, polling for `obs64.exe`) are untouched and still active when
+`process.platform === "win32"`. Cross-platform behaviour is selected at
+runtime with a single `IS_WINDOWS` boolean.
+
+### Files changed
+
+- `plugins/obs/main/src/connection.ts`:
+  - Added `node:fs`, `node:path`, `node:os` imports and an `IS_WINDOWS`
+    constant. The `regedit` import stays in place: the package is pure
+    JavaScript and loads cleanly on Linux even though its functions only
+    succeed on Windows.
+  - New `LINUX_OBS_CANDIDATES` list (apt: `/usr/bin/obs`,
+    `/usr/local/bin/obs`; Flatpak: system + user
+    `com.obsproject.Studio`; Snap: `/snap/bin/obs-studio`,
+    `/snap/bin/obs`).
+  - New `findOBSExecutableLinux()` probes each candidate with
+    `fs.access(... X_OK)`; if none match, falls back to `command -v obs`
+    so anything reachable through `$PATH` is honored.
+  - New `findOBSInstall()` dispatches to `getOBSInstallFromRegistry()` on
+    Windows and `findOBSExecutableLinux()` elsewhere. Return shape is
+    documented per platform: install directory on Windows, absolute
+    launcher path on Linux.
+  - `openObs(installDir)` now branches on `IS_WINDOWS`. Windows keeps the
+    `Start-Process "${installDir}\bin\64bit\obs64.exe" -Verb runAs` flow
+    verbatim. Linux spawns the launcher directly with
+    `detached: true`, `stdio: "ignore"`, `child.unref()` so OBS outlives
+    the Electron parent.
+  - `OBSConnection.openProcess()` now calls `findOBSInstall()` instead of
+    `getOBSInstallFromRegistry()` so it works on every platform.
+  - `setupRunningPolling()` polls for `obs64.exe` on Windows and `obs`
+    elsewhere. The functional process check (whether `isProcessRunning`
+    actually works on Linux) is owned by M5.
+  - `setupConnections()` wraps the `regedit.setExternalVBSLocation(...)`
+    initialization in `if (IS_WINDOWS)` so the VBS bridge is only wired up
+    where it can do something.
+
+### Verification
+
+- TypeScript compiles cleanly for the OBS plugin (only the three
+  pre-existing `libs/castmate-core/src/queue-system/trigger.ts` errors
+  surface — unrelated to this change).
+- Windows code paths are preserved verbatim inside `IS_WINDOWS` branches.
+- A manual Linux smoke test requires an OBS install on the host. In this
+  environment OBS is not installed, so `findOBSInstall()` correctly
+  returns `undefined` and `openProcess()` short-circuits to `false`; the
+  rest of the plugin (websocket connection, scenes, etc.) is unaffected.
+
+---
+
 ## Roadmap
 
 Not yet implemented; tracked here for visibility.
 
-- **M4 — OBS plugin Linux support.** Replace the Windows registry lookup
-  (`regedit`) and `Start-Process` PowerShell launch with a `$PATH` search and
-  a direct `spawn`. Track `obs64.exe` on Windows vs `obs` on Linux for the
-  running-process check.
 - **M5 — OS plugin Linux support.** Branch `tasklist` → `ps`,
   `cmd /c start` → `xdg-open`, `powershell.exe` → the user's shell or a
   direct `bash -c`.
@@ -137,5 +186,9 @@ Not yet implemented; tracked here for visibility.
 - **M7 — Real `plugins/sound/native` Linux backend.** PulseAudio (or
   PipeWire) for device enumeration; `speech-dispatcher` for TTS.
 - **M8 — `electron-builder` Linux pipeline + CI matrix.** Validate AppImage
-  and `.deb` end-to-end; add `ubuntu-latest` (and ideally `macos-latest`)
+  and `.deb` end-to-end; add `debian-latest` (and ideally `macos-latest`)
   to `.github/workflows/build.yaml` alongside `windows-latest`.
+
+## File write by AI :
+- plugins/sound/native/src/linux/native-index-linux.cc
+- plugins/input/native/src/linux/native-index-linux.cc

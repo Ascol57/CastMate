@@ -30,11 +30,16 @@ import _flatten from "lodash/flatten"
 import { SceneSource } from "./obs-data"
 
 import ChildProcess from "node:child_process"
+import fs from "node:fs"
+import path from "node:path"
+import os from "node:os"
 
 import { app } from "electron"
 import regedit from "regedit"
 import { nextTick } from "node:process"
 import EventEmitter from "eventemitter3"
+
+const IS_WINDOWS = process.platform === "win32"
 
 class SceneHistory {
 	private history: string[] = []
@@ -79,33 +84,91 @@ function getOBSInstallFromRegistry() {
 	})
 }
 
+// Standard Linux OBS install locations to probe before falling back to $PATH.
+const LINUX_OBS_CANDIDATES = [
+	"/usr/bin/obs",
+	"/usr/local/bin/obs",
+	"/var/lib/flatpak/exports/bin/com.obsproject.Studio",
+	path.join(os.homedir(), ".local/share/flatpak/exports/bin/com.obsproject.Studio"),
+	"/snap/bin/obs-studio",
+	"/snap/bin/obs",
+]
+
+async function findOBSExecutableLinux(): Promise<string | undefined> {
+	for (const candidate of LINUX_OBS_CANDIDATES) {
+		try {
+			await fs.promises.access(candidate, fs.constants.X_OK)
+			return candidate
+		} catch {
+			// not present / not executable, keep looking
+		}
+	}
+	// Final fallback: lookup `obs` on PATH.
+	return new Promise((resolve) => {
+		ChildProcess.exec("command -v obs", (err, stdout) => {
+			if (err) return resolve(undefined)
+			const found = stdout.trim()
+			resolve(found.length > 0 ? found : undefined)
+		})
+	})
+}
+
+async function findOBSInstall(): Promise<string | undefined> {
+	if (IS_WINDOWS) {
+		return getOBSInstallFromRegistry()
+	}
+	return findOBSExecutableLinux()
+}
+
 function openObs(installDir: string) {
 	return new Promise((resolve, reject) => {
-		const startCmd = `Start-Process "${installDir}\\bin\\64bit\\obs64.exe" -Verb runAs`
-		logger.log(`Opening OBS ${startCmd}`)
-
 		if (!installDir) return resolve(false)
 
-		try {
-			ChildProcess.exec(
-				startCmd,
-				{
-					shell: "powershell.exe",
-					cwd: `${installDir}\\bin\\64bit\\`,
-				},
-				(err, stdout, stderr) => {
-					console.log(stdout)
-					console.error(stderr)
-					if (err) {
-						console.error(err)
-						return resolve(false)
+		if (IS_WINDOWS) {
+			const startCmd = `Start-Process "${installDir}\\bin\\64bit\\obs64.exe" -Verb runAs`
+			logger.log(`Opening OBS ${startCmd}`)
+
+			try {
+				ChildProcess.exec(
+					startCmd,
+					{
+						shell: "powershell.exe",
+						cwd: `${installDir}\\bin\\64bit\\`,
+					},
+					(err, stdout, stderr) => {
+						console.log(stdout)
+						console.error(stderr)
+						if (err) {
+							console.error(err)
+							return resolve(false)
+						}
+						resolve(true)
 					}
-					resolve(true)
-				}
-			)
+				)
+			} catch (err) {
+				console.error("Error Spawning:", err)
+				return reject(err)
+			}
+			return
+		}
+
+		// Linux: `installDir` is the OBS launcher path itself (see findOBSExecutableLinux).
+		logger.log(`Opening OBS ${installDir}`)
+		try {
+			const child = ChildProcess.spawn(installDir, [], {
+				detached: true,
+				stdio: "ignore",
+				cwd: path.dirname(installDir),
+			})
+			child.on("error", (err) => {
+				logger.error("OBS spawn error", err)
+				resolve(false)
+			})
+			child.unref()
+			resolve(true)
 		} catch (err) {
-			console.error("Error Spawning:", err)
-			return reject(err)
+			logger.error("Error Spawning:", err)
+			reject(err)
 		}
 	})
 }
@@ -591,7 +654,7 @@ export class OBSConnection extends FileResource<OBSConnectionConfig, OBSConnecti
 	async openProcess() {
 		if (!this.isLocal) return false
 
-		const path = this.config.installPath ?? (await getOBSInstallFromRegistry())
+		const path = this.config.installPath ?? (await findOBSInstall())
 
 		logger.log("Opening", path)
 
@@ -704,9 +767,11 @@ export function setupRunningPolling() {
 
 	let poller: NodeJS.Timer | undefined = undefined
 
+	const obsProcessName = IS_WINDOWS ? "obs64.exe" : "obs"
+
 	onLoad(() => {
 		poller = setInterval(async () => {
-			localObsRunning.value = await isProcessRunning("obs64.exe")
+			localObsRunning.value = await isProcessRunning(obsProcessName)
 		}, 15000)
 	})
 
@@ -722,12 +787,14 @@ export function setupConnections() {
 	onLoad(() => {
 		OBSEventService.initialize()
 
-		if (app.isPackaged) {
-			const loc = regedit.setExternalVBSLocation("resources/regedit/vbs")
-			logger.log("Setting External VBS Location", loc)
-		} else {
-			const loc = regedit.setExternalVBSLocation("../../node_modules/regedit/vbs")
-			logger.log("Setting External VBS Location", loc)
+		if (IS_WINDOWS) {
+			if (app.isPackaged) {
+				const loc = regedit.setExternalVBSLocation("resources/regedit/vbs")
+				logger.log("Setting External VBS Location", loc)
+			} else {
+				const loc = regedit.setExternalVBSLocation("../../node_modules/regedit/vbs")
+				logger.log("Setting External VBS Location", loc)
+			}
 		}
 	})
 

@@ -60,11 +60,6 @@ export default defineConfig({
 			},
 			onstart(args) {
 				console.log("Vite Electron Start")
-				// Strip ELECTRON_RUN_AS_NODE inherited from the parent env. Some shells
-				// (notably Claude Code's sandboxed shell) set it to 1, which makes Electron
-				// boot in plain-Node mode and breaks require("electron"): it resolves to the
-				// npm package's path string instead of the synthetic main-process module.
-				delete process.env.ELECTRON_RUN_AS_NODE
 				args.startup([".", "--no-sandbox"])
 			},
 		}),
