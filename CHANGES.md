@@ -4,8 +4,8 @@ This document records every change made while adding Linux support to CastMate.
 All existing Windows code paths are preserved — every modification is additive or
 behind a runtime/OS condition.
 
-The work is split into milestones (M1–M8). M1 through M4 are implemented and
-verified on this Linux host. M5–M8 are scoped and queued.
+The work is split into milestones (M1–M8). M1 through M5 are implemented and
+verified on this Linux host. M6–M8 are scoped and queued.
 
 ---
 
@@ -173,13 +173,62 @@ runtime with a single `IS_WINDOWS` boolean.
 
 ---
 
+## M5 — OS plugin Linux support
+
+The OS plugin's process-management primitives and PowerShell action now have
+Linux/macOS code paths. The Windows command surface (`tasklist`,
+`cmd /c start`, `powershell.exe`) is preserved verbatim — every fork is
+behind a single `IS_WINDOWS` constant.
+
+### Files changed
+
+- `plugins/os/main/src/processes.ts`:
+  - Added `IS_WINDOWS` constant.
+  - `isProcessRunning(application)` — Windows still calls `tasklist` and
+    does a case-insensitive substring match on its stdout. Linux/macOS
+    now call `ps -A -o comm=` and match the basename of each line against
+    the basename of `application` (case-insensitive). The basename
+    comparison lets callers pass either `"obs"` or `/usr/bin/obs`
+    interchangeably, which matches the M4 `setupRunningPolling` callsite
+    where `obs` is the Linux process name.
+  - `launch` action — Windows still spawns
+    `cmd /c start "CastMate Launch" <exe> <args...>` for its
+    fire-and-forget semantics. Linux/macOS now spawn the executable
+    directly with `detached: true`, `stdio: "ignore"`, and `child.unref()`
+    so the launched process survives CastMate. A no-op `error` handler
+    swallows spawn failures to keep the fire-and-forget contract.
+- `plugins/os/main/src/powershell.ts`:
+  - Added `IS_WINDOWS` and a `POWERSHELL_SHELL` constant that resolves to
+    `"powershell.exe"` on Windows and `"pwsh"` (PowerShell 7+) on
+    Linux/macOS.
+  - `runPowershellCommand` now uses `POWERSHELL_SHELL`. The
+    PowerShell-specific escaping (`powershellTemplate`,
+    `powershellEscape*` helpers) is untouched — it works identically
+    under `pwsh` since the syntax is the same.
+  - If `pwsh` is missing on Linux/macOS, the rejection message is
+    rewritten to *"PowerShell (`pwsh`) is not installed or not on PATH.
+    Install PowerShell 7+ to use this action on Linux/macOS."* rather
+    than a raw `ENOENT`.
+
+### Verification
+
+- TypeScript compiles cleanly for the OS plugin (only the three
+  pre-existing `trigger.ts` errors remain).
+- The Windows command lines are preserved verbatim inside `IS_WINDOWS`
+  branches.
+- The Launch and Powershell action surfaces are unchanged for end users.
+  The `application` field in the Launch action still advertises
+  `extensions: ["exe"]` — that hint is benign on Linux (the file picker
+  still works, just with a less helpful filter) and was left alone so the
+  Windows UI is unaffected. Tightening the per-platform UI hint can move
+  to a follow-up.
+
+---
+
 ## Roadmap
 
 Not yet implemented; tracked here for visibility.
 
-- **M5 — OS plugin Linux support.** Branch `tasklist` → `ps`,
-  `cmd /c start` → `xdg-open`, `powershell.exe` → the user's shell or a
-  direct `bash -c`.
 - **M6 — Real `plugins/input/native` Linux backend.** Replace the no-op
   stubs with XTest (X11) or libevdev + `uinput` for real keyboard/mouse
   simulation and event capture.
@@ -190,5 +239,6 @@ Not yet implemented; tracked here for visibility.
   to `.github/workflows/build.yaml` alongside `windows-latest`.
 
 ## File write by AI :
+- CHANGES.md
 - plugins/sound/native/src/linux/native-index-linux.cc
 - plugins/input/native/src/linux/native-index-linux.cc

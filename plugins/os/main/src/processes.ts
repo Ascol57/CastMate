@@ -3,17 +3,29 @@ import { Directory, FilePath } from "castmate-schema"
 import { ChildProcess, exec, spawn } from "child_process"
 import * as path from "path"
 
+const IS_WINDOWS = process.platform === "win32"
+
 export function isProcessRunning(application: string) {
 	return new Promise<boolean>(function (resolve, reject) {
-		const plat = process.platform
-		const cmd: string = "tasklist"
-		//plat == "win32" ? "tasklist" : plat == "darwin" ? "ps -ax | grep " + mac : plat == "linux" ? "ps -A" : ""
-		if (cmd === "" || application === "") {
-			resolve(false)
+		if (application === "") {
+			return resolve(false)
 		}
-		exec(cmd, function (err, stdout, stderr) {
-			//TODO: Case insentivity here?
-			resolve(stdout.toLowerCase().indexOf(application.toLowerCase()) > -1)
+
+		if (IS_WINDOWS) {
+			exec("tasklist", function (err, stdout) {
+				resolve(stdout.toLowerCase().indexOf(application.toLowerCase()) > -1)
+			})
+			return
+		}
+
+		// Linux / macOS: `ps -A -o comm=` lists every process's command basename
+		exec("ps -A -o comm=", function (err, stdout) {
+			if (err) return resolve(false)
+			const needle = path.basename(application).toLowerCase()
+			const found = stdout
+				.split("\n")
+				.some((line) => path.basename(line.trim()).toLowerCase() === needle)
+			resolve(found)
 		})
 	})
 }
@@ -55,10 +67,21 @@ export function setupProcesses() {
 				cwd = path.dirname(config.application)
 			}
 
-			spawn("cmd", ["/c", "start", "CastMate Launch", config.application, ...config.args], {
-				cwd,
-				detached: true,
-			})
+			if (IS_WINDOWS) {
+				spawn("cmd", ["/c", "start", "CastMate Launch", config.application, ...config.args], {
+					cwd,
+					detached: true,
+				})
+			} else {
+				const child = spawn(config.application, config.args, {
+					cwd,
+					detached: true,
+					stdio: "ignore",
+				})
+				// Swallow spawn errors — the action contract is fire-and-forget.
+				child.on("error", () => {})
+				child.unref()
+			}
 		},
 	})
 }

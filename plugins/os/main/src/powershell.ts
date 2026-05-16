@@ -154,15 +154,28 @@ async function powershellTemplate(str: string, data: Record<string, any>) {
 
 ///
 
+const IS_WINDOWS = process.platform === "win32"
+
+const POWERSHELL_SHELL = IS_WINDOWS ? "powershell.exe" : "pwsh"
+
 async function runPowershellCommand(command: string, workingDir: string | undefined, abortSignal: AbortSignal) {
 	return abortablePromise<string>(abortSignal, (resolve, reject, handleAbort) => {
-		const process = exec(command, { shell: "powershell.exe", cwd: workingDir }, (err, stdout, stderr) => {
-			if (err) reject(err)
+		const child = exec(command, { shell: POWERSHELL_SHELL, cwd: workingDir }, (err, stdout) => {
+			if (err) {
+				if (!IS_WINDOWS && (err as NodeJS.ErrnoException).code === "ENOENT") {
+					return reject(
+						new Error(
+							"PowerShell (`pwsh`) is not installed or not on PATH. Install PowerShell 7+ to use this action on Linux/macOS."
+						)
+					)
+				}
+				return reject(err)
+			}
 			resolve(stdout)
 		})
 
 		handleAbort(() => {
-			process.kill()
+			child.kill()
 		})
 	})
 }
