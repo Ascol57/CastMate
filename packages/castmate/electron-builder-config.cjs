@@ -61,6 +61,7 @@ module.exports = {
 		target: ["AppImage", "deb"],
 		category: "AudioVideo",
 		artifactName: "${productName}_${version}_${arch}.${ext}",
+		maintainer: "Scott Resnick <lordtocs@gmail.com>",
 		extraResources: [
 			{
 				from: "../../node_modules/@ffmpeg-installer/linux-x64",

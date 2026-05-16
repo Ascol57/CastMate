@@ -2,7 +2,11 @@
 	"name": "castmate",
 	"version": "0.5.9-beta2",
 	"description": "CastMate",
-	"author": "LordTocs",
+	"homepage": "https://www.castmate.io/",
+	"author": {
+		"name": "Scott Resnick",
+		"email": "lordtocs@gmail.com"
+	},
 	"type": "module",
 	"scripts": {
 		"compile": "vue-tsc",
