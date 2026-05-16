@@ -4,8 +4,10 @@ This document records every change made while adding Linux support to CastMate.
 All existing Windows code paths are preserved — every modification is additive or
 behind a runtime/OS condition.
 
-The work is split into milestones (M1–M8). M1 through M7 are implemented and
-verified on this Linux host. M8 is scoped and queued.
+The work is split into milestones (M1–M8). All eight are implemented;
+M1–M7 are also runtime-verified on this Linux host. M8 is config-only and
+will be verified end-to-end the first time the GitHub Actions workflow
+runs on its new `ubuntu-latest` matrix entry.
 
 ## Linux runtime requirements
 
@@ -414,17 +416,94 @@ ids look like `gmw/af`, `gmw/en`, etc.
 
 ---
 
-## Roadmap
+## M8 — `electron-builder` Linux pipeline + CI matrix
 
-Not yet implemented; tracked here for visibility.
+CastMate can now be packaged as an AppImage and a `.deb` from a Linux
+build host, with the right system-library `Depends:` declared so the
+resulting `.deb` installs cleanly on Debian/Ubuntu derivatives. The
+GitHub Actions release workflow now runs on both `windows-latest` and
+`ubuntu-latest` from the same job definition. The Windows build path is
+unchanged.
 
-- **M8 — `electron-builder` Linux pipeline + CI matrix.** Validate AppImage
-  and `.deb` end-to-end; add `debian-latest` (and ideally `macos-latest`)
-  to `.github/workflows/build.yaml` alongside `windows-latest`.
+> Note on runner naming: the user-facing roadmap referred to
+> "debian-latest", but GitHub Actions has no Debian-named hosted runner —
+> only `ubuntu-latest`. Ubuntu is binary-compatible enough with Debian
+> that the `.deb` produced on Ubuntu installs on current Debian releases
+> without modification, so the matrix uses `ubuntu-latest` and the
+> resulting artifacts are the canonical "Debian/Ubuntu" build.
+
+### Files changed
+
+- `packages/castmate/electron-builder-config.cjs`:
+  - The existing `linux` block (added in M2) is unchanged at the top
+    level: `target: ["AppImage", "deb"]`, `category: "AudioVideo"`,
+    `artifactName: "${productName}_${version}_${arch}.${ext}"`,
+    `extraResources` bundling the linux-x64 `ffmpeg` and `ffprobe`
+    binaries.
+  - New top-level `deb` block:
+    ```js
+    deb: {
+      depends: [
+        "libx11-6",            // XTest target — M6 input native
+        "libxtst6",             // XTest extension     — M6 input native
+        "pulseaudio-utils | pipewire-pulse", // ships `pactl`  — M7 audio
+      ],
+      recommends: ["espeak-ng"],     // M7 TTS (optional feature)
+    }
+    ```
+    The `|` syntax in `depends` expresses an OR alternative, which apt
+    handles natively. `espeak-ng` lives in `recommends` rather than
+    `depends` so users who don't need TTS aren't forced to install the
+    voice-data payload.
+- `.github/workflows/build.yaml`:
+  - `strategy.matrix.os` extended from `[windows-latest]` to
+    `[windows-latest, ubuntu-latest]`.
+  - `fail-fast: false` added so a Linux-side failure doesn't cancel the
+    in-flight Windows build (and vice versa).
+  - New step *"Install Linux build/runtime deps"* gated on
+    `runner.os == 'Linux'` runs
+    `sudo apt-get install -y libx11-dev libxtst-dev espeak-ng`. The
+    `-dev` packages are required to compile the input native module
+    against XTest; `espeak-ng` is installed so any TTS-related smoke
+    test inside the build pipeline has it available (and to mirror what
+    a developer would do locally).
+  - No other step changes — `yarn install`, the workspace rebuild step,
+    and `yarn run buildpublish` all run identically on both runners.
+    Electron-builder's `npmRebuild: true` (already in the config) takes
+    care of recompiling the native plugins against Electron's Node ABI
+    on each host.
+
+### Verification
+
+- Both files (`electron-builder-config.cjs`, `build.yaml`) parse
+  cleanly (Node `require()` for the former, `yaml.safe_load` for the
+  latter).
+- The Linux `extraResources` source paths
+  (`@ffmpeg-installer/linux-x64/ffmpeg`,
+  `@ffprobe-installer/linux-x64/ffprobe`) both exist and are
+  executable on this host, so the AppImage and `.deb` will get the
+  binaries inside `ffmpeg/bin/`.
+- End-to-end .deb / AppImage production is not exercised locally
+  (electron-builder packaging takes several minutes and pulls
+  external resources). It will run automatically on the first push to
+  `main` once the new workflow lands, on both the Windows and Ubuntu
+  matrix legs.
+
+---
+
+## Next Step
+
+- M9 : Wayland-native input simulation via uinput when no X server is
+  reachable (currently the X11 backend becomes a no-op on pure
+  Wayland sessions).
+- M10 : Specific options in the settings to choose Backend in Linux (PipeWire or PulseAudio for example...)
+- M11 : Locale-aware OEM key remapping so AZERTY users get the punctuation
+  they expect (currently a US-layout assumption).
 
 ## File write by AI :
 - CHANGES.md
-- plugins/sound/native/src/linux/native-index-linux.cc
-- plugins/sound/native/src/stub/native-index-stub.cc
-- plugins/input/native/src/linux/native-index-linux.cc
-- plugins/input/native/src/stub/native-index-stub.cc
+- .github/workflows/build.yaml
+- plugins/sound/native/src/linux/native-index-linux.cc (partially)
+- plugins/sound/native/src/stub/native-index-stub.cc (partially)
+- plugins/input/native/src/linux/native-index-linux.cc (entirely)
+- plugins/input/native/src/stub/native-index-stub.cc (entirely)

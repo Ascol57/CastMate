@@ -12,8 +12,9 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
-        os: [windows-latest]
+        os: [windows-latest, ubuntu-latest]
 
     steps:
       - name: Checkout
@@ -25,12 +26,20 @@ jobs:
       - uses: actions/setup-python@v6
       - name: "Install distutils"
         run: "pip install setuptools"
+      - name: "Install Linux build/runtime deps"
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          # libx11-dev / libxtst-dev → needed to compile plugins/input/native against XTest.
+          # espeak-ng → bundled at runtime by .deb recommends; install on the CI host so
+          # the postinstall TTS smoke (if any) can run.
+          sudo apt-get install -y libx11-dev libxtst-dev espeak-ng
       - name: "Install Node Packages"
         run: "yarn install"
       - name: "Setup Vite Extensions"
         run: "yarn setup-vite"
       - name: "Recompile Native Deps for Electron"
-        run: "yarn workspace castmate-core run rebuild"  
+        run: "yarn workspace castmate-core run rebuild"
       - name: "Build"
         run: "yarn run buildpublish"
         env:

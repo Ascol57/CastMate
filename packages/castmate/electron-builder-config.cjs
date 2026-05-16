@@ -74,6 +74,14 @@ module.exports = {
 			},
 		],
 	},
+	deb: {
+		depends: [
+			"libx11-6",
+			"libxtst6",
+			"pulseaudio-utils | pipewire-pulse",
+		],
+		recommends: ["espeak-ng"],
+	},
 	nsis: {
 		oneClick: false,
 		perMachine: false,
