@@ -4,8 +4,36 @@ This document records every change made while adding Linux support to CastMate.
 All existing Windows code paths are preserved — every modification is additive or
 behind a runtime/OS condition.
 
-The work is split into milestones (M1–M8). M1 through M5 are implemented and
-verified on this Linux host. M6–M8 are scoped and queued.
+The work is split into milestones (M1–M8). M1 through M7 are implemented and
+verified on this Linux host. M8 is scoped and queued.
+
+## Linux runtime requirements
+
+These are the system packages CastMate expects on Linux. Build-only headers
+are only required when (re)compiling the native modules from source; the
+others are runtime dependencies.
+
+| Apt package              | When needed                                | Purpose                                                |
+| ------------------------ | ------------------------------------------ | ------------------------------------------------------ |
+| `libx11-6` *(runtime)*   | M6 — `plugins/input/native` runtime        | Xlib client; keyboard/mouse simulation                 |
+| `libxtst6` *(runtime)*   | M6 — `plugins/input/native` runtime        | XTest extension                                        |
+| `libx11-dev`             | M6 — build only                            | Xlib headers (`#include <X11/Xlib.h>`)                 |
+| `libxtst-dev`            | M6 — build only                            | XTest headers (`#include <X11/extensions/XTest.h>`)    |
+| `pulseaudio-utils` *or* `pipewire-pulse` | M7 — `plugins/sound/native` runtime | Ships the `pactl` CLI (audio device discovery)  |
+| `espeak-ng`              | M7 — TTS feature                           | Linux text-to-speech back-end                          |
+
+On a typical Debian/Ubuntu desktop the X11 and PulseAudio/PipeWire pieces are
+already in place. The one explicit install needed for full functionality is
+text-to-speech:
+
+```bash
+sudo apt install espeak-ng
+```
+
+If `espeak-ng` is missing, `OsTTSInterface.getVoices()` returns an empty
+array and `speakToFile(...)` calls back with
+`"espeak-ng not installed"` — the audio device plugin keeps working
+independently.
 
 ---
 
@@ -225,15 +253,171 @@ behind a single `IS_WINDOWS` constant.
 
 ---
 
+## M6 — Real `plugins/input/native` Linux backend
+
+The Linux source file gained a working X11 backend: XTest for keyboard and
+mouse simulation, and a worker thread polling `XQueryKeymap` for global
+key-pressed / key-released events. The original M1 no-op stub moved into a
+dedicated macOS fallback so that the macOS build path stays compilable
+without X11 headers.
+
+### Files changed
+
+- `plugins/input/native/src/linux/native-index-linux.cc` — was the no-op
+  stub, now a real X11/XTest backend (~250 LOC). Highlights:
+  - Static `VK_KEYSYM_TABLE` mapping Windows virtual-key codes (`VK_*`)
+    to X11 keysyms covering letters, digits, function keys F1–F24,
+    numpad, modifiers, navigation, common OEM punctuation (US layout
+    assumption).
+  - `mapVkToKeysym(vk)` for simulation; `mapKeysymToVk(ks)` (lazy
+    reverse map) for event reporting.
+  - `simulate_key_*` resolves keysym → keycode via `XKeysymToKeycode`,
+    then calls `XTestFakeKeyEvent` + `XFlush`.
+  - `simulate_mouse_*` calls `XTestFakeButtonEvent` for buttons
+    1/2/3/8/9 (left/middle/right/mouse4/mouse5 per X11 convention).
+  - `start_events()` spawns a worker thread with its own X11 connection
+    that polls `XQueryKeymap` at ~30 Hz, diffs against the previous
+    snapshot, and emits `key-pressed` / `key-released` (with the
+    Windows VK code) via `Napi::ThreadSafeFunction`. `stop_events()`
+    signals the thread and joins it cleanly.
+  - Defensive handling: if `XOpenDisplay` fails (no DISPLAY / no XWayland
+    on a pure Wayland session) the interface logs a one-time warning to
+    stderr and every method becomes a no-op — no crashes.
+- `plugins/input/native/src/stub/native-index-stub.cc` *(new)* — copy of
+  the original M1 no-op stub, used on macOS so that build stays clean
+  without X11.
+- `plugins/input/native/binding.gyp`:
+  - Windows branch unchanged.
+  - New `OS=='linux'` branch: builds the new file with `-std=c++17`,
+    `-pthread`, links `-lX11 -lXtst -lpthread`.
+  - `OS=='mac'` now uses the dedicated stub file rather than the Linux
+    one (which would fail to find X11 headers on Darwin).
+
+### Verification
+
+- `node-gyp rebuild` against the host Node ABI succeeds and produces a
+  `castmate-plugin-input-native.node` that links against
+  `libX11.so.6` + `libXtst.so.6`.
+- `yarn ebuild` re-links it against Electron's ABI.
+- Smoke tests under `DISPLAY=:0`:
+  - Module loads, all seven JS methods present.
+  - `startEvents()` → background thread runs without blocking;
+    `stopEvents()` joins cleanly with no events received during the
+    quiet test window.
+  - `simulateKeyDown/Up(VK_F13)` (harmless function key) returns
+    without crashing; X server accepts the synthetic event.
+
+---
+
+## M7 — Real `plugins/sound/native` Linux backend
+
+The Linux source file gained a real audio device enumeration backend and
+text-to-speech support, both implemented as subprocess wrappers around the
+standard Linux audio tooling. Going through `pactl` means the same code
+runs on PipeWire (via `pipewire-pulse`) and PulseAudio without changes; TTS
+shells out to `espeak-ng` (with an `espeak` legacy fallback). The original
+M1 no-op stub moved into a dedicated macOS fallback so the macOS build
+path stays compilable.
+
+### Files changed
+
+- `plugins/sound/native/src/linux/native-index-linux.cc` — was the no-op
+  stub, now a real backend (~400 LOC). Highlights:
+  - `parse_pactl_list()` splits `pactl list sinks` / `pactl list sources`
+    output into per-device blocks, pulling `State`, `Name`, and
+    `Description`. `State`s `RUNNING`/`IDLE`/`SUSPENDED` all map to
+    `"active"`; anything else to `"unknown"`. The PA `Name` field is
+    reused for both `id` and `guid` (PA/PW has no Windows-style GUID).
+  - `pactl_default("Sink"|"Source")` parses `pactl info` for the
+    default sink/source name; since Linux has no Windows-style
+    eMultimedia/eCommunications role, both `"main"` and `"chat"`
+    resolve to the OS default.
+  - `start_subscriber()` forks `pactl subscribe` and reads its stdout
+    line-by-line in a worker thread:
+    `Event 'new' on sink #N` → `device-added`,
+    `Event 'remove' on …` → `device-removed`,
+    `Event 'change' on …` → `device-changed`,
+    `Event 'change' on server` triggers a re-query and emits
+    `default-output-changed` / `default-input-changed` if either
+    default actually changed. Events are dispatched to JS via
+    `Napi::ThreadSafeFunction::NonBlockingCall`. `Finalize` SIGTERMs
+    the child and joins the thread.
+  - `OsTTSInterface.getVoices()` runs `espeak-ng --voices` (or
+    `espeak --voices` as a fallback) and parses the output as a
+    fixed-width table (column starts taken from the header). The
+    "VoiceName" column becomes `name`, the "File" column becomes `id`
+    — the latter is what `-v` actually accepts. Whitespace-tokenising
+    is intentionally avoided because VoiceName can contain spaces
+    (e.g. "English (Caribbean)"), and the previous tokenizing parser
+    silently produced ids that espeak-ng rejected at runtime.
+  - On error paths (fork failure, espeak-ng not found, espeak-ng
+    exiting non-zero — typically because the voice id was rejected)
+    the AsyncWorker now calls `SetError(...)` so the JS callback
+    receives the message instead of `null`. The previous version
+    swallowed errors and made downstream `ffprobe` calls trip on a
+    file that espeak never wrote.
+  - `OsTTSInterface.speakToFile(text, file, voice, cb)` queues a
+    `Napi::AsyncWorker` that forks `espeak-ng -v <voice> -w <file> --
+    <text>`, waits for the child, then invokes the JS callback with
+    either `null` on success or a structured error string. The `--`
+    separator + `execvp` (no shell) keeps the text safe from
+    shell injection.
+- `plugins/sound/native/src/stub/native-index-stub.cc` *(new)* — copy of
+  the original M1 no-op stub for the macOS build path.
+- `plugins/sound/native/binding.gyp`:
+  - Windows branch unchanged.
+  - New `OS=='linux'` branch: builds the new file with `-std=c++17`,
+    `-pthread`, links `-lpthread`. No external audio dev dependency —
+    everything goes through subprocess.
+  - `OS=='mac'` now uses the dedicated stub file.
+
+### Verification
+
+- `node-gyp rebuild` succeeds and produces
+  `castmate-plugin-sound-native.node` (~140 KB).
+- `yarn ebuild` re-links it against Electron's ABI.
+- Smoke test under PipeWire 1.4.2 (with `pipewire-pulse` providing the
+  PulseAudio compatibility daemon):
+  - `getDevices()` enumerates 4 devices (2 sinks/sources from the
+    onboard Intel codec, the user's Razer Seiren V3 Mini USB mic, plus
+    the standard ALSA monitor source) with the expected
+    `{ id, type, state, name, guid }` shape.
+  - `getDefaultOutput("main")` and `getDefaultInput("main")` resolve
+    to the actual default analog stereo device.
+  - `getVoices()` returns 141 entries (espeak-ng installed).
+  - `speakToFile("Hello from CastMate Linux", "/tmp/cm-tts-test.wav",
+    "", cb)` produces an 82,800-byte WAV file, callback fires with
+    no error.
+
+### Linux runtime requirement
+
+`espeak-ng` is the one piece a typical Debian/Ubuntu desktop is missing
+out of the box. Install it with:
+
+```bash
+sudo apt install espeak-ng
+```
+
+`pactl` is shipped by both `pulseaudio-utils` and `pipewire-pulse`, at
+least one of which is already present on any system that has working
+audio.
+
+### Migration note for early adopters
+
+The first iteration of `getVoices()` returned the "VoiceName" column
+("Afrikaans", "English", …) as the voice id — values that `espeak-ng`'s
+`-v` flag does not accept. If you selected a TTS voice with that early
+build, your CastMate config holds a now-invalid id and TTS actions will
+fail with `"espeak failed (likely unknown voice ...)"`. Open the TTS
+provider settings and re-pick a voice from the updated dropdown; the new
+ids look like `gmw/af`, `gmw/en`, etc.
+
+---
+
 ## Roadmap
 
 Not yet implemented; tracked here for visibility.
 
-- **M6 — Real `plugins/input/native` Linux backend.** Replace the no-op
-  stubs with XTest (X11) or libevdev + `uinput` for real keyboard/mouse
-  simulation and event capture.
-- **M7 — Real `plugins/sound/native` Linux backend.** PulseAudio (or
-  PipeWire) for device enumeration; `speech-dispatcher` for TTS.
 - **M8 — `electron-builder` Linux pipeline + CI matrix.** Validate AppImage
   and `.deb` end-to-end; add `debian-latest` (and ideally `macos-latest`)
   to `.github/workflows/build.yaml` alongside `windows-latest`.
@@ -241,5 +425,6 @@ Not yet implemented; tracked here for visibility.
 ## File write by AI :
 - CHANGES.md
 - plugins/sound/native/src/linux/native-index-linux.cc
+- plugins/sound/native/src/stub/native-index-stub.cc
 - plugins/input/native/src/linux/native-index-linux.cc
-- plugins/input/native/src/stub/native-index-linux.cc
+- plugins/input/native/src/stub/native-index-stub.cc

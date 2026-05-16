@@ -12,8 +12,13 @@
                 ["OS=='win'", {
                     "sources": [ "src/native-index.cc", "src/util.cc", "src/audio-interface.cc", "src/tts-interface.cc" ]
                 }],
-                ["OS!='win'", {
-                    "sources": [ "src/linux/native-index-linux.cc" ]
+                ["OS=='linux'", {
+                    "sources": [ "src/linux/native-index-linux.cc" ],
+                    "cflags_cc": [ "-std=c++17", "-pthread" ],
+                    "libraries": [ "-lpthread" ]
+                }],
+                ["OS=='mac'", {
+                    "sources": [ "src/stub/native-index-stub.cc" ]
                 }]
             ]
         }
