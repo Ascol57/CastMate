@@ -39,6 +39,40 @@ module.exports = {
 			},
 		],
 		artifactName: "${productName}_${version}.${ext}",
+		extraResources: [
+			{
+				from: "../../node_modules/@ffmpeg-installer/win32-x64",
+				to: "ffmpeg/bin",
+				filter: ["**/*.exe"],
+			},
+			{
+				from: "../../node_modules/@ffprobe-installer/win32-x64",
+				to: "ffmpeg/bin",
+				filter: ["**/*.exe"],
+			},
+			{
+				from: "../../node_modules/regedit/vbs",
+				to: "regedit/vbs",
+				filter: ["**/*"],
+			},
+		],
+	},
+	linux: {
+		target: ["AppImage", "deb"],
+		category: "AudioVideo",
+		artifactName: "${productName}_${version}_${arch}.${ext}",
+		extraResources: [
+			{
+				from: "../../node_modules/@ffmpeg-installer/linux-x64",
+				to: "ffmpeg/bin",
+				filter: ["ffmpeg"],
+			},
+			{
+				from: "../../node_modules/@ffprobe-installer/linux-x64",
+				to: "ffmpeg/bin",
+				filter: ["ffprobe"],
+			},
+		],
 	},
 	nsis: {
 		oneClick: false,
@@ -49,23 +83,6 @@ module.exports = {
 	portable: {
 		artifactName: "${productName}_${version}-portable.${ext}",
 	},
-	extraResources: [
-		{
-			from: "../../node_modules/@ffmpeg-installer/win32-x64",
-			to: "ffmpeg/bin",
-			filter: ["**/*.exe"],
-		},
-		{
-			from: "../../node_modules/@ffprobe-installer/win32-x64",
-			to: "ffmpeg/bin",
-			filter: ["**/*.exe"],
-		},
-		{
-			from: "../../node_modules/regedit/vbs",
-			to: "regedit/vbs",
-			filter: ["**/*"],
-		},
-	],
 	extraFiles: [
 		{
 			from: "../castmate-obs-overlay/dist/obs-overlay",

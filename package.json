@@ -44,7 +44,9 @@
 	},
 	"packageManager": "yarn@4.1.0",
 	"dependencies": {
+		"@ffmpeg-installer/ffmpeg": "^1.1.0",
 		"@ffmpeg-installer/win32-x64": "^4.1.0",
+		"@ffprobe-installer/ffprobe": "^2.1.2",
 		"@ffprobe-installer/win32-x64": "^5.1.0",
 		"axios": "^1.5.1",
 		"castmate-core": "workspace:^",

@@ -708,7 +708,89 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ffmpeg-installer/win32-x64@npm:^4.1.0":
+"@ffmpeg-installer/darwin-arm64@npm:4.1.5":
+  version: 4.1.5
+  resolution: "@ffmpeg-installer/darwin-arm64@npm:4.1.5"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@ffmpeg-installer/darwin-x64@npm:4.1.0":
+  version: 4.1.0
+  resolution: "@ffmpeg-installer/darwin-x64@npm:4.1.0"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@ffmpeg-installer/ffmpeg@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@ffmpeg-installer/ffmpeg@npm:1.1.0"
+  dependencies:
+    "@ffmpeg-installer/darwin-arm64": "npm:4.1.5"
+    "@ffmpeg-installer/darwin-x64": "npm:4.1.0"
+    "@ffmpeg-installer/linux-arm": "npm:4.1.3"
+    "@ffmpeg-installer/linux-arm64": "npm:4.1.4"
+    "@ffmpeg-installer/linux-ia32": "npm:4.1.0"
+    "@ffmpeg-installer/linux-x64": "npm:4.1.0"
+    "@ffmpeg-installer/win32-ia32": "npm:4.1.0"
+    "@ffmpeg-installer/win32-x64": "npm:4.1.0"
+  dependenciesMeta:
+    "@ffmpeg-installer/darwin-arm64":
+      optional: true
+    "@ffmpeg-installer/darwin-x64":
+      optional: true
+    "@ffmpeg-installer/linux-arm":
+      optional: true
+    "@ffmpeg-installer/linux-arm64":
+      optional: true
+    "@ffmpeg-installer/linux-ia32":
+      optional: true
+    "@ffmpeg-installer/linux-x64":
+      optional: true
+    "@ffmpeg-installer/win32-ia32":
+      optional: true
+    "@ffmpeg-installer/win32-x64":
+      optional: true
+  checksum: 10/95cd9c8c6b03a096c7218b1e73c3cf222e9f860c5b22ce3d533c1fcef9f2560bf257946547051f034224ebaef785d702d362e55fbc80a6263c487d9da3c517d0
+  languageName: node
+  linkType: hard
+
+"@ffmpeg-installer/linux-arm64@npm:4.1.4":
+  version: 4.1.4
+  resolution: "@ffmpeg-installer/linux-arm64@npm:4.1.4"
+  conditions: os=linux & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@ffmpeg-installer/linux-arm@npm:4.1.3":
+  version: 4.1.3
+  resolution: "@ffmpeg-installer/linux-arm@npm:4.1.3"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@ffmpeg-installer/linux-ia32@npm:4.1.0":
+  version: 4.1.0
+  resolution: "@ffmpeg-installer/linux-ia32@npm:4.1.0"
+  conditions: os=linux & cpu=ia32
+  languageName: node
+  linkType: hard
+
+"@ffmpeg-installer/linux-x64@npm:4.1.0":
+  version: 4.1.0
+  resolution: "@ffmpeg-installer/linux-x64@npm:4.1.0"
+  conditions: os=linux & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@ffmpeg-installer/win32-ia32@npm:4.1.0":
+  version: 4.1.0
+  resolution: "@ffmpeg-installer/win32-ia32@npm:4.1.0"
+  conditions: os=win32 & cpu=ia32
+  languageName: node
+  linkType: hard
+
+"@ffmpeg-installer/win32-x64@npm:4.1.0, @ffmpeg-installer/win32-x64@npm:^4.1.0":
   version: 4.1.0
   resolution: "@ffmpeg-installer/win32-x64@npm:4.1.0"
   checksum: 10/151ae57e16bbef2ea56bf5f3c43b6719d0c534521343344d9464e03e4cca9a9485a4b75808ab7e203a29d2850e5b80b281687f0ddb894a4f9fdf8c5ffcca4951
@@ -716,7 +798,89 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ffprobe-installer/win32-x64@npm:^5.1.0":
+"@ffprobe-installer/darwin-arm64@npm:5.0.1":
+  version: 5.0.1
+  resolution: "@ffprobe-installer/darwin-arm64@npm:5.0.1"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@ffprobe-installer/darwin-x64@npm:5.1.0":
+  version: 5.1.0
+  resolution: "@ffprobe-installer/darwin-x64@npm:5.1.0"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@ffprobe-installer/ffprobe@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "@ffprobe-installer/ffprobe@npm:2.1.2"
+  dependencies:
+    "@ffprobe-installer/darwin-arm64": "npm:5.0.1"
+    "@ffprobe-installer/darwin-x64": "npm:5.1.0"
+    "@ffprobe-installer/linux-arm": "npm:5.2.0"
+    "@ffprobe-installer/linux-arm64": "npm:5.2.0"
+    "@ffprobe-installer/linux-ia32": "npm:5.2.0"
+    "@ffprobe-installer/linux-x64": "npm:5.2.0"
+    "@ffprobe-installer/win32-ia32": "npm:5.1.0"
+    "@ffprobe-installer/win32-x64": "npm:5.1.0"
+  dependenciesMeta:
+    "@ffprobe-installer/darwin-arm64":
+      optional: true
+    "@ffprobe-installer/darwin-x64":
+      optional: true
+    "@ffprobe-installer/linux-arm":
+      optional: true
+    "@ffprobe-installer/linux-arm64":
+      optional: true
+    "@ffprobe-installer/linux-ia32":
+      optional: true
+    "@ffprobe-installer/linux-x64":
+      optional: true
+    "@ffprobe-installer/win32-ia32":
+      optional: true
+    "@ffprobe-installer/win32-x64":
+      optional: true
+  checksum: 10/278c7ef16a5a28246d3594693a837b0e984579e4e47d9b8adc1db49a450b332f8074e523a731f7f549e5f2e7b6aa14ddea359918eddf9ec16613104bcccd8ca4
+  languageName: node
+  linkType: hard
+
+"@ffprobe-installer/linux-arm64@npm:5.2.0":
+  version: 5.2.0
+  resolution: "@ffprobe-installer/linux-arm64@npm:5.2.0"
+  conditions: os=linux & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@ffprobe-installer/linux-arm@npm:5.2.0":
+  version: 5.2.0
+  resolution: "@ffprobe-installer/linux-arm@npm:5.2.0"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@ffprobe-installer/linux-ia32@npm:5.2.0":
+  version: 5.2.0
+  resolution: "@ffprobe-installer/linux-ia32@npm:5.2.0"
+  conditions: os=linux & cpu=ia32
+  languageName: node
+  linkType: hard
+
+"@ffprobe-installer/linux-x64@npm:5.2.0":
+  version: 5.2.0
+  resolution: "@ffprobe-installer/linux-x64@npm:5.2.0"
+  conditions: os=linux & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@ffprobe-installer/win32-ia32@npm:5.1.0":
+  version: 5.1.0
+  resolution: "@ffprobe-installer/win32-ia32@npm:5.1.0"
+  conditions: os=win32 & cpu=ia32
+  languageName: node
+  linkType: hard
+
+"@ffprobe-installer/win32-x64@npm:5.1.0, @ffprobe-installer/win32-x64@npm:^5.1.0":
   version: 5.1.0
   resolution: "@ffprobe-installer/win32-x64@npm:5.1.0"
   checksum: 10/047f9e10115355d0dca51d1f6b955f4dc96e80b0e99926994d8dd334078911819f544d6642053ce9320f03e345e5a015e107c1206af9ca170dbd1d7467198a3a
@@ -3338,7 +3502,9 @@ __metadata:
   resolution: "castmate-monorepo@workspace:."
   dependencies:
     "@electron/rebuild": "npm:^4.0.2"
+    "@ffmpeg-installer/ffmpeg": "npm:^1.1.0"
     "@ffmpeg-installer/win32-x64": "npm:^4.1.0"
+    "@ffprobe-installer/ffprobe": "npm:^2.1.2"
     "@ffprobe-installer/win32-x64": "npm:^5.1.0"
     "@types/node": "npm:^20.4.8"
     "@vitejs/plugin-vue": "npm:4.6.2"

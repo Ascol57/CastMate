@@ -1,7 +1,14 @@
 import childProcess from "node:child_process"
+import { createRequire } from "node:module"
 import path from "path"
 import { shell, app } from "electron"
 import { usePluginLogger } from "../logging/logging"
+
+// CJS-only installers loaded via createRequire to avoid Electron's ESM→CJS interop
+// crash (TypeError on cjsPreparseModuleExports in Node 20.18 embedded in Electron 34).
+const cjsRequire = createRequire(import.meta.url)
+const ffmpegInstaller = cjsRequire("@ffmpeg-installer/ffmpeg") as { path: string }
+const ffprobeInstaller = cjsRequire("@ffprobe-installer/ffprobe") as { path: string }
 
 const logger = usePluginLogger("ffmpeg")
 
@@ -92,14 +99,13 @@ export async function ffprobe(file: string): Promise<FFProbeOutput> {
 export function setupFFMpegPaths() {
 	if (app.isPackaged) {
 		const binPath = path.join(import.meta.dirname, "../../../", "ffmpeg/bin")
+		const exeSuffix = process.platform === "win32" ? ".exe" : ""
 
-		ffprobePath = path.resolve(binPath, "ffprobe.exe")
-		ffmpegPath = path.resolve(binPath, "ffmpeg.exe")
+		ffprobePath = path.resolve(binPath, `ffprobe${exeSuffix}`)
+		ffmpegPath = path.resolve(binPath, `ffmpeg${exeSuffix}`)
 	} else {
-		const nodeModulesPath = path.join(import.meta.dirname, "../../../../", "node_modules")
-
-		ffprobePath = path.resolve(nodeModulesPath, "@ffprobe-installer/win32-x64/ffprobe.exe")
-		ffmpegPath = path.resolve(nodeModulesPath, "@ffmpeg-installer/win32-x64/ffmpeg.exe")
+		ffprobePath = ffprobeInstaller.path
+		ffmpegPath = ffmpegInstaller.path
 	}
 
 	logger.log("ffmpeg path", ffmpegPath)

@@ -316,7 +316,7 @@ export const ViewerData = Service(
 		}
 
 		async initialize() {
-			await ensureDirectory(resolveProjectPath("/viewer-data"))
+			await ensureDirectory(resolveProjectPath("viewer-data"))
 
 			await this.createDb()
 
