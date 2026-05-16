@@ -1,5 +1,6 @@
 import childProcess from "node:child_process"
 import { createRequire } from "node:module"
+import * as fs from "node:fs/promises"
 import path from "path"
 import { shell, app } from "electron"
 import { usePluginLogger } from "../logging/logging"
@@ -94,6 +95,87 @@ export async function ffprobe(file: string): Promise<FFProbeOutput> {
 	const json = JSON.parse(result)
 
 	return json as FFProbeOutput
+}
+
+interface VolumeStats {
+	mean: number
+	max: number
+}
+
+async function detectVolumeStats(file: string): Promise<VolumeStats | undefined> {
+	if (!ffmpegPath) return undefined
+	return new Promise((resolve) => {
+		childProcess.execFile(
+			ffmpegPath,
+			["-hide_banner", "-nostats", "-i", file, "-filter:a", "volumedetect", "-f", "null", "-"],
+			{},
+			(_err, _stdout, stderr) => {
+				const out = stderr || ""
+				const meanMatch = /mean_volume:\s*(-?\d+(?:\.\d+)?)\s*dB/.exec(out)
+				const maxMatch = /max_volume:\s*(-?\d+(?:\.\d+)?)\s*dB/.exec(out)
+				if (!meanMatch || !maxMatch) return resolve(undefined)
+				resolve({ mean: parseFloat(meanMatch[1]), max: parseFloat(maxMatch[1]) })
+			}
+		)
+	})
+}
+
+export async function normalizeAudio(
+	file: string,
+	opts: { targetMeanDb?: number; targetPeakDb?: number; maxBoostDb?: number } = {}
+): Promise<void> {
+	if (!ffmpegPath) return
+	const resolvedFile = path.resolve(file)
+	const targetMean = opts.targetMeanDb ?? -16
+	const targetPeak = opts.targetPeakDb ?? -1.5
+	const maxBoost = opts.maxBoostDb ?? 20
+
+	const stats = await detectVolumeStats(resolvedFile)
+	if (!stats) {
+		logger.error("normalizeAudio: could not measure", resolvedFile)
+		return
+	}
+
+	const rawGain = targetMean - stats.mean
+	const gain = Math.min(rawGain, maxBoost)
+	if (gain <= 0.5) return
+
+	const peakLinear = Math.pow(10, targetPeak / 20).toFixed(4)
+	const filter = `volume=${gain.toFixed(2)}dB,alimiter=limit=${peakLinear}`
+
+	const tmp = `${resolvedFile}.norm.wav`
+	const ok = await new Promise<boolean>((resolve) => {
+		childProcess.execFile(
+			ffmpegPath,
+			[
+				"-hide_banner",
+				"-y",
+				"-i",
+				resolvedFile,
+				"-filter:a",
+				filter,
+				tmp,
+			],
+			{},
+			(err) => resolve(!err)
+		)
+	})
+
+	if (!ok) {
+		logger.error("normalizeAudio: ffmpeg gain pass failed for", resolvedFile)
+		await fs.rm(tmp, { force: true }).catch(() => {})
+		return
+	}
+
+	try {
+		if (process.platform === "win32") {
+			await fs.rm(resolvedFile, { force: true })
+		}
+		await fs.rename(tmp, resolvedFile)
+	} catch (e) {
+		logger.error("normalizeAudio: rename failed", e)
+		await fs.rm(tmp, { force: true }).catch(() => {})
+	}
 }
 
 export function setupFFMpegPaths() {

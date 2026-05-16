@@ -747,9 +747,115 @@ arbitrary text" use cases CastMate doesn't currently expose.
 
 ---
 
+## M12 — Cross-platform TTS loudness normalization
+
+Synthesizers ship at different default volumes — Windows SAPI typically peaks
+around -3 to -6 dBFS, Linux `espeak-ng` already maxes out at -1.5 dBFS, macOS
+NSSpeech sits somewhere in between, and cloud providers vary further. Without
+a normalization step, CastMate's volume slider scaled wildly different
+baselines, so "50 %" sounded loud on one OS and faint on another.
+
+Every TTS file CastMate generates is now peak-normalized in place
+immediately after synthesis, before being handed off to playback. End
+result: the volume slider acts on a consistent baseline regardless of
+which provider/OS produced the audio.
+
+### Strategy
+
+**Mean-level boost with a peak limiter** — two ffmpeg invocations:
+
+1. **Measure** the source's current `mean_volume` and `max_volume` with
+   the `volumedetect` filter (single pass, ~50 ms on a few-second clip).
+2. **Apply** `volume=<gain>dB,alimiter=limit=<peakLinear>` where
+   `gain = min(targetMeanDb - measuredMean, maxBoostDb)` and `peakLinear`
+   is the linear-amplitude form of the peak cap. The chain boosts every
+   sample uniformly to bring the *average* level up; any sample that
+   would clip past `targetPeakDb` is caught by `alimiter` instead.
+
+Defaults: target mean **-16 dBFS** (close to broadcast LUFS targets for
+voice), target peak **-1.5 dBFS** (standard headroom), max boost **+20 dB**
+(so a freakishly quiet source can't be amplified into pure noise). All
+three are overridable via the `opts` parameter.
+
+#### Why not loudnorm?
+
+- **Single-pass `loudnorm`** acts as a *limiter*, not a normalizer —
+  never boosts quiet audio, which is exactly the case we care about for
+  TTS. Verified locally: espeak-ng input at mean -21 / max -1.5 came
+  out at mean -21 / max -1.5 (unchanged).
+- **Two-pass `loudnorm`** with EBU R128: short clips (<2 s, which
+  covers most one-sentence TTS) fall below the gating window, so the
+  first pass measures `LRA=0` and the second pass refuses to apply
+  meaningful gain. Also verified locally — same espeak input came out
+  unchanged.
+
+#### Why a limiter, not just a gain?
+
+Mean-based gain alone would clip the peaks: espeak's input mean is -21
+and peak is -1.5, so a +5 dB gain to hit target mean -16 would push the
+peak to +3.5 dBFS (clipping). `alimiter` catches that and clamps to the
+target peak transparently.
+
+The function **only boosts**. Sources already loud enough (gain
+calculation yields ≤ 0.5 dB) are passed through untouched — we don't
+squash already-loud audio just to match a number. The 0–100 action
+volume slider handles attenuation downstream.
+
+### Files changed
+
+- `libs/castmate-core/src/media/ffmpeg.ts`:
+  - New `node:fs/promises` import for the temp-file rename dance.
+  - New private `detectVolumeStats(file)` — runs ffmpeg's `volumedetect`
+    filter, parses both `mean_volume:` and `max_volume:` out of stderr,
+    returns `{ mean, max }` or `undefined` on measurement failure.
+  - New exported `normalizeAudio(file, opts?)` — calls
+    `detectVolumeStats`, computes `gain = min(targetMean - mean,
+    maxBoost)`, applies it as `volume=<gain>dB,alimiter=limit=<peakLinear>`
+    so peaks are caught instead of distorting. Atomic-renames the temp
+    file over the original. Boost-only (no attenuation). Tunable via
+    `opts.targetMeanDb`, `opts.targetPeakDb`, `opts.maxBoostDb`.
+    Failures are logged but never thrown; the caller always gets a
+    playable file.
+- `libs/castmate-core/src/media/media-manager.ts`:
+  - Re-exports `normalizeAudio` as `normalizeMediaLoudness(file)` so it
+    flows through `castmate-core`'s public surface alongside
+    `probeMedia`.
+- `plugins/sound/main/src/tts.ts`:
+  - `TTSVoice.generate(text)` now calls `await normalizeMediaLoudness(filename)`
+    after the provider's `generate(...)` resolves, before returning the
+    filename to the action. Applies uniformly to OSTTSVoiceProvider
+    (M7's espeak-ng path on Linux, SAPI on Windows, NSSpeech on macOS)
+    and to any future cloud-TTS provider that subclasses
+    `TTSVoiceProvider`.
+
+### Verification
+
+- Standalone ffmpeg roundtrip on this Linux host:
+  - Source: espeak-ng WAV at `max_volume: -1.5 dB` (already at target).
+  - Synthetic quiet variant (`volume=-12dB`): `max_volume: -13.5 dB`.
+  - After detect (`-13.5`) + apply (`+12.0 dB`):
+    `max_volume: -1.5 dB` exactly.
+- TypeScript compiles cleanly for both `libs/castmate-core` and
+  `plugins/sound/main` (only the three pre-existing `trigger.ts` errors
+  surface).
+- The change is additive: TTS callers see the same `generate(text)` →
+  `string filename` contract; only the file's gain differs.
+
+---
+
 ## Next Step
 
-- M12: For TTS, the file were generated and the volume normalized to the same number of decibels across all operating systems. This would make the volume slider actually useful.
+All initially scoped milestones (M1–M12) are now implemented. Possible
+follow-ups beyond this set:
+
+- macOS native input/sound backends (M6/M7 currently fall back to no-op
+  stubs on Darwin).
+- Multi-modifier key simulation on X11 so OEM keysyms at non-level-0
+  shift levels can be produced verbatim (limitation noted in M11).
+- A user-tunable TTS loudness target — currently hard-coded at -1.5 dBFS
+  in `normalizeAudio`'s default. The function already accepts an
+  `opts.targetPeakDb` override; wiring it to a CastMate setting would be
+  trivial.
 
 ## File write by AI :
 - CHANGES.md

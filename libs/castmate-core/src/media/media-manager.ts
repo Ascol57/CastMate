@@ -11,7 +11,7 @@ import { globalLogger, usePluginLogger } from "../logging/logging"
 import { WebService } from "../webserver/internal-webserver"
 import express, { Application, NextFunction, Request, Response, response, Router } from "express"
 import { coreAxios } from "../util/request-utils"
-import { ffprobe, setupFFMpegPaths } from "./ffmpeg"
+import { ffprobe, normalizeAudio, setupFFMpegPaths } from "./ffmpeg"
 //require("@ffmpeg-installer/win32-x64")
 //require("@ffprobe-installer/win32-x64")
 //Thumbnails?
@@ -21,6 +21,10 @@ const logger = usePluginLogger("media")
 
 export function probeMedia(file: string) {
 	return ffprobe(file)
+}
+
+export function normalizeMediaLoudness(file: string) {
+	return normalizeAudio(file)
 }
 
 const addOrUpdateMediaRenderer = defineCallableIPC<(metadata: MediaMetadata) => void>("media", "addMedia")

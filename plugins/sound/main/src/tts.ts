@@ -5,6 +5,7 @@ import {
 	defineAction,
 	definePluginResource,
 	ensureDirectory,
+	normalizeMediaLoudness,
 	onLoad,
 	usePluginLogger,
 } from "castmate-core"
@@ -57,6 +58,9 @@ export class TTSVoice extends FileResource<TTSVoiceConfig> {
 
 		const filename = path.join(cachePath, `${nanoid()}.wav`)
 		await provider.generate(text, this.config.providerConfig, filename)
+
+		await normalizeMediaLoudness(filename)
+
 		return filename
 	}
 }
