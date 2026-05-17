@@ -1,3 +1,5 @@
+const path = require("node:path")
+
 module.exports = {
 	appId: "com.lordtocs.castmate",
 	productName: "CastMate",
@@ -62,6 +64,17 @@ module.exports = {
 		category: "AudioVideo",
 		artifactName: "${productName}_${version}_${arch}.${ext}",
 		maintainer: "Scott Resnick <lordtocs@gmail.com>",
+		synopsis: "Streamer automation: Twitch, OBS, lights, sounds, TTS",
+		description:
+			"CastMate is an open-source automation app for live streamers. " +
+			"It links services and devices — Twitch chat and channel-points, " +
+			"OBS Studio, Philips Hue / LIFX / Govee / Twinkly lights, Discord, " +
+			"Minecraft, sounds, text-to-speech, overlays and more — into a " +
+			"single point-and-click editor. Build profiles that react to " +
+			"viewer rewards, raids, subs, follows, chat commands, timers, or " +
+			"external HTTP triggers; switch OBS scenes, play sound effects, " +
+			"change lights, post to Discord, drive a Minecraft server, or " +
+			"anything else you can wire up.",
 		extraResources: [
 			{
 				from: "../../node_modules/@ffmpeg-installer/linux-x64",
@@ -95,6 +108,11 @@ module.exports = {
 		// Scripts dpkg runs as root after install / before remove.
 		afterInstall: "build/linux/after-install.sh",
 		afterRemove: "build/linux/after-remove.sh",
+		// Install the udev rules and AppStream metainfo with the .deb.
+		fpm: [
+			`${path.join(__dirname, "build/linux/99-castmate-uinput.rules")}=/etc/udev/rules.d/99-castmate-uinput.rules`,
+			`${path.join(__dirname, "build/linux/com.lordtocs.castmate.metainfo.xml")}=/usr/share/metainfo/com.lordtocs.castmate.metainfo.xml`,
+		],
 	},
 	nsis: {
 		oneClick: false,

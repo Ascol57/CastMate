@@ -865,5 +865,6 @@ follow-ups beyond this set:
 - plugins/input/main/src/main.ts (for the settingss)
 - plugins/input/native/src/linux/native-index-linux.cc (entirely)
 - plugins/input/native/src/stub/native-index-stub.cc (entirely)
-- packages/castmate/build/linux/after-install.sh
-- packages/castmate/build/linux/after-remove.sh
+- packages/castmate/build/linux/after-install.sh (entirely)
+- packages/castmate/build/linux/after-remove.sh (entirely)
+- packages/castmate/build/linux/com.lordtocs.castmate.metainfo.xml (partially)

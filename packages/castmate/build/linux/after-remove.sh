@@ -1,24 +1,23 @@
 #!/bin/bash
 # CastMate .deb post-remove script.
-# Cleans up the udev rule installed by after-install.sh. The user is *not*
-# removed from the `input` group here — that group is shared with other apps
-# and shouldn't be touched on uninstall.
+#
+# The udev rule and AppStream metainfo are owned by dpkg (placed natively
+# via `deb.fpm`), so dpkg removes them automatically. This script only
+# rehoms the system after their removal so the changes take effect
+# immediately.
 
 set -e
 
-UDEV_DST=/etc/udev/rules.d/99-castmate-uinput.rules
-APPSTREAM_DST=/usr/share/metainfo/com.lordtocs.castmate.metainfo.xml
-
-if [ -f "$UDEV_DST" ]; then
-    rm -f "$UDEV_DST"
-    if command -v udevadm >/dev/null 2>&1; then
-        udevadm control --reload >/dev/null 2>&1 || true
-        udevadm trigger >/dev/null 2>&1 || true
-    fi
+# udev pick up the deleted rule
+if command -v udevadm >/dev/null 2>&1; then
+    udevadm control --reload >/dev/null 2>&1 || true
+    udevadm trigger >/dev/null 2>&1 || true
 fi
 
-if [ -f "$APPSTREAM_DST" ]; then
-    rm -f "$APPSTREAM_DST"
+# AppStream cache no longer references CastMate
+if command -v appstreamcli >/dev/null 2>&1; then
+    appstreamcli refresh-cache --force >/dev/null 2>&1 || \
+        appstreamcli refresh --force    >/dev/null 2>&1 || true
 fi
 
 exit 0

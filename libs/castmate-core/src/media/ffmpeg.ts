@@ -7,9 +7,8 @@ import { usePluginLogger } from "../logging/logging"
 
 // CJS-only installers loaded via createRequire to avoid Electron's ESM→CJS interop
 // crash (TypeError on cjsPreparseModuleExports in Node 20.18 embedded in Electron 34).
+
 const cjsRequire = createRequire(import.meta.url)
-const ffmpegInstaller = cjsRequire("@ffmpeg-installer/ffmpeg") as { path: string }
-const ffprobeInstaller = cjsRequire("@ffprobe-installer/ffprobe") as { path: string }
 
 const logger = usePluginLogger("ffmpeg")
 
@@ -186,6 +185,8 @@ export function setupFFMpegPaths() {
 		ffprobePath = path.resolve(binPath, `ffprobe${exeSuffix}`)
 		ffmpegPath = path.resolve(binPath, `ffmpeg${exeSuffix}`)
 	} else {
+		const ffmpegInstaller = cjsRequire("@ffmpeg-installer/ffmpeg") as { path: string }
+		const ffprobeInstaller = cjsRequire("@ffprobe-installer/ffprobe") as { path: string }
 		ffprobePath = ffprobeInstaller.path
 		ffmpegPath = ffmpegInstaller.path
 	}
